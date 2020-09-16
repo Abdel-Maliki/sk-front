@@ -1,0 +1,14 @@
+<div [formGroup]="form">
+  <div class="p-field">
+    <label for="name">Name*</label>
+    <input type="text" pInputText id="name" [formControlName]="name" required autofocus />
+    <small class="p-invalid" *ngIf="haseError(name, requiredControl)">Le nom est requis</small>
+    <small class="p-invalid" *ngIf="haseError(name, minLengtControl)">char invalid</small>
+    <small class="p-invalid" *ngIf="haseError(name, maxLengthControl)">char invalid</small>
+  </div>
+  <div class="p-field">
+    <label for="description">Description</label>
+    <textarea id="description" pInputTextarea [formControlName]="description" rows="3" cols="20"></textarea>
+    <small class="p-invalid" *ngIf="haseError(description, maxLengthControl)">char invalid</small>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<div class="layout-sidebar " [ngClass]="{'active': active}">
+  <div class="layout-menu">
+
+    <div *ngFor="let menuCategory of menuItems" class="menu-category">
+      <div class="menu-category-title">{{ menuCategory.title}}</div>
+      <div class="menu-items" *ngFor="let menuItem of menuCategory.menuItems">
+        <div *ngIf="!menuItem.menuItems || menuItem.menuItems.length === 0">
+          <a [routerLink]="menuItem.link" tabindex="0"
+                                          routerLinkActive="router-link-exact-active" [routerLinkActiveOptions]="{exact:true}">
+            <i [class]="menuItem.icon"></i>
+            <span>&nbsp; {{ menuItem.title}}</span>
+          </a>
+        </div>
+        <div *ngIf="menuItem.menuItems && menuItem.menuItems.length > 0">
+          <a tabindex="0" (click)="toggleSubmenu($event, menuItem.title)"
+             style="display: flex; justify-content: space-between">
+            <div>
+              <i [class]="menuItem.icon"></i>
+              <span>&nbsp; {{ menuItem.title}}</span>
+            </div>
+            <i *ngIf="menuItem.menuItems && menuItem.menuItems.length > 0" [@mmmmmm]="isSubmenuActive(menuItem.title) ? 'visible': 'hidden'"
+              class="pi pi-chevron-up"></i>
+          </a>
+          <div [@submenu]="isSubmenuActive(menuItem.title) ? 'visible': 'hidden'">
+            <ul class="sub-menu" *ngFor="let menuSubItem of menuItem.menuItems">
+              <li>
+                <div *ngIf="!menuSubItem.menuItems || menuItem.menuItems.length == 0">
+                  <a [routerLink]="menuSubItem.link" tabindex="0"
+                                                     routerLinkActive="router-link-exact-active" [routerLinkActiveOptions]="{exact:true}">
+                    <i [class]="menuSubItem.icon"></i>
+                    <span>&nbsp; {{ menuSubItem.title}}</span>
+                  </a>
+                </div>
+                <a *ngIf="menuSubItem.menuItems && menuSubItem.menuItems.length > 0" (click)="toggleSubSubmenu($event, menuSubItem.title)"
+                  style="display: flex; justify-content: space-between">
+                  <div>
+                    <i [class]="menuSubItem.icon +' layout-menuitem-icon'"></i>
+                    <span class="layout-menuitem-text">&nbsp; {{ menuSubItem.title}}</span>
+                  </div>
+                  <i *ngIf="menuSubItem.menuItems && menuSubItem.menuItems.length > 0"
+                    class="pi pi-chevron-up layout-submenu-toggler " [@mmmmmm]="isSubSubmenuActive(menuItem.title, menuSubItem.title) ? 'visible': 'hidden'"></i>
+                </a>
+                <div [@submenu]="isSubSubmenuActive(menuItem.title, menuSubItem.title) ? 'visible': 'hidden'">
+                  <ul class="sub-sub-menu" *ngFor="let menuSubSubItem of menuSubItem.menuItems">
+                    <li>
+                      <div *ngIf="!menuSubSubItem.menuItems || menuSubSubItem.menuItems.length === 0">
+                        <a [routerLink]="menuSubSubItem.link" tabindex="0"
+                                                              routerLinkActive="router-link-exact-active" [routerLinkActiveOptions]="{exact:true}">
+                          <i [class]="menuSubSubItem.icon"></i>
+                          <span>&nbsp; {{ menuSubSubItem.title}}</span>
+                        </a>
+                      </div>
+                      <a *ngIf="menuSubSubItem.menuItems && menuSubSubItem.menuItems.length > 0" (click)="toggleSubSubSubmenu($event, menuSubSubItem.title)"
+                        style="display: flex; justify-content: space-between">
+                        <div>
+                          <i [class]="menuSubSubItem.icon +' layout-menuitem-icon'"></i>
+                          <span class="layout-menuitem-text">&nbsp; {{ menuSubSubItem.title}}</span>
+                        </div>
+                        <i *ngIf="menuSubSubItem.menuItems && menuSubSubItem.menuItems.length > 0" [@mmmmmm]="isSubSubSubmenuActive(menuItem.title, menuSubItem.title, menuSubSubItem.title) ? 'visible': 'hidden'"
+                          class="pi pi-chevron-up layout-submenu-toggler "></i>
+                      </a>
+                      <div [@submenu]="isSubSubSubmenuActive(menuItem.title, menuSubItem.title, menuSubSubItem.title) ? 'visible': 'hidden'">
+                        <ul class="sub-sub-sub-menu" *ngFor="let menuSubSubSubItem of menuSubSubItem.menuItems">
+                          <li>
+                            <a [routerLink]="menuSubSubSubItem.link" tabindex="0"
+                                                                     routerLinkActive="router-link-exact-active" [routerLinkActiveOptions]="{exact:true}">
+                              <i [class]="menuSubSubSubItem.icon"></i>
+                              <span>&nbsp; {{ menuSubSubSubItem.title}}</span>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+<div class="layout-topbar">
+  <a class="menu-button" (click)="onMenuButtonClick($event)">
+    <i class="pi pi-bars"></i>
+  </a>
+  <a [routerLink]="['/']" class="logo">
+    <img alt="logo" [src]="'assets/showcase/images/youtube.png'"/>
+  </a>
+
+  <div class="topbar-searsh">
+    <p-autoComplete class="topbar-autocomplete" placeholder="&#61442; Recherche"
+                    [type]="'search'"
+                    [inputStyleClass]="'border-radius-5'"
+                    [(ngModel)]="text" [suggestions]="results"
+                    (completeMethod)="search($event)"></p-autoComplete>
+  </div>
+  <ul #topbarMenu class="topbar-menu" style="margin-left: auto">
+    <li style="line-height: 55px;">
+      <button (click)="changeTheme($event)" style="height: 35px; width: 35px; font-size: 17px" badge="8" pButton pRipple type="button" icon="fa fa-bell" class="p-button-rounded p-button-text"></button>
+    </li>
+    <li style="line-height: 53px;">
+    </li>
+    <li class="topbar-submenu" style="margin: 15px 30px;">
+      <img (click)="toggleMenu($event, 0)" alt="Prestige" style="cursor: pointer; line-height: 40px;width: 40px; height: 40px; border-radius:50%;-moz-border-radius:50%; -webkit-border-radius:50%;" src="assets/showcase/images/galleria/galleria1.jpg">
+      <ul style="margin-top: -20px" [@overlayMenuAnimation]="'visible'" *ngIf="activeMenuIndex === 0" (@overlayMenuAnimation.start)="onOverlayMenuEnter($event)">
+        <li><a href="https://github.com/primefaces/primeng" target="_blank"><span>Source Code</span></a></li>
+        <li><a [routerLink]="['/support']"><span>Support</span></a></li>
+      </ul>
+    </li>
+  </ul>
+</div>

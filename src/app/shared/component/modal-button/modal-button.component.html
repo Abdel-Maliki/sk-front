@@ -1,0 +1,5 @@
+<button pButton pRipple [label]="getCancelLabel()" icon="pi pi-times" class="p-button-text"
+        (click)="cancelEvent.emit()"></button>
+<button pButton pRipple [label]="getValidateLabel()" icon="pi pi-check" class="p-button-text"
+        [disabled]="disabled" (click)="validateEvent.emit()">
+</button>

@@ -9,13 +9,15 @@
     },
     "array-type": false,
     "arrow-return-shorthand": true,
-    "curly": true,
+    //"curly": true,
+    "curly": false,
     "deprecation": {
       "severity": "warning"
     },
     "component-class-suffix": true,
     "contextual-lifecycle": true,
-    "directive-class-suffix": true,
+    // "directive-class-suffix": true,
+    "directive-class-suffix": false,
     "directive-selector": [
       true,
       "attribute",

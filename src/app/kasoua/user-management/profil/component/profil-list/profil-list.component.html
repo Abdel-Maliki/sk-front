@@ -1,0 +1,109 @@
+<div class="card" style="margin: 2rem">
+  <p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+
+      <h5 class="p-m-0">{{'profile.title' | translate}}</h5>
+    </ng-template>
+
+    <div>
+      <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2"
+              (click)="enableShowDialog()"></button>
+      <button [disabled]="selectedEntities.length === 0" pButton pRipple label="Delete" icon="pi pi-trash"
+              class="p-button-danger"
+              (click)="deleteAll()"></button>
+    </div>
+
+    <ng-template pTemplate="right">
+      <span class="p-input-icon-left">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" placeholder="Recherche..."/>
+                    </span>
+    </ng-template>
+  </p-toolbar>
+
+  <p-menu #menu [popup]="true" [model]="items"></p-menu>
+  <p-contextMenu #cm [model]="items"></p-contextMenu>
+  <p-confirmDialog [position]="deleteConfirmDialogPosition" [key]="constantes.deleteConfirmDialogKey" [baseZIndex]="10000"></p-confirmDialog>
+
+  <p-table (onSort)="sort($event)" #dt [(selection)]="selectedEntities"
+           [globalFilterFields]="['id','name','description','createdAt']" [paginator]="true"
+           [rowHover]="true"
+           [rowsPerPageOptions]="[10,25,50]"
+           [rows]="10"
+           [showCurrentPageReport]="true"
+           [value]="provider.getEnvService().pageElements$ | async"
+           [(contextMenuSelection)]="entity" [contextMenu]="cm"
+           currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+           dataKey="id">
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th pSortableColumn="id">Id
+          <p-sortIcon field="id"></p-sortIcon>
+        </th>
+        <th pSortableColumn="name">Nom
+          <p-sortIcon field="name"></p-sortIcon>
+        </th>
+
+        <th pSortableColumn="description">Description
+          <p-sortIcon field="description"></p-sortIcon>
+        </th>
+        <th pSortableColumn="createdAt">Date de création
+          <p-sortIcon field="createdAt"></p-sortIcon>
+        </th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-profil>
+      <tr [pContextMenuRow]="profil">
+        <td>
+          <p-tableCheckbox [value]="profil"></p-tableCheckbox>
+        </td>
+        <td>{{profil.id}}</td>
+        <td>{{profil.name}}</td>
+        <td>{{profil.description}}</td>
+        <td>{{dateHelpers.dateToDMYHMS(profil.createdAt)}}</td>
+        <td>
+          <button pButton pRipple type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text"
+                  (click)="setEntity(profil, menu,$event)"></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="paginatorleft">
+      <p-button (click)="enableShowDialog()" type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+    </ng-template>
+    <ng-template pTemplate="paginatorright">
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="p-d-flex p-ai-center p-jc-between">
+        Au total il y'a {{ provider.getEnvService().totalElement$ | async }} profile.
+      </div>
+    </ng-template>
+  </p-table>
+</div>
+
+<div *ngIf="showFormDialog">
+  <p-dialog (onHide)="desabledShowDialog()" [(visible)]="showFormDialog" [style]="{width: '450px'}"
+            header="Product Details" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+      <app-profil-form #formComponent
+                       [entity]="entity"
+                       (updateEvent)="desabledShowDialog()"
+                       (saveEvent)="desabledShowDialog()">
+      </app-profil-form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <app-modal-button
+        [disabled]="isNotValidForm()"
+        (validateEvent)="saveOrUpdate()"
+        [forUpdate]="!!entity && !!entity.id"
+        (cancelEvent)="desabledShowDialog()">
+      </app-modal-button>
+    </ng-template>
+  </p-dialog>
+</div>
+
+
