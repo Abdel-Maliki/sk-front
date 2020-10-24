@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {ResponseWrapper} from '../class/response-wrapper';
 import {MessageService} from 'primeng/api';
 import {constantes} from '../../../environments/constantes';
+import {TranslateService} from '@ngx-translate/core';
+import {i18nConstantes} from '../../../environments/i18n-constantes';
 
 /**
  * @author abdel-maliki
@@ -19,25 +21,56 @@ export class NotificationService {
   public readonly warnSummary = 'Avertissement';
   public readonly errorSummary = 'Erreur';
 
-  constructor(public messageService: MessageService) {
+  constructor(public messageService: MessageService, public translate: TranslateService) {
   }
 
-  showError(message = constantes.errorMessage, summary = this.errorSummary, key = constantes.defaultNotificationKey,
-            id?: any, life?: number, sticky?: boolean, closable?: boolean, data?: any): void {
+  async showError(message?: string,
+                  summary = this.errorSummary,
+                  key = constantes.defaultNotificationKey,
+                  id?: any,
+                  life?: number,
+                  sticky?: boolean,
+                  closable?: boolean,
+                  data?: any): Promise<void> {
+    message = message ? message : await this.translate.get(i18nConstantes.errorMessage).toPromise();
     this.messageService.add({detail: message, severity: this.errorSeverity, summary, key, id, life, sticky, closable, data});
   }
 
-  showSuccess(message = constantes.successMessage, summary = this.successSummary, key = constantes.defaultNotificationKey,
-              id?: any, life?: number, sticky?: boolean, closable?: boolean, data?: any): void {
+  async showSuccess(message?: string,
+                    summary = this.successSummary,
+                    key = constantes.defaultNotificationKey,
+                    id?: any,
+                    life?: number,
+                    sticky?: boolean,
+                    closable?: boolean,
+                    data?: any): Promise<void> {
+    message = message ? message : await this.translate.get(i18nConstantes.successMessage).toPromise();
     this.messageService.add({detail: message, severity: this.successSeverity, summary, key, id, life, sticky, closable, data});
   }
 
-  showWarning(message, summary = this.warnSummary, key = constantes.defaultNotificationKey, id?: any, life?: number, sticky?: boolean,
-              closable?: boolean, data?: any): void {
+  showWarning(message: string,
+              summary = this.warnSummary,
+              key = constantes.defaultNotificationKey,
+              id?: any,
+              life?: number,
+              sticky?: boolean,
+              closable?: boolean,
+              data?: any): void {
     this.messageService.add({detail: message, severity: this.warnSeverity, summary, key, id, life, sticky, closable, data});
   }
 
-  wrapperMessage(wrapper: ResponseWrapper<any>, errorMessage = constantes.errorMessage): void {
-    wrapper ? wrapper.isValid() ? this.showSuccess() : this.showError(wrapper.error) : this.showError(errorMessage);
+  showInfo(message: string,
+           summary = this.infoSummary,
+           key = constantes.defaultNotificationKey,
+           id?: any,
+           life?: number,
+           sticky?: boolean,
+           closable?: boolean,
+           data?: any): void {
+    this.messageService.add({detail: message, severity: this.infoSeverity, summary, key, id, life, sticky, closable, data});
+  }
+
+  wrapperMessage(wrapper: ResponseWrapper<any>, errorMessage?: string): void {
+    wrapper ? wrapper.isValid() ? this.showSuccess() : this.showError(wrapper.error.message) : this.showError(errorMessage);
   }
 }

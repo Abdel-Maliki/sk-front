@@ -1,4 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {TranslateService} from '@ngx-translate/core';
+import {i18nConstantes} from '../../../../environments/i18n-constantes';
 
 @Component({
   selector: 'app-modal-button',
@@ -14,17 +16,17 @@ export class ModalButtonComponent implements OnInit {
   @Output() validateEvent: EventEmitter<void> = new EventEmitter();
   @Output() cancelEvent: EventEmitter<void> = new EventEmitter();
 
-  constructor() {
+  constructor(public translate: TranslateService) {
   }
 
   ngOnInit(): void {
   }
 
   getValidateLabel(): string {
-    return this.validateLabel ? this.validateLabel : this.forUpdate ? 'Mettre à jour' : 'Ajouter';
+    return this.forUpdate ? i18nConstantes.update : i18nConstantes.add;
   }
 
   getCancelLabel(): string {
-    return this.cancelLabel ? this.cancelLabel : 'Annuler';
+    return i18nConstantes.cancel;
   }
 }

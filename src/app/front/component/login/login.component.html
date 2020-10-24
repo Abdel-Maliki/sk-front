@@ -1,0 +1,21 @@
+<main class="box">
+  <h2>Login</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="inputBox">
+      <label for="userName">Login</label>
+      <input formControlName="username" type="text" name="userName" id="userName" placeholder="Tapez votre Login"
+             required/>
+    </div>
+    <div class="inputBox">
+      <label for="userPassword">Mot de passe</label>
+      <input formControlName="password" type="password" name="userPassword" id="userPassword"
+             placeholder="tapez votre mot de passe"
+             required/>
+    </div>
+    <div>
+      <button [disabled]="form.invalid" (click)="onSubmit()" type="submit" name="" style="float: left;">Submit</button>
+    </div>
+  </form>
+</main>
+<footer>
+</footer>

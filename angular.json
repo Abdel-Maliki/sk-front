@@ -18,7 +18,10 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
-              "rxjs-compat"
+              "rxjs-compat",
+              "socket.io-client",
+              "socket.io-parser",
+              "debug"
             ],
             "outputPath": "dist/front",
             "index": "src/index.html",

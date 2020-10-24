@@ -1,15 +1,26 @@
 import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
+import {LoginComponent} from './front/component/login/login.component';
+import {AuthGuard} from './front/service/auth-guard';
+import {LoginGuard} from './front/service/login-guard';
 
 const routes: Routes = [
   {
+    path: 'login', component: LoginComponent,
+    canActivate: [LoginGuard]
+  },
+  {
     path: '',
     loadChildren: () => import('./kasoua/user-management/user-management.module').then(m => m.UserManagementModule),
+    canActivate: [AuthGuard]
   },
   {
     path: 'user-management',
     loadChildren: () => import('./kasoua/user-management/user-management.module').then(m => m.UserManagementModule),
+    canActivate: [AuthGuard]
   },
+  // otherwise redirect to home
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({

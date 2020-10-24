@@ -4,6 +4,7 @@ import {NavigationEnd, Router} from '@angular/router';
 import {PrimeNGConfig} from 'primeng/api';
 import {constantes} from '../environments/constantes';
 import {TranslateService} from '@ngx-translate/core';
+import {AppConfigService} from './common/service/appconfigservice';
 
 
 @Component({
@@ -20,6 +21,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(private router: Router,
               private primengConfig: PrimeNGConfig,
+              public configService: AppConfigService,
               public translate: TranslateService) {
     translate.addLangs(['fr', 'en']);
     translate.setDefaultLang('fr');

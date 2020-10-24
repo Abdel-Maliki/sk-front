@@ -6,6 +6,7 @@ import {AbstractFormComponent} from '../../../../../common/abstract/abstract-for
 import {FormBuilder, Validators} from '@angular/forms';
 import {NotificationService} from '../../../../../common/service/notification-service';
 import {TranslateService} from '@ngx-translate/core';
+import {i18nConstantes} from '../../../../../../environments/i18n-constantes';
 
 @Component({
   selector: 'app-profil-form',
@@ -20,7 +21,7 @@ export class ProfilFormComponent extends AbstractFormComponent<ProfileDomaine, I
               notification: NotificationService,
               private formBuilder: FormBuilder,
               translate: TranslateService) {
-    super(profileProvider, notification, translate);
+    super(profileProvider, notification, translate, i18nConstantes.profileBase);
   }
 
   ngOnInit(): void {

@@ -1,14 +1,14 @@
 <div [formGroup]="form">
   <div class="p-field">
-    <label for="name">Name*</label>
+    <label for="name">{{ fieldLabel('name') | translate | req }}</label>
     <input type="text" pInputText id="name" [formControlName]="name" required autofocus />
-    <small class="p-invalid" *ngIf="haseError(name, requiredControl)">Le nom est requis</small>
-    <small class="p-invalid" *ngIf="haseError(name, minLengtControl)">char invalid</small>
-    <small class="p-invalid" *ngIf="haseError(name, maxLengthControl)">char invalid</small>
+    <small class="p-invalid" *ngIf="haseError(name, requiredControl)">{{ i18nError('reqName') | translate }}</small>
+    <small class="p-invalid" *ngIf="haseError(name, minLengtControl)">{{ i18nConstantes.minCharError | translate: {min: minLength} }}</small>
+    <small class="p-invalid" *ngIf="haseError(name, maxLengthControl)">{{ i18nConstantes.maxCharError | translate: {max: maxLength} }}</small>
   </div>
   <div class="p-field">
-    <label for="description">Description</label>
+    <label for="description">{{ fieldLabel('description') | translate}}</label>
     <textarea id="description" pInputTextarea [formControlName]="description" rows="3" cols="20"></textarea>
-    <small class="p-invalid" *ngIf="haseError(description, maxLengthControl)">char invalid</small>
+    <small class="p-invalid" *ngIf="haseError(description, maxLengthControl)">{{ i18nConstantes.maxCharError | translate: {max: maxLength} }}</small>
   </div>
 </div>

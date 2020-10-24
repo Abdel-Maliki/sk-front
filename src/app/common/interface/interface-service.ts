@@ -1,5 +1,6 @@
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {ResponseWrapper} from '../class/response-wrapper';
+import {Pagination} from '../class/pagination';
 
 /**
  * @author abdel-maliki
@@ -7,30 +8,42 @@ import {ResponseWrapper} from '../class/response-wrapper';
  */
 
 
-export interface InterfaceService<T>  {
+export interface InterfaceService<T> {
 
   pageElements$: BehaviorSubject<T[]>;
   entites$: BehaviorSubject<T[]>;
   allEntities: BehaviorSubject<T[]>;
   totalElement$: BehaviorSubject<number>;
-  error$: Observable<string>;
+  error$: BehaviorSubject<string>;
   pageSubscrption: Subscription;
 
-  get(id: number): Observable<ResponseWrapper<T>> | Promise<ResponseWrapper<T>>;
+  get(id: number): Promise<ResponseWrapper<T>>;
 
-  getAll(): Observable<ResponseWrapper<T[]>> | Promise<ResponseWrapper<T[]>>;
+  getAll(): Promise<ResponseWrapper<T[]>>;
 
-  pageElements(page: number, size: number, sort?: string): Promise<ResponseWrapper<T[]>>;
+  pageElements(pagination: Pagination): Promise<ResponseWrapper<T[]>>;
 
   create(entity: T): Promise<ResponseWrapper<T>>;
 
   update(entity: T, id: number | string): Promise<ResponseWrapper<T>>;
 
-  saveAll?(entities: T[]): Observable<ResponseWrapper<T[]>> | Promise<ResponseWrapper<T[]>>;
-
   delete(id: number | string): Promise<ResponseWrapper<T>>;
 
+  createAndGet(data: { entity: T, pagination: Pagination }): Promise<ResponseWrapper<T[]>>;
+
+  updateAndGet(data: { entity: T, pagination: Pagination }, id: number | string): Promise<ResponseWrapper<T[]>>;
+
+  deleteAndGet(pagination: Pagination, id: number | string): Promise<ResponseWrapper<T[]>>;
+
+  saveAll?(entities: T[]): Promise<ResponseWrapper<T[]>>;
+
+  updateAll?(entities: T[]): Promise<ResponseWrapper<T[]>>;
+
   deleteAll?(entites: T[]): Promise<ResponseWrapper<T[]>>;
+
+  snapshot?(id: number): Observable<ResponseWrapper<T>>;
+
+  snapshots?(): Observable<ResponseWrapper<T[]>>;
 
   getPath(): string;
 }

@@ -4,10 +4,12 @@
  */
 import {MenuItem} from 'primeng/api/menuitem';
 import {QueryParamsHandling} from '@angular/router';
+import {Observable} from 'rxjs';
 
 export class MenuItemImp implements MenuItem {
+  public label: string;
 
-  constructor(public label?: string,
+  constructor(label?: Promise<string> | Observable<string> | string,
               public icon?: string,
               public command?: (event?: any) => void,
               url?: string,
@@ -38,5 +40,10 @@ export class MenuItemImp implements MenuItem {
               public state?: {
                 [k: string]: any;
               }) {
+    label instanceof Promise
+      ? label.then(value => this.label = value)
+      : label instanceof Observable
+      ? label.subscribe(value => this.label = value)
+      : this.label = label;
   }
 }

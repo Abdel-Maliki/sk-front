@@ -1,5 +1,5 @@
-<button pButton pRipple [label]="getCancelLabel()" icon="pi pi-times" class="p-button-text"
+<button pButton pRipple [label]="cancelLabel ? cancelLabel : (getCancelLabel() | translate) " icon="pi pi-times" class="p-button-text"
         (click)="cancelEvent.emit()"></button>
-<button pButton pRipple [label]="getValidateLabel()" icon="pi pi-check" class="p-button-text"
+<button pButton pRipple [label]="validateLabel ? validateLabel : (getValidateLabel() | translate) " icon="pi pi-check" class="p-button-text"
         [disabled]="disabled" (click)="validateEvent.emit()">
 </button>

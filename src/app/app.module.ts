@@ -5,7 +5,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {MenuLeftComponent} from './front/component/menu-left/menu-left.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {HttpClient, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ToastModule} from 'primeng/toast';
 import {CalendarModule} from 'primeng/calendar';
@@ -17,6 +17,12 @@ import {ConfirmationService, MessageService} from 'primeng/api';
 import {SocketIoConfig, SocketIoModule} from 'ngx-socket-io';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import {ProgressBarModule} from 'primeng/progressbar';
+import {LoaderInterceptor} from './common/interceptor/loader-interceptor';
+import { LoginComponent } from './front/component/login/login.component';
+import {JwtInterceptor} from './front/service/jwt-interceptor';
+import {ErrorInterceptor} from './front/service/error-interceptor';
+import { LoaderComponent } from './front/component/loader/loader.component';
 
 const socketIoConfig: SocketIoConfig = { url: 'http://localhost:5000', options: {} };
 
@@ -25,6 +31,8 @@ const socketIoConfig: SocketIoConfig = { url: 'http://localhost:5000', options: 
     AppComponent,
     MenuLeftComponent,
     TopbarComponent,
+    LoginComponent,
+    LoaderComponent,
   ],
   imports: [
     BrowserModule,
@@ -46,9 +54,16 @@ const socketIoConfig: SocketIoConfig = { url: 'http://localhost:5000', options: 
         useFactory: HttpLoaderFactory,
         deps: [HttpClient]
       }
-    })
+    }),
+    ProgressBarModule
   ],
-  providers: [MessageService, ConfirmationService],
+  providers: [
+    MessageService,
+    ConfirmationService,
+    { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

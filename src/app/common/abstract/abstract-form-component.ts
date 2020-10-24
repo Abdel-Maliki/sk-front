@@ -7,6 +7,7 @@ import {FormGroup, Validators} from '@angular/forms';
 import {NotificationService} from '../service/notification-service';
 import {TranslateService} from '@ngx-translate/core';
 import {AbstractComponent} from './abstract-component';
+import {Pagination} from '../class/pagination';
 
 /**
  * @author abdel-maliki
@@ -31,8 +32,9 @@ export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I exten
 
   protected constructor(public provider: P,
                         public notification: NotificationService,
-                        public translate: TranslateService) {
-    super(provider, notification, translate);
+                        public translate: TranslateService,
+                        public i18nBase: string) {
+    super(provider, notification, translate, i18nBase);
   }
 
   ngOnDestroy(): void {
@@ -41,32 +43,50 @@ export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I exten
   ngOnInit(): void {
   }
 
-  save(entity?: T): Promise<ResponseWrapper<T>> {
-    return new Promise<ResponseWrapper<T>>(async (resolve) => {
-      try {
-        const wrapper: ResponseWrapper<T> = await this.provider.getEnvService().create(entity ? entity : this.entity);
-        if (wrapper.isValid()) {
-          this.saveEvent.emit(wrapper.data);
-        }
-        resolve(wrapper);
-      } catch (error) {
-        resolve(ResponseWrapper.ko(error));
-      }
+  save(entity: T= this.entity): Promise<ResponseWrapper<T>> {
+    return new Promise<ResponseWrapper<T>>(async (resolve, reject) => {
+      this.provider.getEnvService().create(entity)
+        .then((responseWrapper: ResponseWrapper<T>) => {
+          this.saveEvent.emit(responseWrapper.data);
+          resolve(responseWrapper);
+        }).catch((error: ResponseWrapper<T>) => {
+        reject(error);
+      });
     });
   }
 
-  update(id?: number | string, entity?: T): Promise<ResponseWrapper<T>> {
-    this.entity = entity ? entity : this.entity;
-    return new Promise<ResponseWrapper<T>>(async (resolve) => {
-      try {
-        const wrapper: ResponseWrapper<T> = await this.provider.getEnvService().update(this.entity, id ? id : this.entity.id);
-        if (wrapper.isValid()) {
-          this.updateEvent.emit(wrapper.data);
-        }
-        resolve(wrapper);
-      } catch (error) {
-        resolve(ResponseWrapper.ko(error));
-      }
+  update(id?: number | string, entity: T = this.entity): Promise<ResponseWrapper<T>> {
+    this.entity = entity ? Object.assign({}, entity) : this.entity;
+    return new Promise<ResponseWrapper<T>>(async (resolve, reject) => {
+      this.provider.getEnvService().update(entity, id ? id : entity.id)
+        .then((responseWrapper: ResponseWrapper<T>) => {
+          this.saveEvent.emit(responseWrapper.data);
+          resolve(responseWrapper);
+        }).catch((error: ResponseWrapper<T>) => {
+        reject(error);
+      });
+    });
+  }
+
+  createAndGet(pagination: Pagination, entity: T = this.entity): Promise<ResponseWrapper<T[]>> {
+    return new Promise<ResponseWrapper<T[]>>(async (resolve, reject) => {
+      this.provider.getEnvService().createAndGet({entity, pagination})
+        .then((responseWrapper: ResponseWrapper<T[]>) => {
+          resolve(responseWrapper);
+        }).catch((error: ResponseWrapper<T>) => {
+        reject(error);
+      });
+    });
+  }
+
+  updateAndGet(pagination: Pagination, entity: T = this.entity, id: number | string = this.entity.id): Promise<ResponseWrapper<T[]>> {
+    return new Promise<ResponseWrapper<T[]>>(async (resolve, reject) => {
+      this.provider.getEnvService().updateAndGet({entity, pagination}, id)
+        .then((responseWrapper: ResponseWrapper<T[]>) => {
+          resolve(responseWrapper);
+        }).catch((error: ResponseWrapper<T>) => {
+        reject(error);
+      });
     });
   }
 

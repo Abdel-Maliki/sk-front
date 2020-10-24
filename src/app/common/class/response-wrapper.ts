@@ -2,23 +2,25 @@
  * @author abdel-maliki
  * Date : 08/09/2020
  */
-import {constantes} from '../../../environments/constantes';
+import {Pagination} from './pagination';
 
 export class ResponseWrapper<T> {
 
   constructor(public data?: T ,
-              public page?: number,
-              public size = constantes.defaultPageSize,
-              public totalElements = 0,
-              public status = 200,
-              public error?: string) {
+              public pagination?: Pagination,
+              public code = 200,
+              public error?: {message: string}) {
   }
 
-  static ko<T>(error: string, status = 400): ResponseWrapper<T>{
-    return new ResponseWrapper<T>(null, null, null, null, status, error);
+  static ko<T>(message: string, status = 400): ResponseWrapper<T>{
+    return new ResponseWrapper<T>(null, null, status, {message});
+  }
+
+  static ok<T>(message: string, status = 400): ResponseWrapper<T>{
+    return new ResponseWrapper<T>(null, null, status, {message});
   }
   isValid(): boolean{
-    return this.status &&  this.status >= 200 &&  this.status < 400;
+    return this.code &&  this.code >= 200 &&  this.code < 400;
   }
 
   isNotValid(): boolean{

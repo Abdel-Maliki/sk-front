@@ -1,7 +1,7 @@
 <p-toast position="bottom-right" [key]="constantes.defaultNotificationKey"></p-toast>
 <div class="layout-wrapper">
-  <app-topbar [active]="menuActive" (menuButtonClick)="onMenuButtonClick()"></app-topbar>
-  <app-menu-left [active]="menuActive"></app-menu-left>
+  <app-topbar *ngIf="configService.getConfig().toolbare" [active]="menuActive" (menuButtonClick)="onMenuButtonClick()"></app-topbar>
+  <app-menu-left *ngIf="configService.getConfig().menuLeft" [active]="menuActive"></app-menu-left>
   <div class="layout-mask" [ngClass]="{'layout-mask-active': menuActive}" (click)="onMaskClick()"></div>
   <div class="layout-content" [ngClass]="{'not-active': !menuActive}">
     <router-outlet></router-outlet>

@@ -18,8 +18,9 @@ export abstract class AbstractComponent<T extends AbstractEntity<T>,
 
   protected constructor(public provider: P,
                         public notification: NotificationService,
-                        public translate: TranslateService) {
-    super();
+                        public translate: TranslateService,
+                        public i18nBase: string) {
+    super(translate, notification, i18nBase );
   }
 
   ngOnDestroy(): void {

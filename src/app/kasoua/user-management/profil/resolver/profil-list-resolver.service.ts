@@ -15,8 +15,7 @@ export class ProfilListResolverService implements Resolve<ResponseWrapper<Profil
   constructor(public profileProvider: ProfileProvider) {
   }
 
-
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<ResponseWrapper<ProfileDomaine[]>> {
-    return this.profileProvider.getEnvService().pageElements(0, constantes.defaultPageSize);
+    return this.profileProvider.getEnvService().pageElements({page: 0, size: constantes.rowsPerPageOptions[0]});
   }
 }

@@ -1,59 +1,70 @@
+<p-menu #menu [popup]="true" [model]="items"></p-menu>
+<p-contextMenu #cm [model]="items"></p-contextMenu>
+<p-confirmDialog [position]="deleteConfirmDialogPosition" [key]="constantes.deleteConfirmDialogKey"
+                 [baseZIndex]="10000"></p-confirmDialog>
+
 <div class="card" style="margin: 2rem">
   <p-toolbar styleClass="p-mb-4">
     <ng-template pTemplate="left">
 
-      <h5 class="p-m-0">{{'profile.title' | translate}}</h5>
+      <h5 class="p-m-0">{{i18nElement('title') | translate}}</h5>
     </ng-template>
 
     <div>
-      <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2"
-              (click)="enableShowDialog()"></button>
-      <button [disabled]="selectedEntities.length === 0" pButton pRipple label="Delete" icon="pi pi-trash"
+      <button pButton pRipple [label]="i18nConstantes.new | translate" icon="pi pi-plus" class="p-button-success p-mr-2"
+              (click)="enableDialog()"></button>
+      <button [disabled]="selectedEntities.length === 0" pButton pRipple
+              icon="pi pi-trash"
               class="p-button-danger"
-              (click)="deleteAll()"></button>
+              (click)="deleteAllConfimation()"></button>
     </div>
 
     <ng-template pTemplate="right">
       <span class="p-input-icon-left">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" placeholder="Recherche..."/>
+                        <input pInputText type="text" (input)="dt.filterGlobal($event.target['value'], 'contains')" [placeholder]="(i18nConstantes.search | translate) + '...'"/>
                     </span>
     </ng-template>
   </p-toolbar>
 
-  <p-menu #menu [popup]="true" [model]="items"></p-menu>
-  <p-contextMenu #cm [model]="items"></p-contextMenu>
-  <p-confirmDialog [position]="deleteConfirmDialogPosition" [key]="constantes.deleteConfirmDialogKey" [baseZIndex]="10000"></p-confirmDialog>
 
-  <p-table (onSort)="sort($event)" #dt [(selection)]="selectedEntities"
-           [globalFilterFields]="['id','name','description','createdAt']" [paginator]="true"
+  <p-table #dt [(selection)]="selectedEntities"
+           [lazy]="true"
+           (onPage)="onPage($event)"
+           (onSort)="onSort($event)"
+           (onFilter)="onFilter($event)"
+           [totalRecords]="provider.getEnvService().totalElement$ | async"
+           [resizableColumns]="true"
+           columnResizeMode="expand"
+           [loading]="loading"
+           [globalFilterFields]="['name','description','createdAt']"
+           [paginator]="true"
            [rowHover]="true"
-           [rowsPerPageOptions]="[10,25,50]"
-           [rows]="10"
+           [rowsPerPageOptions]="constantes.rowsPerPageOptions"
+           [rows]="constantes.rowsPerPageOptions[0]"
+           [filterDelay]="800"
            [showCurrentPageReport]="true"
            [value]="provider.getEnvService().pageElements$ | async"
-           [(contextMenuSelection)]="entity" [contextMenu]="cm"
-           currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+           [(contextMenuSelection)]="entity"
+           [contextMenu]="cm"
+           [currentPageReportTemplate]="i18nConstantes.toatalElement | translate: {value: provider.getEnvService().totalElement$ | async} "
            dataKey="id">
     <ng-template pTemplate="header">
       <tr>
         <th style="width: 3rem">
           <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
         </th>
-        <th pSortableColumn="id">Id
-          <p-sortIcon field="id"></p-sortIcon>
-        </th>
-        <th pSortableColumn="name">Nom
+        <th pSortableColumn="name">{{ fieldLabel('name') | translate}}
           <p-sortIcon field="name"></p-sortIcon>
         </th>
 
-        <th pSortableColumn="description">Description
+        <th pSortableColumn="description">{{ fieldLabel('description') | translate}}
           <p-sortIcon field="description"></p-sortIcon>
         </th>
-        <th pSortableColumn="createdAt">Date de création
+        <th pSortableColumn="createdAt">{{ i18nConstantes.createdAt | translate}}
           <p-sortIcon field="createdAt"></p-sortIcon>
         </th>
-        <th>Actions</th>
+        <th>{{i18nConstantes.actions | translate}}</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-profil>
@@ -61,7 +72,6 @@
         <td>
           <p-tableCheckbox [value]="profil"></p-tableCheckbox>
         </td>
-        <td>{{profil.id}}</td>
         <td>{{profil.name}}</td>
         <td>{{profil.description}}</td>
         <td>{{dateHelpers.dateToDMYHMS(profil.createdAt)}}</td>
@@ -72,35 +82,36 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="paginatorleft">
-      <p-button (click)="enableShowDialog()" type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+      <p-button (click)="enableDialog()" type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
     </ng-template>
     <ng-template pTemplate="paginatorright">
     </ng-template>
-    <ng-template pTemplate="summary">
+    <!--<ng-template pTemplate="summary">
       <div class="p-d-flex p-ai-center p-jc-between">
         Au total il y'a {{ provider.getEnvService().totalElement$ | async }} profile.
       </div>
-    </ng-template>
+    </ng-template>-->
   </p-table>
 </div>
 
 <div *ngIf="showFormDialog">
-  <p-dialog (onHide)="desabledShowDialog()" [(visible)]="showFormDialog" [style]="{width: '450px'}"
+  <p-dialog (onHide)="desabledDialog()" [(visible)]="showFormDialog" [style]="{width: '450px'}"
             header="Product Details" [modal]="true" styleClass="p-fluid">
     <ng-template pTemplate="content">
       <app-profil-form #formComponent
                        [entity]="entity"
-                       (updateEvent)="desabledShowDialog()"
-                       (saveEvent)="desabledShowDialog()">
+                       (updateEvent)="desabledDialog()"
+                       (saveEvent)="desabledDialog()">
       </app-profil-form>
     </ng-template>
+
 
     <ng-template pTemplate="footer">
       <app-modal-button
         [disabled]="isNotValidForm()"
         (validateEvent)="saveOrUpdate()"
         [forUpdate]="!!entity && !!entity.id"
-        (cancelEvent)="desabledShowDialog()">
+        (cancelEvent)="desabledDialog()">
       </app-modal-button>
     </ng-template>
   </p-dialog>

@@ -7,7 +7,7 @@ import {AbstractEntity} from '../../../../common/abstract/abstract-entity';
 
 export class ProfileDomaine extends AbstractEntity<ProfileDomaine> {
 
-  constructor(public name?: string,public description?: string) {
+  constructor(public name?: string, public description?: string) {
     super();
   }
 

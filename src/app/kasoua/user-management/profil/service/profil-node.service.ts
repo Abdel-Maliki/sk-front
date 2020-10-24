@@ -16,6 +16,6 @@ export class ProfilNodeService extends AbstractNodeService<ProfileDomaine> {
   }
 
   getPath(): string {
-    return 'profile';
+    return 'profiles';
   }
 }

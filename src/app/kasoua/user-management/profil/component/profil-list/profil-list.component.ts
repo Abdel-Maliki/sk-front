@@ -7,6 +7,7 @@ import {NotificationService} from '../../../../../common/service/notification-se
 import {ProfilFormComponent} from '../profil-form/profil-form.component';
 import {ConfirmationService} from 'primeng/api';
 import {TranslateService} from '@ngx-translate/core';
+import {i18nConstantes} from '../../../../../../environments/i18n-constantes';
 
 @Component({
   selector: 'app-profil-list',
@@ -14,24 +15,20 @@ import {TranslateService} from '@ngx-translate/core';
   styleUrls: ['./profil-list.component.scss']
 })
 // tslint:disable-next-line:max-line-length
-export class ProfilListComponent extends AbstractListComponent
-  <ProfileDomaine, InterfaceProfile, ProfileProvider, ProfilFormComponent> implements OnInit {
+export class ProfilListComponent extends AbstractListComponent<ProfileDomaine, InterfaceProfile, ProfileProvider, ProfilFormComponent> implements OnInit {
 
   constructor(profileProvider: ProfileProvider,
               notification: NotificationService,
               confirmationService: ConfirmationService,
               translate: TranslateService) {
-    super(profileProvider, notification, confirmationService, translate);
+    super(profileProvider, notification, confirmationService, translate, i18nConstantes.profileBase);
   }
 
   ngOnInit(): void {
-  }
-
-  sort($event: any): void {
-
+    super.ngOnInit();
   }
 
   newInstance(): ProfileDomaine {
-    return new ProfileDomaine();
+    return this.createInstance(ProfileDomaine);
   }
 }
