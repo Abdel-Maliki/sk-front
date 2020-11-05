@@ -1,0 +1,128 @@
+<p-menu #menu [popup]="true" [model]="modalItems"></p-menu>
+<p-contextMenu #cm [model]="modalItems"></p-contextMenu>
+<p-confirmDialog [position]="deleteConfirmDialogPosition" [key]="constantes.deleteConfirmDialogKey"
+                 [baseZIndex]="10000"></p-confirmDialog>
+
+<div class="card" style="margin: 2rem">
+  <p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+
+      <h5 class="p-m-0">{{i18nElement('title') | translate}}</h5>
+    </ng-template>
+
+    <div>
+      <button pButton pRipple [label]="i18nConstantes.new | translate" icon="pi pi-plus" class="p-button-success p-mr-2"
+              (click)="enableDialog()"></button>
+      <button [disabled]="selectedEntities.length === 0" pButton pRipple icon="pi pi-trash" class="p-button-danger"
+              (click)="deleteAllConfimation()"></button>
+    </div>
+
+    <ng-template pTemplate="right">
+      <span class="p-input-icon-left">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="dt.filterGlobal($event.target['value'], 'contains')"
+                               [placeholder]="(i18nConstantes.search | translate) + '...'"/>
+                    </span>
+    </ng-template>
+  </p-toolbar>
+
+
+  <p-table #dt [(selection)]="selectedEntities"
+           [lazy]="true"
+           (onPage)="onPage($event)"
+           (onSort)="onSort($event)"
+           (onFilter)="onFilter($event)"
+           [totalRecords]="provider.getEnvService().totalElement$ | async"
+           [resizableColumns]="true"
+           columnResizeMode="expand"
+           [loading]="loading"
+           [globalFilterFields]="['name','userName','email','profile.name','createdAt']"
+           [paginator]="true"
+           [rowHover]="true"
+           [rowsPerPageOptions]="constantes.rowsPerPageOptions"
+           [rows]="constantes.rowsPerPageOptions[0]"
+           [filterDelay]="800"
+           [showCurrentPageReport]="true"
+           [value]="provider.getEnvService().pageElements$ | async"
+           [(contextMenuSelection)]="entity"
+           [contextMenu]="cm"
+           [currentPageReportTemplate]="i18nConstantes.toatalElement | translate: {value: provider.getEnvService().totalElement$ | async} "
+           dataKey="id" styleClass="p-datatable-sm">
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th pSortableColumn="name">{{ fieldLabel('name') | translate}}
+          <p-sortIcon field="name"></p-sortIcon>
+        </th>
+        <th pSortableColumn="userName">{{ fieldLabel('userName') | translate}}
+          <p-sortIcon field="userName"></p-sortIcon>
+        </th>
+
+        <th pSortableColumn="email">{{ fieldLabel('email') | translate}}
+          <p-sortIcon field="email"></p-sortIcon>
+        </th>
+
+        <th pSortableColumn="profile.name">{{ fieldLabel('profile') | translate}}
+          <p-sortIcon field="profile.name"></p-sortIcon>
+        </th>
+
+        <th pSortableColumn="createdAt">{{ i18nConstantes.createdAt | translate}}
+          <p-sortIcon field="createdAt"></p-sortIcon>
+        </th>
+        <th>{{i18nConstantes.actions | translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-user>
+      <tr [pContextMenuRow]="user">
+        <td>
+          <p-tableCheckbox [value]="user"></p-tableCheckbox>
+        </td>
+        <td>{{user.name}}</td>
+        <td>{{user.userName}}</td>
+        <td>{{user.email}}</td>
+        <td>{{user.profile.name}}</td>
+        <td>{{dateHelpers.dateToDMYHMS(user.createdAt)}}</td>
+        <td>
+          <button pButton pRipple type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text"
+                  (click)="setEntity(user,$event, menu)"></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="paginatorleft">
+      <p-button (click)="enableDialog()" type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+    </ng-template>
+    <ng-template pTemplate="paginatorright">
+    </ng-template>
+    <!--<ng-template pTemplate="summary">
+      <div class="p-d-flex p-ai-center p-jc-between">
+        Au total il y'a {{ provider.getEnvService().totalElement$ | async }} profile.
+      </div>
+    </ng-template>-->
+  </p-table>
+</div>
+
+
+<div *ngIf="showFormDialog">
+  <p-dialog (onHide)="desabledDialog()" resizable="true" [(visible)]="showFormDialog" [style]="{width: '450px'}"
+            header="Ajouter un utilisateur" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+      <app-user-form #formComponent
+                     [entity]="entity"
+                     (updateEvent)="desabledDialog()"
+                     (saveEvent)="desabledDialog()">
+      </app-user-form>
+    </ng-template>
+
+
+    <ng-template pTemplate="footer">
+      <app-modal-button
+        [disabled]="isNotValidForm()"
+        (validateEvent)="saveOrUpdate()"
+        [forUpdate]="!!entity && !!entity.id"
+        (cancelEvent)="desabledDialog()">
+      </app-modal-button>
+    </ng-template>
+  </p-dialog>
+</div>

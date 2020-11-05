@@ -1,0 +1,77 @@
+<div [formGroup]="form" (ngSubmit)="onSubmit()" class="f-width">
+
+  <div class="p-field">
+    <!--<p-dropdown styleClass="f-width" (input)="onKeyUp($event.target.value)" required emptyFilterMessage="Aucun élément trouvé"
+                dataKey="id" [options]="profiles" [formControlName]="profile" placeholder="Sélectionner un profile"
+                filterPlaceholder="Rechercher un profile" filter="true" filterBy="name" optionLabel="name"></p-dropdown>-->
+
+    <label [for]="profile">{{ fieldLabel(profile) | translate | req }}</label>
+    <p-autoComplete [autofocus]="true" [inputId]="profile" formControlName="profile" [(ngModel)]="entity.profile" [suggestions]="profiles"
+                    (completeMethod)="onKeyUp($event.query)" field="name" [minLength]="1"></p-autoComplete>
+  </div>
+
+  <div class="p-field">
+    <label [for]="name">{{ fieldLabel(name) | translate | req }}</label>
+    <input class="f-width" type="text" pInputText [id]="name" [formControlName]="name" required/>
+    <small class="p-invalid" *ngIf="haseError(name, requiredControl)">{{ i18nReqError(name) | translate }}</small>
+    <small class="p-invalid"
+           *ngIf="haseError(name, minLengtControl)">{{ i18nConstantes.minCharError | translate: {min: minLength} }}</small>
+    <small class="p-invalid"
+           *ngIf="haseError(name, maxLengthControl)">{{ i18nConstantes.maxCharError | translate: {max: maxLength} }}</small>
+  </div>
+
+  <div class="p-field">
+    <label [for]="userName">{{ fieldLabel(userName) | translate | req }}</label>
+    <input class="f-width" type="text" pInputText [id]="userName" [formControlName]="userName" required/>
+    <small class="p-invalid"
+           *ngIf="haseError(userName, requiredControl)">{{ i18nReqError(userName) | translate }}</small>
+    <small class="p-invalid"
+           *ngIf="haseError(userName, minLengtControl)">{{ i18nConstantes.minCharError | translate: {min: minLength} }}</small>
+    <small class="p-invalid"
+           *ngIf="haseError(userName, maxLengthControl)">{{ i18nConstantes.maxCharError | translate: {max: maxLength} }}</small>
+  </div>
+
+  <div class="p-field">
+    <label [for]="email">{{ fieldLabel(email) | translate | req }}</label>
+    <input class="f-width" type="text" pInputText [id]="email" [formControlName]="email" required/>
+    <small class="p-invalid" *ngIf="haseError(email, requiredControl)">{{ i18nReqError(email) | translate }}</small>
+    <small class="p-invalid"
+           *ngIf="haseError(email, requiredControl)">{{ i18nReqError(email) | translate }}</small>
+    <small class="p-invalid"
+           *ngIf="haseError(email, minLengtControl)">{{ i18nConstantes.minCharError | translate: {min: minLength} }}</small>
+    <small class="p-invalid"
+           *ngIf="haseError(email, maxLengthControl)">{{ i18nConstantes.maxCharError | translate: {max: maxLength} }}</small>
+  </div>
+
+  <div class="p-formgrid p-grid" *ngIf="!forUpdate()">
+    <div class="p-field p-col">
+      <label [for]="password">{{ fieldLabel(password) | translate | req }}</label>
+      <input class="f-width" type="password" pInputText [id]="password" [formControlName]="password" required/>
+      <small class="p-invalid"
+             *ngIf="haseError(password, requiredControl)">{{ i18nReqError(email) | translate }}</small>
+      <small class="p-invalid"
+             *ngIf="haseError(password, minLengtControl)">{{ i18nConstantes.minCharError | translate: {min: passwordMinLength} }}</small>
+      <small class="p-invalid"
+             *ngIf="haseError(password, maxLengthControl)">{{ i18nConstantes.maxCharError | translate: {max: maxLength} }}</small>
+    </div>
+
+    <div class="p-field p-col">
+      <label [for]="repeatPassword">{{ fieldLabel(repeatPassword) | translate | req }}</label>
+      <input class="f-width" type="password" pInputText [id]="repeatPassword" [formControlName]="repeatPassword" required/>
+      <small class="p-invalid"
+             *ngIf="haseError(repeatPassword, requiredControl)">{{ i18nReqError(repeatPassword) | translate }}</small>
+      <small class="p-invalid"
+             *ngIf="haseError(repeatPassword, minLengtControl)">{{ i18nConstantes.minCharError | translate: {min: passwordMinLength} }}</small>
+      <small class="p-invalid"
+             *ngIf="haseError(repeatPassword, maxLengthControl)">{{ i18nConstantes.maxCharError | translate: {max: maxLength} }}</small>
+      <small class="p-invalid"
+             *ngIf="haseError(repeatPassword, confirmedValidator)">{{i18nError('notIdentiquePassword') | translate }}</small>
+    </div>
+  </div>
+
+</div>
+
+<app-modal-button *ngIf="showButtons" [forUpdate]="forUpdate()" (validateEvent)="onSubmit()"
+                  [disabled]="!form || form.invalid" [modal]="false">
+
+</app-modal-button>
