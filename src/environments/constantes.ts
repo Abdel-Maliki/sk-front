@@ -8,7 +8,9 @@ export const constantes = {
   deleteConfirmDialogIcon : 'pi pi-info-circle',
   deleteConfirmDialogKey : 'deleteDialog',
   defaultNotificationKey  : 'defaultKey',
-  rowsPerPageOptions : [2, 10, 25, 50],
+  rowsPerPageOptions : [10, 25, 50],
+  globalFiltered: 'global',
+  profileAdmin: 'admin',
 };
 
 

@@ -4,7 +4,7 @@
  */
 import {Updatelog} from '../class/updateLog';
 
-export class AbstractEntity<T> {
+export abstract class AbstractEntity<T> {
   id: number | string;
   createdAt: Date;
   updateDate: Date;

@@ -8,6 +8,7 @@ import {NotificationService} from '../service/notification-service';
 import {TranslateService} from '@ngx-translate/core';
 import {AbstractComponent} from './abstract-component';
 import {Pagination} from '../class/pagination';
+import {Router} from '@angular/router';
 
 /**
  * @author abdel-maliki
@@ -21,6 +22,7 @@ export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I exten
 
   form: FormGroup;
   @Input() entity: T;
+  @Input() showButtons: boolean;
   @Output() saveEvent: EventEmitter<T> = new EventEmitter();
   @Output() updateEvent: EventEmitter<T> = new EventEmitter();
   minLength = 2;
@@ -33,17 +35,33 @@ export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I exten
   protected constructor(public provider: P,
                         public notification: NotificationService,
                         public translate: TranslateService,
+                        router: Router,
                         public i18nBase: string) {
-    super(provider, notification, translate, i18nBase);
+    super(provider, notification, translate, router, i18nBase);
   }
 
   ngOnDestroy(): void {
   }
 
   ngOnInit(): void {
+    if (!this.entity && this.provider.getEnvService().entity$.value && this.provider.getEnvService().entity$.value.id) {
+      this.entity = this.provider.getEnvService().entity$.value;
+    } else if (!this.entity) {
+      this.entity = this.getNewInstance();
+    }
   }
 
-  save(entity: T= this.entity): Promise<ResponseWrapper<T>> {
+  onSubmit(entity: T = this.entity): void {
+    console.log('Class: AbstractFormComponent, Function: onSubmit, Line 55 , : '
+    , );
+    if (this.form && this.form.valid) {
+      this.create(entity).then();
+    } else if (this.form && this.form.valid) {
+      this.update().then();
+    }
+  }
+
+  create(entity: T = this.entity): Promise<ResponseWrapper<T>> {
     return new Promise<ResponseWrapper<T>>(async (resolve, reject) => {
       this.provider.getEnvService().create(entity)
         .then((responseWrapper: ResponseWrapper<T>) => {
@@ -55,10 +73,10 @@ export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I exten
     });
   }
 
-  update(id?: number | string, entity: T = this.entity): Promise<ResponseWrapper<T>> {
+  update(id: number | string = this.entity.id, entity: T = this.entity): Promise<ResponseWrapper<T>> {
     this.entity = entity ? Object.assign({}, entity) : this.entity;
     return new Promise<ResponseWrapper<T>>(async (resolve, reject) => {
-      this.provider.getEnvService().update(entity, id ? id : entity.id)
+      this.provider.getEnvService().update(entity, id)
         .then((responseWrapper: ResponseWrapper<T>) => {
           this.saveEvent.emit(responseWrapper.data);
           resolve(responseWrapper);
@@ -121,7 +139,7 @@ export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I exten
     return !this.isValidForm();
   }
 
-  fotUpdate(): boolean {
+  forUpdate(): boolean {
     return !!this.entity && !!this.entity.id;
   }
 

@@ -4,15 +4,17 @@ import { ProfilListComponent } from './profil-list.component';
 import {ProfilListRoutingModule} from './profil-list-routing.module';
 import {SharedModule} from '../../../../../shared/shared.module';
 import {ProfilFormModule} from '../profil-form/profil-form.module';
+import {ProfilRoleModule} from '../profil-role/profil-role.module';
 
 
 @NgModule({
   declarations: [ProfilListComponent],
-    imports: [
-        CommonModule,
-        ProfilListRoutingModule,
-        SharedModule,
-        ProfilFormModule,
-    ]
+  imports: [
+    CommonModule,
+    ProfilListRoutingModule,
+    SharedModule,
+    ProfilFormModule,
+    ProfilRoleModule,
+  ]
 })
 export class ProfilListModule { }

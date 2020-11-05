@@ -5,6 +5,7 @@ import {InterfaceService} from '../interface/interface-service';
 import {NotificationService} from '../service/notification-service';
 import {TranslateService} from '@ngx-translate/core';
 import {ComponentCommon} from './component-common';
+import {Router} from '@angular/router';
 
 /**
  * @author abdel-maliki
@@ -19,6 +20,7 @@ export abstract class AbstractComponent<T extends AbstractEntity<T>,
   protected constructor(public provider: P,
                         public notification: NotificationService,
                         public translate: TranslateService,
+                        public router: Router,
                         public i18nBase: string) {
     super(translate, notification, i18nBase );
   }
@@ -29,5 +31,9 @@ export abstract class AbstractComponent<T extends AbstractEntity<T>,
   ngOnInit(): void {
   }
 
+  goTo(link: string): void {
+    this.router.navigateByUrl(link).then();
+  }
 
+  abstract getNewInstance(): T;
 }

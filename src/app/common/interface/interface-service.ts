@@ -1,6 +1,7 @@
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {ResponseWrapper} from '../class/response-wrapper';
 import {Pagination} from '../class/pagination';
+import {ActivatedRouteSnapshot} from '@angular/router';
 
 /**
  * @author abdel-maliki
@@ -11,6 +12,7 @@ import {Pagination} from '../class/pagination';
 export interface InterfaceService<T> {
 
   pageElements$: BehaviorSubject<T[]>;
+  entity$: BehaviorSubject<T>;
   entites$: BehaviorSubject<T[]>;
   allEntities: BehaviorSubject<T[]>;
   totalElement$: BehaviorSubject<number>;
@@ -34,6 +36,10 @@ export interface InterfaceService<T> {
   updateAndGet(data: { entity: T, pagination: Pagination }, id: number | string): Promise<ResponseWrapper<T[]>>;
 
   deleteAndGet(pagination: Pagination, id: number | string): Promise<ResponseWrapper<T[]>>;
+
+  resolverFormJob(route: ActivatedRouteSnapshot, id?: string): Promise<ResponseWrapper<T>>;
+
+  search?(...param: any): Promise<ResponseWrapper<T[]>>;
 
   saveAll?(entities: T[]): Promise<ResponseWrapper<T[]>>;
 

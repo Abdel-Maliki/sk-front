@@ -11,7 +11,7 @@ import {constantes} from '../../../../../environments/constantes';
  */
 
 @Injectable({providedIn: 'root'})
-export class ProfilListResolverService implements Resolve<ResponseWrapper<ProfileDomaine[]>> {
+export class ProfilListResolver implements Resolve<ResponseWrapper<ProfileDomaine[]>> {
   constructor(public profileProvider: ProfileProvider) {
   }
 

@@ -7,6 +7,7 @@ import {FormBuilder, Validators} from '@angular/forms';
 import {NotificationService} from '../../../../../common/service/notification-service';
 import {TranslateService} from '@ngx-translate/core';
 import {i18nConstantes} from '../../../../../../environments/i18n-constantes';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-profil-form',
@@ -20,8 +21,9 @@ export class ProfilFormComponent extends AbstractFormComponent<ProfileDomaine, I
   constructor(profileProvider: ProfileProvider,
               notification: NotificationService,
               private formBuilder: FormBuilder,
+              router: Router,
               translate: TranslateService) {
-    super(profileProvider, notification, translate, i18nConstantes.profileBase);
+    super(profileProvider, notification, translate, router, i18nConstantes.profileBase);
   }
 
   ngOnInit(): void {
@@ -53,6 +55,10 @@ export class ProfilFormComponent extends AbstractFormComponent<ProfileDomaine, I
     }
     this.form.get(this.name).valueChanges.subscribe(value => this.entity.name = value);
     this.form.get(this.description).valueChanges.subscribe(value => this.entity.description = value);
+  }
+
+  getNewInstance(): ProfileDomaine {
+    return new ProfileDomaine();
   }
 
 }

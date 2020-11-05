@@ -4,7 +4,7 @@ import {AbstractServiceProvider} from './abstract-service-provider';
 import {InterfaceService} from '../interface/interface-service';
 import {NotificationService} from '../service/notification-service';
 import {AbstractFormComponent} from './abstract-form-component';
-import {ConfirmationService, MenuItem} from 'primeng/api';
+import {ConfirmationService, MenuItem, SortEvent} from 'primeng/api';
 import {Menu} from 'primeng/menu';
 import {MenuItemImp} from '../class/menu-item-imp';
 import {TranslateService} from '@ngx-translate/core';
@@ -14,6 +14,8 @@ import {constantes} from '../../../environments/constantes';
 import {Pagination} from '../class/pagination';
 import {ResponseWrapper} from '../class/response-wrapper';
 import {FilterMetadata} from 'primeng/api/filtermetadata';
+import {Router} from '@angular/router';
+import {ContextMenu} from 'primeng/contextmenu';
 
 /**
  * @author abdel-maliki
@@ -36,17 +38,21 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
   loading = false;
   subscription: Subscription;
   pagination: Pagination = new Pagination(0, constantes.rowsPerPageOptions[0], 0);
+  formLink: string;
 
-  updateItem: MenuItem = new MenuItemImp(this.editLabel(), 'pi pi-refresh', () => this.enableDialog(this.entity));
-  deleteItem: MenuItem = new MenuItemImp(this.deleteLabel(), 'pi pi-trash', () => this.deleteConfimation());
-  items: MenuItem[] = [this.updateItem, this.deleteItem];
+  moalUpdateItem: MenuItem = new MenuItemImp(this.editLabel(), 'fa fa-pencil  fa-lg', () => this.enableDialog(this.entity));
+  rediredUpdateItem: MenuItem = new MenuItemImp(this.editLabel(), 'pi pi-refresh', () => this.goToForm('/' + this.entity.id));
+  deleteItem: MenuItem = new MenuItemImp(this.deleteLabel(), 'fa fa-trash fa-lg', () => this.deleteConfimation());
+  modalItems: MenuItem[] = [this.moalUpdateItem, this.deleteItem];
+  redirectItems: MenuItem[] = [this.rediredUpdateItem, this.deleteItem];
 
   protected constructor(public provider: P,
                         public notification: NotificationService,
                         public confirmationService: ConfirmationService,
                         public translate: TranslateService,
+                        public router: Router,
                         public i18nBase: string) {
-    super(provider, notification, translate, i18nBase);
+    super(provider, notification, translate, router, i18nBase);
   }
 
   ngOnInit(): void {
@@ -68,10 +74,6 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     });
   }
 
-  createInstance(c: new (...param: any) => T): T {
-    return new c();
-  }
-
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
@@ -81,10 +83,8 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     }
   }
 
-  abstract newInstance(): T;
-
   enableDialog(entity?: T): void {
-    this.entity = entity ? Object.assign({}, entity) : this.newInstance();
+    this.entity = entity ? Object.assign({}, entity) : this.getNewInstance();
     this.showFormDialog = true;
   }
 
@@ -106,7 +106,7 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
   save(): void {
     if (this.formComponent) {
       this.formComponent.disabled = true;
-      this.formComponent.save().then(async () => {
+      this.formComponent.create().then(async () => {
         await this.reload();
         this.notification.showSuccess().then();
       }, () => this.formComponent.disabled = false);
@@ -167,9 +167,14 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     });
   }
 
-  setEntity(entity: T, menu: Menu, $event: MouseEvent): void {
+  setEntity(entity: T, event?: UIEvent, menu?: Menu): void {
     this.entity = Object.assign({}, entity);
-    menu.toggle($event);
+    if (menu && event && this.showContextMenu(entity)) {
+      menu.toggle(event);
+    }
+    if (event) {
+      event.preventDefault();
+    }
   }
 
   async deleteConfimation(): Promise<void> {
@@ -200,23 +205,27 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     });
   }
 
-  onPage($event: { first: number; rows: number }): void {
-    this.pagination.page = $event.first === 0 ? 0 : +$event.first / +$event.rows;
-    this.pagination.size = $event.rows;
+  onPage(event: { first: number; rows: number }): void {
+    this.pagination.page = event.first === 0 ? 0 : +event.first / +event.rows;
+    this.pagination.size = event.rows;
     this.reload().then();
   }
 
-  onSort($event: { field: string; order: number }): void {
+  onSort(event: SortEvent): void {
     this.pagination.page = 0;
-    this.pagination.sort = $event.field;
-    this.pagination.direction = $event.order;
+    this.pagination.sort = event.field;
+    this.pagination.direction = event.order;
     this.reload().then();
   }
 
   // LazyLoadEvent
 
-  onFilter($event: { filteredValue: T[]; filters?: { [s: string]: FilterMetadata; } }): void {
-    this.pagination.globalFilter = $event.filters && $event.filters.global !== null ? $event.filters.global.value : undefined;
+  onFilter(event: { filteredValue: T[]; filters?: { [s: string]: FilterMetadata; } }, key: string = 'global'): void {
+
+    if (key === constantes.globalFiltered) {
+      this.pagination.globalFilter = event.filters && event.filters.global ? event.filters.global.value : undefined;
+    }
+    this.pagination.filters = event.filters;
     this.reload().then();
   }
 
@@ -238,5 +247,13 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
 
   onReject(): void {
     this.notification.messageService.clear('confirm');
+  }
+
+  goToForm(param: string = ''): void {
+    this.goTo(this.formLink + param);
+  }
+
+  showContextMenu(entity: T): boolean {
+    return true;
   }
 }

@@ -15,8 +15,8 @@ export abstract class AbstractServiceProvider<T extends AbstractEntity<T>, R ext
                         private configurationService: ConfigurationService,
                         public translate: TranslateService,
                         private nodeService: R,
-                        private javaService: R,
-                        private fireBaseService: R) {
+                        private javaService?: R,
+                        private fireBaseService?: R) {
   }
 
   getEnvService(): R {

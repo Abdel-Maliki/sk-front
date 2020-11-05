@@ -1,5 +1,15 @@
-<button pButton pRipple [label]="cancelLabel ? cancelLabel : (getCancelLabel() | translate) " icon="pi pi-times" class="p-button-text"
-        (click)="cancelEvent.emit()"></button>
-<button pButton pRipple [label]="validateLabel ? validateLabel : (getValidateLabel() | translate) " icon="pi pi-check" class="p-button-text"
-        [disabled]="disabled" (click)="validateEvent.emit()">
-</button>
+<div class="f-width" *ngIf="modal">
+  <button pButton pRipple [label]="cancelLabel ? cancelLabel : (getCancelLabel() | translate) " icon="pi pi-times"
+          class="p-button-text" (click)="cancelEvent.emit()"></button>
+  <button pButton pRipple [label]="validateLabel ? validateLabel : (getValidateLabel() | translate) " icon="pi pi-check"
+          class="p-button-text" [disabled]="disabled" (click)="validateEvent.emit()">
+  </button>
+</div>
+
+<div class="f-width" *ngIf="!modal" style="margin-top: 40px">
+  <button style="width: 47%;" pButton pRipple type="button" class="p-button-secondary" (click)="cancelEvent.emit()"
+          [label]="cancelLabel ? cancelLabel : (getCancelLabel() | translate) "></button>
+  <button style="width: 47%; margin-left: 6%;" pButton pRipple type="button" class="p-button-success"
+          [label]="validateLabel ? validateLabel : (getValidateLabel() | translate)"
+          [disabled]="disabled" (click)="validateEvent.emit()"></button>
+</div>

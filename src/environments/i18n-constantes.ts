@@ -10,6 +10,7 @@ export const i18nConstantes = {
   successMessage: 'successMessage',
   errorMessage: 'errorMessage',
   profileBase: 'profile',
+  userBase: 'user',
   new: 'new',
   add: 'add',
   delete: 'delete',

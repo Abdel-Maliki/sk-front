@@ -26,6 +26,29 @@
     "errors": {
       "reqName": "Le nom est réquis"
     },
-    "title": "Gérer les profiles"
+    "title": "Gérer les profiles",
+    "manageRoles": "Gérer les roles"
+  },
+  "user": {
+    "fields": {
+      "email": "Email",
+      "name": "Nom & Prénom",
+      "userName": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "repeatPassword": "Répéter le mot de passe",
+      "profile": "Profile"
+    },
+    "profile": "Profile",
+    "errors": {
+      "reqName": "Le nom est réquis",
+      "reqUserName": "Le nom d'utilisateur est réquis",
+      "reqPassword": "Le mot de passe est réquis",
+      "reqEmail": "L'adresse email est réquise",
+      "reqRepeatPassword": "Merci de repéter le mot de passe",
+      "notIdentiquePassword": "les deux mots de passe ne sont pas identiques"
+    },
+    "title": "Gérer les utilisateurs"
   }
+
+
 }

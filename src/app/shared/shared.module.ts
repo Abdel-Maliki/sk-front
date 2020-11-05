@@ -26,6 +26,7 @@ import {ModalButtonComponent} from './component/modal-button/modal-button.compon
 import {TranslateModule} from '@ngx-translate/core';
 import {Riqueredpipe} from '../common/pipe/RiqueredPipe';
 import {CommonModule} from '@angular/common';
+import {PanelMenuModule} from 'primeng/panelmenu';
 
 
 @NgModule({
@@ -63,6 +64,7 @@ import {CommonModule} from '@angular/common';
     ModalButtonComponent,
     TranslateModule,
     Riqueredpipe,
+    PanelMenuModule,
   ]
 })
 export class SharedModule {

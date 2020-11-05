@@ -1,5 +1,5 @@
-<p-menu #menu [popup]="true" [model]="items"></p-menu>
-<p-contextMenu #cm [model]="items"></p-contextMenu>
+<p-menu #menu [popup]="true" [model]="modalItems"></p-menu>
+<p-contextMenu #cm [model]="modalItems"></p-contextMenu>
 <p-confirmDialog [position]="deleteConfirmDialogPosition" [key]="constantes.deleteConfirmDialogKey"
                  [baseZIndex]="10000"></p-confirmDialog>
 
@@ -10,7 +10,7 @@
       <h5 class="p-m-0">{{i18nElement('title') | translate}}</h5>
     </ng-template>
 
-    <div>
+    <div class="p-toolbar-group-left">
       <button pButton pRipple [label]="i18nConstantes.new | translate" icon="pi pi-plus" class="p-button-success p-mr-2"
               (click)="enableDialog()"></button>
       <button [disabled]="selectedEntities.length === 0" pButton pRipple
@@ -22,7 +22,8 @@
     <ng-template pTemplate="right">
       <span class="p-input-icon-left">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="dt.filterGlobal($event.target['value'], 'contains')" [placeholder]="(i18nConstantes.search | translate) + '...'"/>
+                        <input pInputText type="text" (input)="dt.filterGlobal($event.target['value'], 'contains')"
+                               [placeholder]="(i18nConstantes.search | translate) + '...'"/>
                     </span>
     </ng-template>
   </p-toolbar>
@@ -48,7 +49,7 @@
            [(contextMenuSelection)]="entity"
            [contextMenu]="cm"
            [currentPageReportTemplate]="i18nConstantes.toatalElement | translate: {value: provider.getEnvService().totalElement$ | async} "
-           dataKey="id">
+           dataKey="id" styleClass="p-datatable-sm">
     <ng-template pTemplate="header">
       <tr>
         <th style="width: 3rem">
@@ -68,7 +69,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-profil>
-      <tr [pContextMenuRow]="profil">
+      <tr (contextmenu)="setEntity(profil, $event)" [pContextMenuRowDisabled]="!showContextMenu(profil)" (click)="setEntity(profil, $event)" [pContextMenuRow]="profil">
         <td>
           <p-tableCheckbox [value]="profil"></p-tableCheckbox>
         </td>
@@ -76,13 +77,14 @@
         <td>{{profil.description}}</td>
         <td>{{dateHelpers.dateToDMYHMS(profil.createdAt)}}</td>
         <td>
-          <button pButton pRipple type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text"
-                  (click)="setEntity(profil, menu,$event)"></button>
+          <button pButton pRipple type="button" icon="pi pi-ellipsis-v"
+                  class="p-button-rounded p-button-text" (click)="setEntity(profil,$event, menu)"></button>
         </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="paginatorleft">
-      <p-button (click)="enableDialog()" type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+      <!--      <p-button (click)="enableDialog()" type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>-->
+      <p-button type="button" icon="pi pi-refresh" styleClass="p-button-text"></p-button>
     </ng-template>
     <ng-template pTemplate="paginatorright">
     </ng-template>
@@ -95,7 +97,7 @@
 </div>
 
 <div *ngIf="showFormDialog">
-  <p-dialog (onHide)="desabledDialog()" [(visible)]="showFormDialog" [style]="{width: '450px'}"
+  <p-dialog (onHide)="desabledDialog()" resizable="true" [(visible)]="showFormDialog" [style]="{width: '450px'}"
             header="Product Details" [modal]="true" styleClass="p-fluid">
     <ng-template pTemplate="content">
       <app-profil-form #formComponent
@@ -112,6 +114,25 @@
         (validateEvent)="saveOrUpdate()"
         [forUpdate]="!!entity && !!entity.id"
         (cancelEvent)="desabledDialog()">
+      </app-modal-button>
+    </ng-template>
+  </p-dialog>
+</div>
+
+
+<div *ngIf="showProfileRole">
+  <p-dialog (onHide)="desabledRoleOption()" resizable="true" [(visible)]="showProfileRole" header="Product Details"
+            [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+      <app-profil-role [roles]="roles"></app-profil-role>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <app-modal-button
+        [disabled]="false"
+        (validateEvent)="setRoles()"
+        [forUpdate]="true"
+        (cancelEvent)="desabledRoleOption()">
       </app-modal-button>
     </ng-template>
   </p-dialog>

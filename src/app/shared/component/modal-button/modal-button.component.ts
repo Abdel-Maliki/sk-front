@@ -9,6 +9,7 @@ import {i18nConstantes} from '../../../../environments/i18n-constantes';
 })
 export class ModalButtonComponent implements OnInit {
 
+  @Input() modal = true;
   @Input() forUpdate: boolean;
   @Input() validateLabel: string;
   @Input() disabled: boolean;

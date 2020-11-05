@@ -1,11 +1,11 @@
 import {RouterModule, Routes} from '@angular/router';
 import {NgModule} from '@angular/core';
-import {ProfilListResolverService} from '../../resolver/profil-list-resolver.service';
 import {ProfilListComponent} from './profil-list.component';
+import {ProfilListResolver} from '../../resolver/profil-list-resolver';
 
 const routes: Routes = [
   {
-    path: '', component: ProfilListComponent, resolve: {data: ProfilListResolverService}
+    path: '', component: ProfilListComponent, resolve: {data: ProfilListResolver}
   },
 ];
 

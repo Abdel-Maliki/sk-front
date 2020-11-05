@@ -2,12 +2,12 @@ import {InterfaceService} from '../interface/interface-service';
 import {AbstractEntity} from './abstract-entity';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {ResponseWrapper} from '../class/response-wrapper';
-import {Socket} from 'ngx-socket-io';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {HeadersOptions, HttpHelpers} from '../class/http-helpers';
 import {map} from 'rxjs/operators';
 import {Pagination} from '../class/pagination';
+import {ActivatedRouteSnapshot} from '@angular/router';
 
 
 /**
@@ -16,19 +16,29 @@ import {Pagination} from '../class/pagination';
  */
 
 export abstract class AbstractNodeService<T extends AbstractEntity<T>> implements InterfaceService<T> {
+
   allEntities: BehaviorSubject<T[]> = new BehaviorSubject<T[]>([]);
   entites$: BehaviorSubject<T[]> = new BehaviorSubject<T[]>([]);
   pageElements$: BehaviorSubject<T[]> = new BehaviorSubject<T[]>([]);
   totalElement$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   error$: BehaviorSubject<string> = new BehaviorSubject(null);
   pageSubscrption: Subscription;
+  entity$: BehaviorSubject<T> = new BehaviorSubject<T>(null);
 
-
-  protected constructor(protected socket: Socket, protected httpClient: HttpClient) {
+  protected constructor(protected httpClient: HttpClient) {
   }
 
   get baseOption(): HeadersOptions {
     return HttpHelpers.getOptions();
+  }
+
+  resolverFormJob(route: ActivatedRouteSnapshot, id: string = 'id'): Promise<ResponseWrapper<T>> {
+    this.entity$.next(null);
+    if (route.params && route.params[id] && route.params[id].length > 7) {
+      return this.get(route.params[id]);
+    } else {
+      return null;
+    }
   }
 
   mapQuery<R>(query: Observable<ResponseWrapper<R>>): Promise<ResponseWrapper<R>> {
@@ -41,6 +51,7 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     return new Promise((resolve, reject) => {
       this.mapQuery<T>(this.httpClient.get<ResponseWrapper<T>>(this.getUrl(id), this.baseOption))
         .then((value: ResponseWrapper<T>) => {
+          this.entity$.next(value.data);
           resolve(value);
         })
         .catch((error: ResponseWrapper<T>) => {
@@ -68,8 +79,6 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
           resolve(value);
         })
         .catch((error) => {
-          console.log('Class: AbstractNodeService, Function: , Line 70 , error: '
-            , error);
           this.nextError(error, reject);
         });
     });
@@ -97,7 +106,7 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
         })
         .catch((error: ResponseWrapper<T[]>) => {
           console.log('Class: AbstractNodeService, Function: , Line 99 , error: '
-          , error);
+            , error);
           this.nextError(error, reject);
         });
     });
@@ -188,6 +197,20 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
   getAll(): Promise<ResponseWrapper<T[]>> {
     return new Promise((resolve, reject) => {
       this.httpClient.get<ResponseWrapper<T[]>>(this.getUrl('get/all'), this.baseOption)
+        .toPromise()
+        .then((value: ResponseWrapper<T[]>) => {
+          resolve(value);
+        })
+        .catch((error: ResponseWrapper<T[]>) => {
+          this.nextError(error, reject);
+        });
+    });
+  }
+
+  search(...param: any[]): Promise<ResponseWrapper<T[]>> {
+    return new Promise<ResponseWrapper<T[]>>((resolve, reject) => {
+      this.httpClient.put<ResponseWrapper<T[]>>(this.getUrl('search/profile'), param ? param.reduce((pr, cu) => Object.assign(pr, cu), {}) : {},
+        this.baseOption)
         .toPromise()
         .then((value: ResponseWrapper<T[]>) => {
           resolve(value);
