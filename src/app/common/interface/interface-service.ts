@@ -13,7 +13,7 @@ export interface InterfaceService<T> {
 
   pageElements$: BehaviorSubject<T[]>;
   entity$: BehaviorSubject<T>;
-  entites$: BehaviorSubject<T[]>;
+  entities$: BehaviorSubject<T[]>;
   allEntities: BehaviorSubject<T[]>;
   totalElement$: BehaviorSubject<number>;
   error$: BehaviorSubject<string>;
@@ -37,6 +37,8 @@ export interface InterfaceService<T> {
 
   deleteAndGet(pagination: Pagination, id: number | string): Promise<ResponseWrapper<T[]>>;
 
+  deleteAllAndGet?(entities: T[], pagination: Pagination): Promise<ResponseWrapper<T[]>>;
+
   resolverFormJob(route: ActivatedRouteSnapshot, id?: string): Promise<ResponseWrapper<T>>;
 
   search?(...param: any): Promise<ResponseWrapper<T[]>>;
@@ -45,7 +47,7 @@ export interface InterfaceService<T> {
 
   updateAll?(entities: T[]): Promise<ResponseWrapper<T[]>>;
 
-  deleteAll?(entites: T[]): Promise<ResponseWrapper<T[]>>;
+  deleteAll?(entities: T[]): Promise<ResponseWrapper<T[]>>;
 
   snapshot?(id: number): Observable<ResponseWrapper<T>>;
 

@@ -3,15 +3,11 @@ import {UserDomaine} from '../../domain/user-domaine';
 import {InterfaceUser} from '../../domain/interface-user';
 import {UserProvider} from '../../service/user-provider';
 import {AbstractFormComponent} from '../../../../../common/abstract/abstract-form-component';
-import {NotificationService} from '../../../../../common/service/notification-service';
-import {ConfirmationService} from 'primeng/api';
-import {TranslateService} from '@ngx-translate/core';
 import {i18nConstantes} from '../../../../../../environments/i18n-constantes';
-import {Router} from '@angular/router';
-import {FormBuilder, Validators} from '@angular/forms';
-import {ConfirmedValidator} from '../../../../../common/function/confirmed.validator';
+import {FormBuilder, FormControl, Validators} from '@angular/forms';
 import {ProfileProvider} from '../../../profil/service/profile-provider';
 import {ProfileDomaine} from '../../../profil/domain/profile-domaine';
+import {ServiceUtils} from '../../../../../common/service/service-utils.service';
 
 @Component({
   selector: 'app-user-form',
@@ -30,21 +26,18 @@ export class UserFormComponent extends AbstractFormComponent<UserDomaine, Interf
   readonly repeatPassword = 'repeatPassword';
   readonly email = 'email';
   readonly profile = 'profile';
-  readonly confirmedValidator = 'confirmedValidator';
+  readonly active = 'active';
   readonly passwordMinLength = 8;
+  activeFormControl: FormControl;
 
   constructor(provider: UserProvider,
-              notification: NotificationService,
-              confirmationService: ConfirmationService,
-              router: Router,
-              translate: TranslateService,
+              serviceUtils: ServiceUtils,
               protected formBuilder: FormBuilder,
               protected profileProvider: ProfileProvider) {
-    super(provider, notification, translate, router, i18nConstantes.userBase);
+    super(provider, serviceUtils, i18nConstantes.userBase);
   }
 
   ngOnInit(): void {
-    super.ngOnInit();
     this.subscribeForm();
     this.setFormData();
     this.updateForm();
@@ -56,25 +49,19 @@ export class UserFormComponent extends AbstractFormComponent<UserDomaine, Interf
     }
     this.profiles.push(this.entity.profile);
     this.form.get(this.profile).setValue(this.entity.profile);
-    this.form.removeControl(this.password);
-    this.form.removeControl(this.repeatPassword);
   }
 
   ngOnDestroy(): void {
-    super.ngOnDestroy();
+    super.onDestroy();
   }
 
   buildForm(): void {
     this.form = this.formBuilder.group({
       name: [this.entity.name, this.reqMinMaxValidator()],
       userName: [this.entity.userName, [...this.reqMinMaxValidator()]],
-      password: [this.entity.password, [Validators.required, Validators.maxLength(this.maxLength),
-        Validators.minLength(this.passwordMinLength)]],
-      repeatPassword: [null, [Validators.required, Validators.maxLength(this.maxLength), Validators.minLength(this.passwordMinLength)]],
       email: [this.entity.email, [...this.reqMinMaxValidator(), Validators.email]],
       profile: [this.entity.profile, []],
-    }, this.forUpdate() ? {} : {
-      validator: ConfirmedValidator('password', 'repeatPassword')
+      active: [this.entity.active, []],
     });
   }
 
@@ -84,8 +71,8 @@ export class UserFormComponent extends AbstractFormComponent<UserDomaine, Interf
     }
     this.form.get(this.name).setValue(this.entity.name);
     this.form.get(this.userName).setValue(this.entity.userName);
-    this.form.get(this.password).setValue(this.entity.password);
     this.form.get(this.email).setValue(this.entity.email);
+    this.form.get(this.active).setValue(this.entity.active);
     // this.form.get(this.profile).setValue(this.entity.profile);
   }
 
@@ -93,10 +80,12 @@ export class UserFormComponent extends AbstractFormComponent<UserDomaine, Interf
     if (!this.form) {
       this.buildForm();
     }
+    this.activeFormControl = new FormControl(this.entity.active);
+
     this.form.get(this.userName).valueChanges.subscribe(value => this.entity.userName = value);
     this.form.get(this.name).valueChanges.subscribe(value => this.entity.name = value);
-    this.form.get(this.password).valueChanges.subscribe(value => this.entity.password = value);
     this.form.get(this.email).valueChanges.subscribe(value => this.entity.email = value);
+    this.form.get(this.active).valueChanges.subscribe(value => this.entity.active = value);
     // this.form.get(this.profile).valueChanges.subscribe(value => this.entity.profile = value);
   }
 
@@ -112,5 +101,13 @@ export class UserFormComponent extends AbstractFormComponent<UserDomaine, Interf
 
   isValidForm(): boolean {
     return this.form && this.form.valid && this.entity && !!this.entity.profile && !!this.entity.profile.id;
+  }
+
+  showActiveOption(): boolean {
+    if (this.forUpdate() && this.entity.active) {
+      return this.helpers.hasRole(Object.values(this.rolesConstantes), this.rolesConstantes.DISABLED_ACCOUNT);
+    } else {
+      return this.helpers.hasRole(Object.values(this.rolesConstantes), this.rolesConstantes.ACTIVATE_ACCOUNT);
+    }
   }
 }

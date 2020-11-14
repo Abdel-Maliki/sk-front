@@ -3,6 +3,7 @@ import {AbstractEntity} from './abstract-entity';
 import {UserConfigurationService} from '../service/user-configuration.service';
 import {ConfigurationService} from '../service/configuration-service';
 import {TranslateService} from '@ngx-translate/core';
+import {Injectable} from '@angular/core';
 
 /**
  * @author abdel-maliki

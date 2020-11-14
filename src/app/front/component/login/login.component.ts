@@ -43,13 +43,11 @@ export class LoginComponent implements OnInit {
     this.authenficationProvider.getEnvService().login(this.f.username.value, this.f.password.value)
       .pipe(first())
       .subscribe({
-        next: () => {
-          // const returnUrl = this.route.snapshot.queryParams.returnUrl || '/';
-          this.router.navigate(['/']);
+        next: async () => {
+          await this.authenficationProvider.getEnvService().currentUserRoles().toPromise().then();
+          this.router.navigateByUrl(this.route.snapshot.queryParams.returnUrl ? this.route.snapshot.queryParams.returnUrl : '/').then();
         },
         error: (error: HttpErrorResponse) => {
-          console.log('Class: LoginComponent, Function: error, Line 47 , error: '
-            , error);
           // this.alertService.error(error);
           // this.loading = false;
           this.alertService.showError(error.error.message).then();

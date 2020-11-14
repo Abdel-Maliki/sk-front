@@ -1,33 +1,29 @@
 import {AbstractEntity} from './abstract-entity';
-import {Directive, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Directive, ViewChild} from '@angular/core';
 import {AbstractServiceProvider} from './abstract-service-provider';
 import {InterfaceService} from '../interface/interface-service';
-import {NotificationService} from '../service/notification-service';
 import {AbstractFormComponent} from './abstract-form-component';
-import {ConfirmationService, MenuItem, SortEvent} from 'primeng/api';
+import {MenuItem, SortEvent} from 'primeng/api';
 import {Menu} from 'primeng/menu';
 import {MenuItemImp} from '../class/menu-item-imp';
-import {TranslateService} from '@ngx-translate/core';
 import {AbstractComponent} from './abstract-component';
 import {Subscription} from 'rxjs';
 import {constantes} from '../../../environments/constantes';
 import {Pagination} from '../class/pagination';
 import {ResponseWrapper} from '../class/response-wrapper';
 import {FilterMetadata} from 'primeng/api/filtermetadata';
-import {Router} from '@angular/router';
-import {ContextMenu} from 'primeng/contextmenu';
+import {ServiceUtils} from '../service/service-utils.service';
 
 /**
  * @author abdel-maliki
  * Date : 08/09/2020
  */
 
-
 @Directive()
 export abstract class AbstractListComponent<T extends AbstractEntity<T>,
   I extends InterfaceService<T>,
   P extends AbstractServiceProvider<T, I>,
-  F extends AbstractFormComponent<T, I, P>> extends AbstractComponent<T, I, P> implements OnInit, OnDestroy {
+  F extends AbstractFormComponent<T, I, P>> extends AbstractComponent<T, I, P> {
 
   selectedEntities: T[] = [];
   entity: T;
@@ -37,44 +33,43 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
   deleteConfirmDialogPosition = 'topright';
   loading = false;
   subscription: Subscription;
+  rolesSubscription: Subscription;
   pagination: Pagination = new Pagination(0, constantes.rowsPerPageOptions[0], 0);
   formLink: string;
 
-  moalUpdateItem: MenuItem = new MenuItemImp(this.editLabel(), 'fa fa-pencil  fa-lg', () => this.enableDialog(this.entity));
+  haseAddRole = false;
+  haseEditRole = false;
+  haseDeleteRole = false;
+
+  modalUpdateItem: MenuItem = new MenuItemImp(this.editLabel(), 'fa fa-pencil  fa-lg', () => this.enableDialog(this.entity));
   rediredUpdateItem: MenuItem = new MenuItemImp(this.editLabel(), 'pi pi-refresh', () => this.goToForm('/' + this.entity.id));
-  deleteItem: MenuItem = new MenuItemImp(this.deleteLabel(), 'fa fa-trash fa-lg', () => this.deleteConfimation());
-  modalItems: MenuItem[] = [this.moalUpdateItem, this.deleteItem];
+  deleteItem: MenuItem = new MenuItemImp(this.deleteLabel(), 'fa fa-trash fa-lg', () => this.deleteConfirmation());
+  modalItems: MenuItem[] = [this.modalUpdateItem, this.deleteItem];
   redirectItems: MenuItem[] = [this.rediredUpdateItem, this.deleteItem];
 
   protected constructor(public provider: P,
-                        public notification: NotificationService,
-                        public confirmationService: ConfirmationService,
-                        public translate: TranslateService,
-                        public router: Router,
+                        public serviceUtils: ServiceUtils,
                         public i18nBase: string) {
-    super(provider, notification, translate, router, i18nBase);
+    super(provider, serviceUtils, i18nBase);
+    this.initAbstractList();
   }
 
-  ngOnInit(): void {
-    this.subscribeError();
-
-    /*setInterval(() => {
-      console.log('Class: AbstractListComponent, Function: , Line 57 , : '
-      , );
-      this.table.first = 2;
-      this.table.firstChange.emit(this.table.first);
-    }, 5000);*/
-  }
-
-  subscribeError(): void {
+  subscribe(): void {
     this.subscription = this.provider.getEnvService().error$.subscribe((error: string) => {
       if (error && error.length > 0) {
-        this.notification.showError(error).then();
+        this.serviceUtils.notificationService.showError(error).then();
       }
+    });
+
+    this.rolesSubscription = this.serviceUtils.authenficationProvider.getEnvService().roles.subscribe(() => {
+      this.checkRoles();
     });
   }
 
-  ngOnDestroy(): void {
+  onDestroy(): void {
+    if (this.rolesSubscription) {
+      this.rolesSubscription.unsubscribe();
+    }
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
@@ -108,7 +103,7 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
       this.formComponent.disabled = true;
       this.formComponent.create().then(async () => {
         await this.reload();
-        this.notification.showSuccess().then();
+        this.serviceUtils.notificationService.showSuccess().then();
       }, () => this.formComponent.disabled = false);
     }
   }
@@ -118,7 +113,7 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
       this.formComponent.disabled = true;
       this.formComponent.update().then(async () => {
         await this.reload();
-        this.notification.showSuccess().then();
+        this.serviceUtils.notificationService.showSuccess().then();
       }, () => this.formComponent.disabled = false);
     }
   }
@@ -127,8 +122,9 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     if (this.formComponent) {
       this.formComponent.disabled = true;
       this.formComponent.createAndGet(this.pagination).then(async () => {
+        this.normaliseSelected();
         this.desabledDialog();
-        this.notification.showSuccess().then();
+        this.serviceUtils.notificationService.showSuccess().then();
       }, () => this.formComponent.disabled = false);
     }
   }
@@ -137,8 +133,9 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     if (this.formComponent) {
       this.formComponent.disabled = true;
       this.formComponent.updateAndGet(this.pagination).then(async () => {
+        this.normaliseSelected();
         this.desabledDialog();
-        this.notification.showSuccess().then();
+        this.serviceUtils.notificationService.showSuccess().then();
       }, () => this.formComponent.disabled = false);
     }
   }
@@ -150,26 +147,36 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
   delete(entity: T): void {
     this.provider.getEnvService().delete(entity.id).then(async () => {
       await this.reload();
-      this.notification.showSuccess().then();
+      this.serviceUtils.notificationService.showSuccess().then();
     });
   }
 
   deleteAndGet(entity: T): void {
     this.provider.getEnvService().deleteAndGet(this.pagination, entity.id).then(async () => {
-      this.notification.showSuccess().then();
+      this.normaliseSelected();
+      this.serviceUtils.notificationService.showSuccess().then();
     });
   }
 
-  deleteAll(entities?: T[]): void {
-    this.provider.getEnvService().deleteAll(entities ? entities : this.selectedEntities).then(async () => {
+  deleteAllAndGet(entities: T[] = this.selectedEntities, pagination: Pagination = this.pagination): void {
+    this.provider.getEnvService().deleteAllAndGet(entities.filter(entity => this.showItemContextMenu(entity)), pagination)
+      .then(async () => {
+        this.normaliseSelected();
+        this.serviceUtils.notificationService.showSuccess().then();
+      });
+  }
+
+  deleteAll(entities: T[] = this.selectedEntities): void {
+    this.provider.getEnvService().deleteAll(entities.filter(entity => this.showItemContextMenu(entity))).then(async () => {
       await this.reload();
-      this.notification.showSuccess().then();
+      this.serviceUtils.notificationService.showSuccess().then();
     });
   }
 
-  setEntity(entity: T, event?: UIEvent, menu?: Menu): void {
+  async setEntity(entity: T, event?: UIEvent, menu?: Menu): Promise<void> {
+    await this.rebuidMenuItem(entity);
     this.entity = Object.assign({}, entity);
-    if (menu && event && this.showContextMenu(entity)) {
+    if (menu && event && this.showItemContextMenu(entity)) {
       menu.toggle(event);
     }
     if (event) {
@@ -177,12 +184,12 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     }
   }
 
-  async deleteConfimation(): Promise<void> {
-    this.confirmationService.confirm({
+  async deleteConfirmation(): Promise<void> {
+    this.serviceUtils.confirmationService.confirm({
       message: await this.deleteConfirmeMessage(),
       header: await this.deleteConfirmeMessageHeader(),
-      acceptLabel: await this.yesLabel(),
-      rejectLabel: await this.noLabel(),
+      acceptLabel: this.yesLabel,
+      rejectLabel: this.noLabel,
       icon: this.constantes.deleteConfirmDialogIcon,
       accept: () => this.deleteAndGet(this.entity),
       reject: () => {
@@ -192,13 +199,13 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
   }
 
   async deleteAllConfimation(): Promise<void> {
-    this.confirmationService.confirm({
+    this.serviceUtils.confirmationService.confirm({
       message: await this.deleteAllConfirmeMessage(),
       header: await this.deleteConfirmeMessageHeader(),
-      acceptLabel: await this.yesLabel(),
-      rejectLabel: await this.noLabel(),
+      acceptLabel: this.yesLabel,
+      rejectLabel: this.noLabel,
       icon: this.constantes.deleteConfirmDialogIcon,
-      accept: () => this.deleteAll(),
+      accept: () => this.deleteAllAndGet(),
       reject: () => {
       },
       key: this.constantes.deleteConfirmDialogKey,
@@ -218,8 +225,6 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     this.reload().then();
   }
 
-  // LazyLoadEvent
-
   onFilter(event: { filteredValue: T[]; filters?: { [s: string]: FilterMetadata; } }, key: string = 'global'): void {
 
     if (key === constantes.globalFiltered) {
@@ -229,6 +234,8 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     this.reload().then();
   }
 
+  // LazyLoadEvent
+
   reload(pagination: Pagination = this.pagination): Promise<ResponseWrapper<T[]>> {
     const timer = setTimeout(() => this.loading = true, 230);
     return new Promise<ResponseWrapper<T[]>>((resolve, reject) => {
@@ -236,6 +243,7 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
         .then(value => {
           clearTimeout(timer);
           this.loading = false;
+          this.normaliseSelected();
           resolve(value);
         }).catch(reason => {
         clearTimeout(timer);
@@ -246,14 +254,47 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
   }
 
   onReject(): void {
-    this.notification.messageService.clear('confirm');
+    this.serviceUtils.notificationService.messageService.clear('confirm');
   }
 
   goToForm(param: string = ''): void {
     this.goTo(this.formLink + param);
   }
 
-  showContextMenu(entity: T): boolean {
+  showItemContextMenu(entity: T): boolean {
     return true;
+  }
+
+  validateEntries(): T[] {
+    return this.selectedEntities ? this.selectedEntities.filter(value => this.showItemContextMenu(value)) : [];
+  }
+
+  normaliseSelected(): void {
+    this.selectedEntities = this.selectedEntities
+      .filter(value => this.provider.getEnvService().pageElements$.value.map(value1 => value1.id).indexOf(value.id) >= 0)
+      .filter(value => this.showItemContextMenu(value))
+      .concat(this.provider.getEnvService().pageElements$.value.filter(value => !this.showItemContextMenu(value)));
+  }
+
+  async rebuidMenuItem(entity: T): Promise<void> {
+  }
+
+  showcontextMenuOption(): boolean {
+  }
+
+  checkRoles(): void {
+  }
+
+  private initAbstractList(): void {
+    this.subscribe();
+    this.checkRoles();
+    this.normaliseSelected();
+
+    /*setInterval(() => {
+      console.log('Class: AbstractListComponent, Function: , Line 57 , : '
+      , );
+      this.table.first = 2;
+      this.table.firstChange.emit(this.table.first);
+    }, 5000);*/
   }
 }

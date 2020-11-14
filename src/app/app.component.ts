@@ -1,10 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
-import {NavigationEnd, Router} from '@angular/router';
+import {NavigationEnd} from '@angular/router';
 import {PrimeNGConfig} from 'primeng/api';
 import {constantes} from '../environments/constantes';
-import {TranslateService} from '@ngx-translate/core';
 import {AppConfigService} from './common/service/appconfigservice';
+import {ServiceUtils} from './common/service/service-utils.service';
 
 
 @Component({
@@ -19,19 +19,19 @@ export class AppComponent implements OnInit, OnDestroy {
 
   public subscription: Subscription;
 
-  constructor(private router: Router,
+  constructor(public serviceUtils: ServiceUtils,
               private primengConfig: PrimeNGConfig,
-              public configService: AppConfigService,
-              public translate: TranslateService) {
-    translate.addLangs(['fr', 'en']);
-    translate.setDefaultLang('fr');
-    translate.use('fr');
+              public configService: AppConfigService) {
+    serviceUtils.authenficationProvider.getEnvService().currentUserRoles().toPromise().then();
+    serviceUtils.translate.addLangs(['fr', 'en']);
+    serviceUtils.translate.setDefaultLang('fr');
+    serviceUtils.translate.use('fr');
   }
 
   ngOnInit(): void {
     this.primengConfig.ripple = true;
 
-    this.router.events.subscribe(event => {
+    this.serviceUtils.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         // this.hideMenu();
       }
@@ -57,8 +57,7 @@ export class AppComponent implements OnInit, OnDestroy {
   addClass(element: any, className: string): void {
     if (element.classList) {
       element.classList.add(className);
-    }
-    else {
+    } else {
       element.className += ' ' + className;
     }
   }
@@ -66,8 +65,7 @@ export class AppComponent implements OnInit, OnDestroy {
   removeClass(element: any, className: string): void {
     if (element.classList) {
       element.classList.remove(className);
-    }
-    else {
+    } else {
       element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
     }
   }

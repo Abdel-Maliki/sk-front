@@ -36,7 +36,8 @@
       "userName": "Nom d'utilisateur",
       "password": "Mot de passe",
       "repeatPassword": "Répéter le mot de passe",
-      "profile": "Profile"
+      "profile": "Profile",
+      "status": "Statut"
     },
     "profile": "Profile",
     "errors": {
@@ -47,7 +48,21 @@
       "reqRepeatPassword": "Merci de repéter le mot de passe",
       "notIdentiquePassword": "les deux mots de passe ne sont pas identiques"
     },
-    "title": "Gérer les utilisateurs"
+    "title": "Gérer les utilisateurs",
+    "activateAccount" : "Activer",
+    "disableAccount" : "Désactiver",
+    "activateMessage" : "Vous êtes sûr de vouloir activer ce compte ?",
+    "disableMessage" : "Vous êtes sûr de vouloir désactiver ce compte ?",
+    "activateAccountHeader" : "Activer le compte de {{ userName }}",
+    "disableAccountHeader" : "Désactiver le compte de {{ userName }}",
+    "activateAllMessage" : "Vous êtes sûr de vouloir activer tout ces comptes ?",
+    "disableAllMessage" : "Vous êtes sûr de vouloir désactiver tout ces comptes ?",
+    "activateAllAccountHeader" : "Activer les comptes",
+    "disableAllAccountHeader" : "Désactiver les compte",
+    "activateOrDisable": "Activer/Désactiver",
+    "resetPassword": "Réinitialiser",
+    "resetPasswordMessage" : "Vous êtes sûr de vouloir réinitialiser le mot passe ?",
+    "resetPasswordHeader" : "Réinitialiser le mot de passe de {{ userName }}"
   }
 
 

@@ -6,33 +6,29 @@ import {NotificationService} from '../service/notification-service';
 import {TranslateService} from '@ngx-translate/core';
 import {ComponentCommon} from './component-common';
 import {Router} from '@angular/router';
+import {ServiceUtils} from '../service/service-utils.service';
 
 /**
  * @author abdel-maliki
  * Date : 08/09/2020
  */
-@Directive()
 export abstract class AbstractComponent<T extends AbstractEntity<T>,
   I extends InterfaceService<T>,
-  P extends AbstractServiceProvider<T, I>> extends ComponentCommon implements OnInit, OnDestroy {
+  P extends AbstractServiceProvider<T, I>> extends ComponentCommon {
 
 
   protected constructor(public provider: P,
-                        public notification: NotificationService,
-                        public translate: TranslateService,
-                        public router: Router,
+                        public serviceUtils: ServiceUtils,
                         public i18nBase: string) {
-    super(translate, notification, i18nBase );
+    super(serviceUtils, i18nBase );
+    this.initAbstractComponent();
   }
 
-  ngOnDestroy(): void {
-  }
-
-  ngOnInit(): void {
+  private initAbstractComponent(): void {
   }
 
   goTo(link: string): void {
-    this.router.navigateByUrl(link).then();
+    this.serviceUtils.router.navigateByUrl(link).then();
   }
 
   abstract getNewInstance(): T;

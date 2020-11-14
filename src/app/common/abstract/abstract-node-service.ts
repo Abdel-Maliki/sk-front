@@ -8,6 +8,8 @@ import {HeadersOptions, HttpHelpers} from '../class/http-helpers';
 import {map} from 'rxjs/operators';
 import {Pagination} from '../class/pagination';
 import {ActivatedRouteSnapshot} from '@angular/router';
+import {i18nConstantes} from '../../../environments/i18n-constantes';
+import {TranslateService} from '@ngx-translate/core';
 
 
 /**
@@ -18,14 +20,16 @@ import {ActivatedRouteSnapshot} from '@angular/router';
 export abstract class AbstractNodeService<T extends AbstractEntity<T>> implements InterfaceService<T> {
 
   allEntities: BehaviorSubject<T[]> = new BehaviorSubject<T[]>([]);
-  entites$: BehaviorSubject<T[]> = new BehaviorSubject<T[]>([]);
+  entities$: BehaviorSubject<T[]> = new BehaviorSubject<T[]>([]);
   pageElements$: BehaviorSubject<T[]> = new BehaviorSubject<T[]>([]);
   totalElement$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   error$: BehaviorSubject<string> = new BehaviorSubject(null);
   pageSubscrption: Subscription;
   entity$: BehaviorSubject<T> = new BehaviorSubject<T>(null);
+  errorMessage: string;
 
-  protected constructor(protected httpClient: HttpClient) {
+  protected constructor(protected httpClient: HttpClient, protected translate: TranslateService) {
+    translate.get(i18nConstantes.errorMessage).toPromise().then(value => this.errorMessage = value);
   }
 
   get baseOption(): HeadersOptions {
@@ -49,7 +53,7 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
 
   get(id: number): Promise<ResponseWrapper<T>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery<T>(this.httpClient.get<ResponseWrapper<T>>(this.getUrl(id), this.baseOption))
+      this.mapQuery<T>(this.httpClient.get<ResponseWrapper<T>>(this.getUrl(`read/${id}`), this.baseOption))
         .then((value: ResponseWrapper<T>) => {
           this.entity$.next(value.data);
           resolve(value);
@@ -62,7 +66,7 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
 
   delete(id: number | string): Promise<ResponseWrapper<T>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery<T>(this.httpClient.delete<ResponseWrapper<T>>(this.getUrl(id), this.baseOption))
+      this.mapQuery<T>(this.httpClient.delete<ResponseWrapper<T>>(this.getUrl(`delete/${id}`), this.baseOption))
         .then((value: any) => {
           resolve(value);
         })
@@ -86,7 +90,7 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
 
   update(entity: T, id: number | string): Promise<ResponseWrapper<T>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery(this.httpClient.put<ResponseWrapper<T>>(this.getUrl(id), JSON.stringify(entity), this.baseOption))
+      this.mapQuery(this.httpClient.put<ResponseWrapper<T>>(this.getUrl(`update/${id}`), JSON.stringify(entity), this.baseOption))
         .then((value: ResponseWrapper<T>) => {
           resolve(value);
         })
@@ -157,6 +161,21 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     });
   }
 
+  deleteAllAndGet(entities: T[], pagination: Pagination): Promise<ResponseWrapper<T[]>> {
+    return new Promise((resolve, reject) => {
+      this.mapQuery(this.httpClient.put<ResponseWrapper<T[]>>(this.getUrl('delete-all/and-get'),
+        JSON.stringify({pagination, ids: entities.map(value => value.id)}), this.baseOption))
+        .then((response: ResponseWrapper<T[]>) => {
+          this.pageElements$.next(response.data);
+          this.totalElement$.next(response.pagination.totalElements);
+          resolve(response);
+        })
+        .catch((error: ResponseWrapper<T[]>) => {
+          this.nextError(error, reject);
+        });
+    });
+  }
+
   saveAll(entities: T[]): Promise<ResponseWrapper<T[]>> {
     return new Promise((resolve, reject) => {
       this.mapQuery(this.httpClient.post<ResponseWrapper<T[]>>(this.getUrl('save/all'), JSON.stringify(entities), this.baseOption))
@@ -209,7 +228,8 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
 
   search(...param: any[]): Promise<ResponseWrapper<T[]>> {
     return new Promise<ResponseWrapper<T[]>>((resolve, reject) => {
-      this.httpClient.put<ResponseWrapper<T[]>>(this.getUrl('search/profile'), param ? param.reduce((pr, cu) => Object.assign(pr, cu), {}) : {},
+      this.httpClient.put<ResponseWrapper<T[]>>(this.getUrl('search'),
+        param ? param.reduce((pr, cu) => Object.assign(pr, cu), {}) : {},
         this.baseOption)
         .toPromise()
         .then((value: ResponseWrapper<T[]>) => {
@@ -230,7 +250,9 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
   }
 
   nextError<R>(responseWrapper: ResponseWrapper<R>, reject: (value?: ResponseWrapper<R>) => void): void {
-    this.error$.next(responseWrapper && responseWrapper.error && responseWrapper.error.message ? responseWrapper.error.message : 'lll');
+    this.error$.next(responseWrapper && responseWrapper.error && responseWrapper.error.message
+      ? responseWrapper.error.message
+      : this.errorMessage);
     reject(responseWrapper);
   }
 

@@ -11,6 +11,7 @@ export class UserDomaine extends AbstractEntity<UserDomaine> {
   name: string;
   password: string;
   userName: string;
+  active = false;
   profile: ProfileDomaine;
 
   constructor() {

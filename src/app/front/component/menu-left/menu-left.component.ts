@@ -37,8 +37,8 @@ export class MenuLeftComponent implements OnInit {
   menuItems: MenuCategory[] = [
     new MenuCategory('categorie 1',
       [
-        new MenuItem('item1', '#', 'fa fa-arrows'),
-        new MenuItem('item2', '#', 'fa fa-car'),
+        new MenuItem('Utilisateurs', 'user-management/users/list', 'fa fa-arrows'),
+        new MenuItem('Profile', 'user-management/profils/list', 'fa fa-car'),
         new MenuItem('item3', '#', 'fa fa-cude'),
       ]),
     new MenuCategory('categorie 2',

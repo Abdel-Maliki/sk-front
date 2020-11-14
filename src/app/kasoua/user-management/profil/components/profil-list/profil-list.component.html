@@ -11,9 +11,9 @@
     </ng-template>
 
     <div class="p-toolbar-group-left">
-      <button pButton pRipple [label]="i18nConstantes.new | translate" icon="pi pi-plus" class="p-button-success p-mr-2"
+      <button *ngIf="hasRole(rolesConstantes.ADD_PROFILE)" pButton pRipple [label]="i18nConstantes.new | translate" icon="pi pi-plus" class="p-button-success p-mr-2"
               (click)="enableDialog()"></button>
-      <button [disabled]="selectedEntities.length === 0" pButton pRipple
+      <button *ngIf="hasRole(rolesConstantes.DELETE_PROFILE)" [disabled]="validateEntries().length === 0" pButton pRipple
               icon="pi pi-trash"
               class="p-button-danger"
               (click)="deleteAllConfimation()"></button>
@@ -47,9 +47,10 @@
            [showCurrentPageReport]="true"
            [value]="provider.getEnvService().pageElements$ | async"
            [(contextMenuSelection)]="entity"
-           [contextMenu]="cm"
+           [contextMenu]="showcontextMenuOption() ? cm : null"
            [currentPageReportTemplate]="i18nConstantes.toatalElement | translate: {value: provider.getEnvService().totalElement$ | async} "
-           dataKey="id" styleClass="p-datatable-sm">
+           dataKey="id"
+           [styleClass]="showcontextMenuOption() ?'p-datatable-sm' : ''">
     <ng-template pTemplate="header">
       <tr>
         <th style="width: 3rem">
@@ -65,18 +66,20 @@
         <th pSortableColumn="createdAt">{{ i18nConstantes.createdAt | translate}}
           <p-sortIcon field="createdAt"></p-sortIcon>
         </th>
-        <th>{{i18nConstantes.actions | translate}}</th>
+        <th *ngIf="showcontextMenuOption()">{{i18nConstantes.actions | translate}}</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-profil>
-      <tr (contextmenu)="setEntity(profil, $event)" [pContextMenuRowDisabled]="!showContextMenu(profil)" (click)="setEntity(profil, $event)" [pContextMenuRow]="profil">
+      <tr (contextmenu)="setEntity(profil, $event)" [pContextMenuRowDisabled]="!showItemContextMenu(profil)"
+          (click)="setEntity(profil, $event)" [pContextMenuRow]="profil">
         <td>
-          <p-tableCheckbox [value]="profil"></p-tableCheckbox>
+          <p-checkbox *ngIf="!showItemContextMenu(profil)" [disabled]="true"></p-checkbox>
+          <p-tableCheckbox *ngIf="showItemContextMenu(profil)" [value]="profil"></p-tableCheckbox>
         </td>
         <td>{{profil.name}}</td>
         <td>{{profil.description}}</td>
         <td>{{dateHelpers.dateToDMYHMS(profil.createdAt)}}</td>
-        <td>
+        <td *ngIf="showcontextMenuOption()">
           <button pButton pRipple type="button" icon="pi pi-ellipsis-v"
                   class="p-button-rounded p-button-text" (click)="setEntity(profil,$event, menu)"></button>
         </td>
@@ -84,7 +87,7 @@
     </ng-template>
     <ng-template pTemplate="paginatorleft">
       <!--      <p-button (click)="enableDialog()" type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>-->
-      <p-button type="button" icon="pi pi-refresh" styleClass="p-button-text"></p-button>
+      <p-button type="button" icon="pi pi-refresh" (click)="reload()" styleClass="p-button-text"></p-button>
     </ng-template>
     <ng-template pTemplate="paginatorright">
     </ng-template>
@@ -124,7 +127,7 @@
   <p-dialog (onHide)="desabledRoleOption()" resizable="true" [(visible)]="showProfileRole" header="Product Details"
             [modal]="true" styleClass="p-fluid">
     <ng-template pTemplate="content">
-      <app-profil-role [roles]="roles"></app-profil-role>
+      <app-profil-role [profileRoles]="profileRoles"></app-profil-role>
     </ng-template>
 
     <ng-template pTemplate="footer">

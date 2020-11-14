@@ -43,32 +43,10 @@
            *ngIf="haseError(email, maxLengthControl)">{{ i18nConstantes.maxCharError | translate: {max: maxLength} }}</small>
   </div>
 
-  <div class="p-formgrid p-grid" *ngIf="!forUpdate()">
-    <div class="p-field p-col">
-      <label [for]="password">{{ fieldLabel(password) | translate | req }}</label>
-      <input class="f-width" type="password" pInputText [id]="password" [formControlName]="password" required/>
-      <small class="p-invalid"
-             *ngIf="haseError(password, requiredControl)">{{ i18nReqError(email) | translate }}</small>
-      <small class="p-invalid"
-             *ngIf="haseError(password, minLengtControl)">{{ i18nConstantes.minCharError | translate: {min: passwordMinLength} }}</small>
-      <small class="p-invalid"
-             *ngIf="haseError(password, maxLengthControl)">{{ i18nConstantes.maxCharError | translate: {max: maxLength} }}</small>
-    </div>
-
-    <div class="p-field p-col">
-      <label [for]="repeatPassword">{{ fieldLabel(repeatPassword) | translate | req }}</label>
-      <input class="f-width" type="password" pInputText [id]="repeatPassword" [formControlName]="repeatPassword" required/>
-      <small class="p-invalid"
-             *ngIf="haseError(repeatPassword, requiredControl)">{{ i18nReqError(repeatPassword) | translate }}</small>
-      <small class="p-invalid"
-             *ngIf="haseError(repeatPassword, minLengtControl)">{{ i18nConstantes.minCharError | translate: {min: passwordMinLength} }}</small>
-      <small class="p-invalid"
-             *ngIf="haseError(repeatPassword, maxLengthControl)">{{ i18nConstantes.maxCharError | translate: {max: maxLength} }}</small>
-      <small class="p-invalid"
-             *ngIf="haseError(repeatPassword, confirmedValidator)">{{i18nError('notIdentiquePassword') | translate }}</small>
-    </div>
+  <div class="p-field-checkbox" *ngIf="showActiveOption()">
+    <p-checkbox binary="true" [inputId]="this.active" [formControlName]="this.active"></p-checkbox>
+    <label [for]="this.active">{{ i18nElement('activateOrDisable') | translate}}</label>
   </div>
-
 </div>
 
 <app-modal-button *ngIf="showButtons" [forUpdate]="forUpdate()" (validateEvent)="onSubmit()"

@@ -27,6 +27,7 @@ import {TranslateModule} from '@ngx-translate/core';
 import {Riqueredpipe} from '../common/pipe/RiqueredPipe';
 import {CommonModule} from '@angular/common';
 import {PanelMenuModule} from 'primeng/panelmenu';
+import {CheckboxModule} from 'primeng/checkbox';
 
 
 @NgModule({
@@ -65,6 +66,7 @@ import {PanelMenuModule} from 'primeng/panelmenu';
     TranslateModule,
     Riqueredpipe,
     PanelMenuModule,
+    CheckboxModule,
   ]
 })
 export class SharedModule {

@@ -9,11 +9,13 @@ const routes: Routes = [
     path: 'login', component: LoginComponent,
     canActivate: [LoginGuard]
   },
-  {
+  { path: '',   redirectTo: '/user-management/profils/list', pathMatch: 'full' },
+  /*{
+
     path: '',
     loadChildren: () => import('./kasoua/user-management/user-management.module').then(m => m.UserManagementModule),
     canActivate: [AuthGuard]
-  },
+  },*/
   {
     path: 'user-management',
     loadChildren: () => import('./kasoua/user-management/user-management.module').then(m => m.UserManagementModule),

@@ -4,10 +4,8 @@ import {InterfaceProfile} from '../../domain/interface-profile';
 import {ProfileProvider} from '../../service/profile-provider';
 import {AbstractFormComponent} from '../../../../../common/abstract/abstract-form-component';
 import {FormBuilder, Validators} from '@angular/forms';
-import {NotificationService} from '../../../../../common/service/notification-service';
-import {TranslateService} from '@ngx-translate/core';
 import {i18nConstantes} from '../../../../../../environments/i18n-constantes';
-import {Router} from '@angular/router';
+import {ServiceUtils} from '../../../../../common/service/service-utils.service';
 
 @Component({
   selector: 'app-profil-form',
@@ -19,11 +17,9 @@ export class ProfilFormComponent extends AbstractFormComponent<ProfileDomaine, I
   readonly description = 'description';
 
   constructor(profileProvider: ProfileProvider,
-              notification: NotificationService,
-              private formBuilder: FormBuilder,
-              router: Router,
-              translate: TranslateService) {
-    super(profileProvider, notification, translate, router, i18nConstantes.profileBase);
+              serviceUtils: ServiceUtils,
+              private formBuilder: FormBuilder) {
+    super(profileProvider, serviceUtils, i18nConstantes.profileBase);
   }
 
   ngOnInit(): void {

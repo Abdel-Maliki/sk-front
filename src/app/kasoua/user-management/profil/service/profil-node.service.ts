@@ -4,6 +4,7 @@ import {ProfileDomaine} from '../domain/profile-domaine';
 import {HttpClient} from '@angular/common/http';
 import {InterfaceProfile} from '../domain/interface-profile';
 import {ResponseWrapper} from '../../../../common/class/response-wrapper';
+import {TranslateService} from '@ngx-translate/core';
 
 /**
  * @author abdel-maliki
@@ -12,8 +13,8 @@ import {ResponseWrapper} from '../../../../common/class/response-wrapper';
 
 @Injectable({providedIn: 'root'})
 export class ProfilNodeService extends AbstractNodeService<ProfileDomaine> implements InterfaceProfile {
-  protected constructor(protected httpClient: HttpClient) {
-    super(httpClient);
+  protected constructor(protected httpClient: HttpClient, protected translate: TranslateService) {
+    super(httpClient, translate);
   }
 
   getPath(): string {

@@ -1,24 +1,22 @@
 import {AbstractEntity} from './abstract-entity';
-import {Directive, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, Directive, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {AbstractServiceProvider} from './abstract-service-provider';
 import {InterfaceService} from '../interface/interface-service';
 import {ResponseWrapper} from '../class/response-wrapper';
 import {FormGroup, Validators} from '@angular/forms';
-import {NotificationService} from '../service/notification-service';
-import {TranslateService} from '@ngx-translate/core';
 import {AbstractComponent} from './abstract-component';
 import {Pagination} from '../class/pagination';
-import {Router} from '@angular/router';
+import {ServiceUtils} from '../service/service-utils.service';
 
 /**
  * @author abdel-maliki
  * Date : 08/09/2020
  */
 
+
 @Directive()
-// tslint:disable-next-line:max-line-length directive-class-suffix
 export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I extends InterfaceService<T>, P extends AbstractServiceProvider<T, I>>
-  extends AbstractComponent<T, I, P> implements OnInit, OnDestroy {
+  extends AbstractComponent<T, I, P>  {
 
   form: FormGroup;
   @Input() entity: T;
@@ -33,17 +31,16 @@ export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I exten
   readonly minLengtControl: string = 'minlength';
 
   protected constructor(public provider: P,
-                        public notification: NotificationService,
-                        public translate: TranslateService,
-                        router: Router,
+                        public serviceUtils: ServiceUtils,
                         public i18nBase: string) {
-    super(provider, notification, translate, router, i18nBase);
+    super(provider, serviceUtils, i18nBase);
+    this.init();
   }
 
-  ngOnDestroy(): void {
+  onDestroy(): void {
   }
 
-  ngOnInit(): void {
+  init(): void {
     if (!this.entity && this.provider.getEnvService().entity$.value && this.provider.getEnvService().entity$.value.id) {
       this.entity = this.provider.getEnvService().entity$.value;
     } else if (!this.entity) {
@@ -52,8 +49,6 @@ export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I exten
   }
 
   onSubmit(entity: T = this.entity): void {
-    console.log('Class: AbstractFormComponent, Function: onSubmit, Line 55 , : '
-    , );
     if (this.form && this.form.valid) {
       this.create(entity).then();
     } else if (this.form && this.form.valid) {

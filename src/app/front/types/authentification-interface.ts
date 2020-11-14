@@ -9,6 +9,8 @@ import {User} from '../service/user';
 export interface AuthentificationInterface {
   userValue: User;
   user: Observable<User>;
+  roles: BehaviorSubject<string[]>;
   login(username, password): Observable<User>;
+  currentUserRoles(): Observable<string[]>;
   logout(): void ;
 }
