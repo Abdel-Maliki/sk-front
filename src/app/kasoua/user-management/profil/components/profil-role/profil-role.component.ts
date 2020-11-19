@@ -37,7 +37,7 @@ export class ProfilRoleComponent extends AbstractComponent<ProfileDomaine, Inter
             items: [
               this.buildItem(Roles.ADD_USER),
               this.buildItem(Roles.EDIT_USER),
-              this.buildItem(Roles.LISTER_USER),
+              this.buildItem(Roles.READ_USER),
               this.buildItem(Roles.DELETE_USER),
               this.buildItem(Roles.ACTIVATE_ACCOUNT),
               this.buildItem(Roles.DISABLED_ACCOUNT),
@@ -50,7 +50,7 @@ export class ProfilRoleComponent extends AbstractComponent<ProfileDomaine, Inter
             items: [
               this.buildItem(Roles.ADD_PROFILE),
               this.buildItem(Roles.EDIT_PROFILE),
-              this.buildItem(Roles.LISTER_PROFILE),
+              this.buildItem(Roles.READ_PROFILE),
               this.buildItem(Roles.DELETE_PROFILE),
               this.buildItem(Roles.AFFECT_PROFILE_ROLE),
             ]

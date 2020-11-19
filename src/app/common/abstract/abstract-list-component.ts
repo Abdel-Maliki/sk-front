@@ -280,6 +280,7 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
   }
 
   showcontextMenuOption(): boolean {
+    return true;
   }
 
   checkRoles(): void {
