@@ -44,8 +44,8 @@
   </div>
 
   <div class="p-field-checkbox" *ngIf="showActiveOption()">
-    <p-checkbox binary="true" [inputId]="this.active" [formControlName]="this.active"></p-checkbox>
-    <label [for]="this.active">{{ i18nElement('activateOrDisable') | translate}}</label>
+    <p-checkbox binary="true" [inputId]="this.status" [formControlName]="this.status"></p-checkbox>
+    <label [for]="this.status">{{ i18nElement('activateOrDisable') | translate}}</label>
   </div>
 </div>
 

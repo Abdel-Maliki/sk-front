@@ -3,12 +3,12 @@ import {Router} from '@angular/router';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {BehaviorSubject, Observable, throwError} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
-import {User} from './user';
 import {environment} from '../../../environments/environment';
 import {AuthentificationInterface} from '../types/authentification-interface';
 import {ResponseWrapper} from '../../common/class/response-wrapper';
 import {HeadersOptions, HttpHelpers} from '../../common/class/http-helpers';
 import {constantes} from '../../../environments/constantes';
+import {UserDomaine} from '../../kasoua/user-management/user/domain/user-domaine';
 
 /**
  * @author abdel-maliki
@@ -17,9 +17,9 @@ import {constantes} from '../../../environments/constantes';
 
 @Injectable({providedIn: 'root'})
 export class HttpauthentificationService implements AuthentificationInterface {
-  userSubject: BehaviorSubject<User> = new BehaviorSubject<User>(null);
+  userSubject: BehaviorSubject<UserDomaine> = new BehaviorSubject<UserDomaine>(null);
   tokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(JSON.parse(localStorage.getItem(constantes.storageToken)));
-  user: Observable<User>;
+  user: Observable<UserDomaine>;
   roles: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
 
   constructor(
@@ -33,7 +33,7 @@ export class HttpauthentificationService implements AuthentificationInterface {
     return HttpHelpers.getOptions();
   }
 
-  public get userValue(): User {
+  public get userValue(): UserDomaine {
     return this.userSubject.value;
   }
 
@@ -42,17 +42,18 @@ export class HttpauthentificationService implements AuthentificationInterface {
   }
 
   login(email, password): Observable<void> {
-    return this.http.post<ResponseWrapper<{token: string }>>(`${environment.apiUrl}login`, {email, password})
-      .pipe(map((response: ResponseWrapper<{token: string }>) => {
+    return this.http.post<ResponseWrapper<{ token: string }>>(`${environment.apiUrl}login`, {email, password})
+      .pipe(map((response: ResponseWrapper<{ token: string }>) => {
         localStorage.setItem(constantes.storageToken, JSON.stringify(response.data.token));
         this.tokenSubject.next(response.data.token);
         return;
-      }), catchError(this.handleError));
+      }));
   }
 
   loadCurrentUserDatas(): Observable<void> {
-    return this.http.get<ResponseWrapper<{user: User, roles: string[]}>>(`${environment.apiUrl}users/current-user-data`, this.baseOption)
-      .pipe(map((value: ResponseWrapper<{user: User, roles: string[]}>) => {
+    return this.http.get<ResponseWrapper<{ user: UserDomaine, roles: string[] }>>
+    (`${environment.apiUrl}users/current-user-data`, this.baseOption)
+      .pipe(map((value: ResponseWrapper<{ user: UserDomaine, roles: string[] }>) => {
         this.roles.next(value.data.roles);
         this.userSubject.next(value.data.user);
       }));

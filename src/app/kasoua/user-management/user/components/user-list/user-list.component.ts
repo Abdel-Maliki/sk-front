@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AbstractListComponent} from '../../../../../common/abstract/abstract-list-component';
 import {MenuItem} from 'primeng/api';
 import {i18nConstantes} from '../../../../../../environments/i18n-constantes';
-import {UserDomaine} from '../../domain/user-domaine';
+import {UserDomaine, UserState} from '../../domain/user-domaine';
 import {InterfaceUser} from '../../domain/interface-user';
 import {UserProvider} from '../../service/user-provider';
 import {UserFormComponent} from '../user-form/user-form.component';
@@ -26,6 +26,9 @@ export class UserListComponent extends AbstractListComponent<UserDomaine, Interf
     () => this.resetPasswordConfirmation());
 
   activateMessage: string;
+  activateLabel: string;
+  disableLabel: string;
+  blockedLabel: string;
   disableMessage: string;
   activateAllMessage: string;
   disableAllMessage: string;
@@ -35,6 +38,7 @@ export class UserListComponent extends AbstractListComponent<UserDomaine, Interf
   haseActiveRole = false;
   haseDisabledRole = false;
   haseResetPassword = false;
+  userState = UserState;
 
   constructor(provider: UserProvider,
               serviceUtils: ServiceUtils) {
@@ -43,6 +47,7 @@ export class UserListComponent extends AbstractListComponent<UserDomaine, Interf
 
   ngOnInit(): void {
     this.getLabels();
+    this.checkRoles();
   }
 
   checkRoles(): void {
@@ -52,6 +57,7 @@ export class UserListComponent extends AbstractListComponent<UserDomaine, Interf
     this.haseActiveRole = this.hasRole(this.rolesConstantes.ACTIVATE_ACCOUNT);
     this.haseDisabledRole = this.hasRole(this.rolesConstantes.DISABLED_ACCOUNT);
     this.haseResetPassword = this.hasRole(this.rolesConstantes.RESET_PASSWORD);
+    super.checkRoles();
   }
 
   ngOnDestroy(): void {
@@ -70,6 +76,10 @@ export class UserListComponent extends AbstractListComponent<UserDomaine, Interf
     this.promiseI18nElement('activateAllAccountHeader').then(value => this.activateAllAccountHeader = value);
     this.promiseI18nElement('disableAllAccountHeader').then(value => this.disableAllAccountHeader = value);
     this.promiseI18nElement('resetPasswordMessage').then(value => this.resetPasswordMessage = value);
+    this.promiseI18nElement('activateLabel').then(value => this.activateLabel = value);
+    this.promiseI18nElement('disableLabel').then(value => this.disableLabel = value);
+    this.promiseI18nElement('blockedLabel').then(value => this.blockedLabel = value);
+    super.getLabels();
   }
 
   showItemContextMenu(entity: UserDomaine): boolean {
@@ -99,10 +109,10 @@ export class UserListComponent extends AbstractListComponent<UserDomaine, Interf
 
   async rebuidMenuItem(entity: UserDomaine): Promise<void> {
     this.modalItems = [];
-    if (this.entity && this.entity.active && this.haseDisabledRole) {
+    if (entity && entity.status === UserState.ACTIVE && this.haseDisabledRole) {
       this.modalItems = [this.DISABLE_ITEM];
     }
-    if (this.entity && !this.entity.active && this.haseActiveRole) {
+    if (entity && (entity.status === UserState.DESACTIVE || entity.status === UserState.BLOQUE) && this.haseActiveRole) {
       this.modalItems = [this.ACTIVE_ITEM];
     }
     if (this.haseEditRole) {
@@ -120,7 +130,7 @@ export class UserListComponent extends AbstractListComponent<UserDomaine, Interf
     this.shoWConfirmDialog(
       this.activateMessage,
       this.promiseI18nElement('activateAccountHeader', {userName: this.entity.userName}),
-      this.activateAccount
+      () => this.activateAccount(),
     ).then();
   }
 
@@ -128,7 +138,7 @@ export class UserListComponent extends AbstractListComponent<UserDomaine, Interf
     this.shoWConfirmDialog(
       this.activateMessage,
       this.promiseI18nElement('disableAccountHeader', {userName: this.entity.userName}),
-      this.disableAccount
+      () => this.disableAccount()
     ).then();
   }
 
@@ -136,7 +146,7 @@ export class UserListComponent extends AbstractListComponent<UserDomaine, Interf
     this.shoWConfirmDialog(
       this.resetPasswordMessage,
       this.promiseI18nElement('resetPasswordHeader', {userName: this.entity.userName}),
-      this.resetPassword
+      () => this.resetPassword()
     ).then();
   }
 
@@ -152,8 +162,8 @@ export class UserListComponent extends AbstractListComponent<UserDomaine, Interf
     return this.haseResetPassword
       || this.haseEditRole
       || this.haseDeleteRole
-      || (this.haseActiveRole && this.provider.getEnvService().entities$.value.some(value => !value.active))
-      || (this.haseDisabledRole && this.provider.getEnvService().entities$.value.some(value => value.active));
+      || (this.haseActiveRole && this.provider.getEnvService().entities$.value.some(value => value.status === UserState.DESACTIVE))
+      || (this.haseDisabledRole && this.provider.getEnvService().entities$.value.some(value => value.status === UserState.ACTIVE));
   }
 
 

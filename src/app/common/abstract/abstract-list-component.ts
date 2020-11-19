@@ -67,6 +67,7 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
   }
 
   onDestroy(): void {
+    this.provider.getEnvService().error$.next(null);
     if (this.rolesSubscription) {
       this.rolesSubscription.unsubscribe();
     }
@@ -288,7 +289,6 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
 
   private initAbstractList(): void {
     this.subscribe();
-    this.checkRoles();
     this.normaliseSelected();
 
     /*setInterval(() => {

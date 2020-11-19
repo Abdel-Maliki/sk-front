@@ -94,8 +94,9 @@
         <td>{{user.email}}</td>
         <td>{{user.profile.name}}</td>
         <td>
-          <span style="min-width: 70%" *ngIf="user.active" class="p-tag p-tag-success">{{ i18nElement('activateAccount') | translate}}</span>
-          <span style="min-width: 70%" *ngIf="!user.active" class="p-tag p-tag-danger">{{ i18nElement('disableAccount') | translate}}</span>
+          <span style="min-width: 70%" *ngIf="user.status === userState.ACTIVE" class="p-tag p-tag-success">{{activateLabel }}</span>
+          <span style="min-width: 70%" *ngIf="user.status === userState.DESACTIVE" class="p-tag p-tag-warning">{{ disableLabel}}</span>
+          <span style="min-width: 70%" *ngIf="user.status === userState.BLOQUE" class="p-tag p-tag-danger">{{ blockedLabel}}</span>
         </td>
         <td>{{dateHelpers.dateToDMYHMS(user.createdAt)}}</td>
         <td *ngIf="showcontextMenuOption()">

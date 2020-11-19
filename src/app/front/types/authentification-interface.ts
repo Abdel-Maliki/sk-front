@@ -1,5 +1,5 @@
 import {BehaviorSubject, Observable} from 'rxjs';
-import {User} from '../service/user';
+import {UserDomaine} from '../../kasoua/user-management/user/domain/user-domaine';
 
 /**
  * @author abdel-maliki
@@ -7,9 +7,9 @@ import {User} from '../service/user';
  */
 
 export interface AuthentificationInterface {
-  userValue: User;
+  userValue: UserDomaine;
   token: string;
-  user: Observable<User>;
+  user: Observable<UserDomaine>;
   roles: BehaviorSubject<string[]>;
   login(username, password): Observable<void>;
   loadCurrentUserDatas(): Observable<void>;

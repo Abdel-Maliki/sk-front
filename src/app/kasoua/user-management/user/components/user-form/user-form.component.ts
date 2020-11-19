@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {UserDomaine} from '../../domain/user-domaine';
+import {UserDomaine, UserState} from '../../domain/user-domaine';
 import {InterfaceUser} from '../../domain/interface-user';
 import {UserProvider} from '../../service/user-provider';
 import {AbstractFormComponent} from '../../../../../common/abstract/abstract-form-component';
@@ -26,7 +26,7 @@ export class UserFormComponent extends AbstractFormComponent<UserDomaine, Interf
   readonly repeatPassword = 'repeatPassword';
   readonly email = 'email';
   readonly profile = 'profile';
-  readonly active = 'active';
+  readonly status = 'status';
   readonly passwordMinLength = 8;
   activeFormControl: FormControl;
 
@@ -61,7 +61,7 @@ export class UserFormComponent extends AbstractFormComponent<UserDomaine, Interf
       userName: [this.entity.userName, [...this.reqMinMaxValidator()]],
       email: [this.entity.email, [...this.reqMinMaxValidator(), Validators.email]],
       profile: [this.entity.profile, []],
-      active: [this.entity.active, []],
+      status: [this.entity.status === UserState.ACTIVE , []],
     });
   }
 
@@ -72,7 +72,7 @@ export class UserFormComponent extends AbstractFormComponent<UserDomaine, Interf
     this.form.get(this.name).setValue(this.entity.name);
     this.form.get(this.userName).setValue(this.entity.userName);
     this.form.get(this.email).setValue(this.entity.email);
-    this.form.get(this.active).setValue(this.entity.active);
+    this.form.get(this.status).setValue(this.entity.status === UserState.ACTIVE);
     // this.form.get(this.profile).setValue(this.entity.profile);
   }
 
@@ -80,12 +80,12 @@ export class UserFormComponent extends AbstractFormComponent<UserDomaine, Interf
     if (!this.form) {
       this.buildForm();
     }
-    this.activeFormControl = new FormControl(this.entity.active);
+    this.activeFormControl = new FormControl(this.entity.status === UserState.ACTIVE);
 
     this.form.get(this.userName).valueChanges.subscribe(value => this.entity.userName = value);
     this.form.get(this.name).valueChanges.subscribe(value => this.entity.name = value);
     this.form.get(this.email).valueChanges.subscribe(value => this.entity.email = value);
-    this.form.get(this.active).valueChanges.subscribe(value => this.entity.active = value);
+    this.form.get(this.status).valueChanges.subscribe(value => this.entity.status = value ? UserState.ACTIVE : UserState.DESACTIVE);
     // this.form.get(this.profile).valueChanges.subscribe(value => this.entity.profile = value);
   }
 
@@ -104,10 +104,12 @@ export class UserFormComponent extends AbstractFormComponent<UserDomaine, Interf
   }
 
   showActiveOption(): boolean {
-    if (this.forUpdate() && this.entity.active) {
-      return this.helpers.hasRole(Object.values(this.rolesConstantes), this.rolesConstantes.DISABLED_ACCOUNT);
-    } else {
+    if (this.entity.status === UserState.DESACTIVE || this.entity.status === UserState.BLOQUE) {
       return this.helpers.hasRole(Object.values(this.rolesConstantes), this.rolesConstantes.ACTIVATE_ACCOUNT);
+    } else if (this.entity.status === UserState.ACTIVE) {
+      return this.helpers.hasRole(Object.values(this.rolesConstantes), this.rolesConstantes.DISABLED_ACCOUNT);
+    }else {
+      return false;
     }
   }
 }
