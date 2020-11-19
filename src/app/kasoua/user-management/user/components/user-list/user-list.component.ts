@@ -165,6 +165,4 @@ export class UserListComponent extends AbstractListComponent<UserDomaine, Interf
       || (this.haseActiveRole && this.provider.getEnvService().entities$.value.some(value => value.status === UserState.DESACTIVE))
       || (this.haseDisabledRole && this.provider.getEnvService().entities$.value.some(value => value.status === UserState.ACTIVE));
   }
-
-
 }
