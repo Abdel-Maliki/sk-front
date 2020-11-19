@@ -22,7 +22,7 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(public serviceUtils: ServiceUtils,
               private primengConfig: PrimeNGConfig,
               public configService: AppConfigService) {
-    serviceUtils.authenficationProvider.getEnvService().currentUserRoles().toPromise().then();
+    serviceUtils.authenficationProvider.getEnvService().loadCurrentUserDatas().toPromise().then();
     serviceUtils.translate.addLangs(['fr', 'en']);
     serviceUtils.translate.setDefaultLang('fr');
     serviceUtils.translate.use('fr');

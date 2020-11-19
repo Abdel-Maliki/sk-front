@@ -11,6 +11,7 @@ export const constantes = {
   rowsPerPageOptions : [10, 25, 50],
   globalFiltered: 'global',
   profileAdmin: 'admin',
+  storageToken: 'token',
 };
 
 

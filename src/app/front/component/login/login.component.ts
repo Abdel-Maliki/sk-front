@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: async () => {
-          await this.authenficationProvider.getEnvService().currentUserRoles().toPromise().then();
+          await this.authenficationProvider.getEnvService().loadCurrentUserDatas().toPromise().then();
           this.router.navigateByUrl(this.route.snapshot.queryParams.returnUrl ? this.route.snapshot.queryParams.returnUrl : '/').then();
         },
         error: (error: HttpErrorResponse) => {

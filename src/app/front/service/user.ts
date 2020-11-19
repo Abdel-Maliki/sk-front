@@ -11,6 +11,5 @@ export class User extends AbstractEntity<User> {
   lastName: string;
   password: string;
   userName: string;
-  token: string;
   profile: Profile;
 }
