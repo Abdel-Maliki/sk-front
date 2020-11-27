@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
 import {AbstractNodeService} from '../../../../common/abstract/abstract-node-service';
 import {ProfileDomaine} from '../domain/profile-domaine';
-import {HttpClient} from '@angular/common/http';
 import {InterfaceProfile} from '../domain/interface-profile';
 import {ResponseWrapper} from '../../../../common/class/response-wrapper';
-import {TranslateService} from '@ngx-translate/core';
+import {NodeServiceData} from '../../../../common/abstract/node-service-data';
 
 /**
  * @author abdel-maliki
@@ -12,9 +11,10 @@ import {TranslateService} from '@ngx-translate/core';
  */
 
 @Injectable({providedIn: 'root'})
-export class ProfilNodeService extends AbstractNodeService<ProfileDomaine> implements InterfaceProfile {
-  protected constructor(protected httpClient: HttpClient, protected translate: TranslateService) {
-    super(httpClient, translate);
+export class ProfileNodeService extends AbstractNodeService<ProfileDomaine> implements InterfaceProfile {
+
+  protected constructor(data: NodeServiceData) {
+    super(data);
   }
 
   getPath(): string {
@@ -23,7 +23,7 @@ export class ProfilNodeService extends AbstractNodeService<ProfileDomaine> imple
 
   getRoles(id: number | string): Promise<string[]> {
     return new Promise((resolve, reject) => {
-      this.mapQuery<string[]>(this.httpClient.get<ResponseWrapper<string[]>>(this.getUrl(`roles/${id}`), this.baseOption))
+      this.mapQuery<string[]>(this.data.httpClient.get<ResponseWrapper<string[]>>(this.getUrl(`roles/${id}`), this.baseOption))
         .then((value: ResponseWrapper<string[]>) => {
           resolve(value.data);
         })
@@ -33,10 +33,12 @@ export class ProfilNodeService extends AbstractNodeService<ProfileDomaine> imple
     });
   }
 
-  setRoles(id: number | string, roles: string[]): Promise<void> {
+  setRoles(id: number | string, roles: string[], password: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.mapQuery<string[]>(this.httpClient.put<ResponseWrapper<string[]>>(this.getUrl(`set-roles/${id}`), roles, this.baseOption))
+      this.mapQuery<string[]>(this.data.httpClient
+        .put<ResponseWrapper<string[]>>(this.getUrl(`set-roles/${id}`), {roles, password}, this.baseOption))
         .then(() => {
+          this.data.passwordStateService.setStateToValid();
           resolve();
         })
         .catch((error: ResponseWrapper<string[]>) => {

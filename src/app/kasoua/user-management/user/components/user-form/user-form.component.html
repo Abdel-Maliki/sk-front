@@ -49,7 +49,13 @@
   </div>
 </div>
 
-<app-modal-button *ngIf="showButtons" [forUpdate]="forUpdate()" (validateEvent)="onSubmit()"
+<app-modal-button *ngIf="showButtons" [forUpdate]="forUpdate()"
+                  (validateEvent)="isValidPassword ? onSubmit() : enablePasswordConfirmation()"
                   [disabled]="!form || form.invalid" [modal]="false">
-
 </app-modal-button>
+
+<app-confirm-password
+  [visible]="visibleConfirmPassword"
+  (validateEvent)="onSubmit()"
+  (cancelEvent)="disablePasswordConfirmation()">
+</app-confirm-password>

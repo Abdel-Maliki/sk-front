@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {ResponseWrapper} from '../../../../common/class/response-wrapper';
-import {UserDomaine} from '../domain/user-domaine';
+import {UserDomain} from '../domain/user-domain';
 import {constantes} from '../../../../../environments/constantes';
 import {UserProvider} from '../service/user-provider';
 
@@ -11,10 +11,10 @@ import {UserProvider} from '../service/user-provider';
  */
 
 @Injectable({providedIn: 'root'})
-export class UserListResolver implements Resolve<ResponseWrapper<UserDomaine[]>> {
+export class UserListResolver implements Resolve<ResponseWrapper<UserDomain[]>> {
   constructor(protected provider: UserProvider) {
   }
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<ResponseWrapper<UserDomaine[]>> {
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<ResponseWrapper<UserDomain[]>> {
     return this.provider.getEnvService().pageElements({page: 0, size: constantes.rowsPerPageOptions[0]});
   }
 }

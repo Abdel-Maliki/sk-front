@@ -28,14 +28,39 @@ import {Riqueredpipe} from '../common/pipe/RiqueredPipe';
 import {CommonModule} from '@angular/common';
 import {PanelMenuModule} from 'primeng/panelmenu';
 import {CheckboxModule} from 'primeng/checkbox';
+import {ConfirmPasswordComponent} from './component/confirm-password/confirm-password.component';
 
 
 @NgModule({
-  declarations: [ModalButtonComponent, Riqueredpipe],
+  declarations: [ModalButtonComponent, Riqueredpipe, ConfirmPasswordComponent],
   imports: [
-    ButtonModule,
     CommonModule,
-    TranslateModule
+    CalendarModule,
+    SliderModule,
+    DialogModule,
+    ConfirmDialogModule,
+    ContextMenuModule,
+    ButtonModule,
+    ToastModule,
+    InputTextModule,
+    InputNumberModule,
+    InputTextareaModule,
+    ProgressBarModule,
+    TooltipModule,
+    RadioButtonModule,
+    ToolbarModule,
+    FileUploadModule,
+    TabViewModule,
+    RatingModule,
+    RippleModule,
+    MultiSelectModule,
+    DropdownModule,
+    TableModule,
+    ReactiveFormsModule,
+    MenuModule,
+    TranslateModule,
+    PanelMenuModule,
+    CheckboxModule,
   ],
 
   exports: [
@@ -67,6 +92,7 @@ import {CheckboxModule} from 'primeng/checkbox';
     Riqueredpipe,
     PanelMenuModule,
     CheckboxModule,
+    ConfirmPasswordComponent,
   ]
 })
 export class SharedModule {

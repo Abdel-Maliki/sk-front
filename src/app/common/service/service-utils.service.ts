@@ -7,6 +7,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {AuthenficationProvider} from '../../front/classe/authenfication-provider';
 import {Router} from '@angular/router';
 import {ConfirmationService} from 'primeng/api';
+import {PasswordStateService} from './password-state-service';
 
 /**
  * @author abdel-maliki
@@ -17,9 +18,8 @@ import {ConfirmationService} from 'primeng/api';
 export class ServiceUtils {
   constructor(public authenficationProvider: AuthenficationProvider,
               public notificationService: NotificationService,
-              public appConfigService: AppConfigService,
-              public configurationService: ConfigurationService,
               public userConfigurationService: UserConfigurationService,
+              public passwordStateService: PasswordStateService,
               public confirmationService: ConfirmationService,
               public translate: TranslateService,
               public router: Router

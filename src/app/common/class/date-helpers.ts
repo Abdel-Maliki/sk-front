@@ -69,8 +69,6 @@ export class DateHelpers {
   }
 
   public static dateToDDMMYYYY(date?: Date): string {
-    console.log('Class: DateHelpers, Function: dateToDDMMYYYY, Line 71 , date: '
-      , date);
     return DateHelpers.parseDate(date).toLocaleDateString(DateHelpers.locales, {
       year: 'numeric',
       month: 'numeric',

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
 import {ResponseWrapper} from '../../../../common/class/response-wrapper';
-import {UserDomaine} from '../domain/user-domaine';
+import {UserDomain} from '../domain/user-domain';
 import {UserProvider} from '../service/user-provider';
 
 /**
@@ -12,12 +12,12 @@ import {UserProvider} from '../service/user-provider';
 @Injectable({
   providedIn: 'root'
 })
-export class UserFormResolver implements Resolve<ResponseWrapper<UserDomaine>> {
+export class UserFormResolver implements Resolve<ResponseWrapper<UserDomain>> {
 
   constructor(protected provider: UserProvider) {
   }
 
-  resolve(route: ActivatedRouteSnapshot): Promise<ResponseWrapper<UserDomaine>> {
+  resolve(route: ActivatedRouteSnapshot): Promise<ResponseWrapper<UserDomain>> {
     return this.provider.getEnvService().resolverFormJob(route);
   }
 }

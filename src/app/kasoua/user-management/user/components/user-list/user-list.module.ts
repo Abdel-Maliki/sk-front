@@ -5,6 +5,8 @@ import { UserListRoutingModule } from './user-list-routing.module';
 import { UserListComponent } from './user-list.component';
 import {SharedModule} from '../../../../../shared/shared.module';
 import {UserFormModule} from '../user-form/user-form.module';
+import {UpdatePasswordModule} from '../../../../../front/component/update-password/update-password.module';
+import {FormsModule} from '@angular/forms';
 
 
 @NgModule({
@@ -13,7 +15,9 @@ import {UserFormModule} from '../user-form/user-form.module';
         CommonModule,
         UserListRoutingModule,
         SharedModule,
-        UserFormModule
+        UserFormModule,
+        UpdatePasswordModule,
+        FormsModule
     ]
 })
 export class UserListModule { }

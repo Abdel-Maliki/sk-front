@@ -1,15 +1,14 @@
 import {InterfaceService} from '../interface/interface-service';
 import {AbstractEntity} from './abstract-entity';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Subject, Subscription} from 'rxjs';
 import {ResponseWrapper} from '../class/response-wrapper';
-import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {HeadersOptions, HttpHelpers} from '../class/http-helpers';
 import {map} from 'rxjs/operators';
 import {Pagination} from '../class/pagination';
 import {ActivatedRouteSnapshot} from '@angular/router';
 import {i18nConstantes} from '../../../environments/i18n-constantes';
-import {TranslateService} from '@ngx-translate/core';
+import {NodeServiceData} from './node-service-data';
 
 
 /**
@@ -23,13 +22,14 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
   entities$: BehaviorSubject<T[]> = new BehaviorSubject<T[]>([]);
   pageElements$: BehaviorSubject<T[]> = new BehaviorSubject<T[]>([]);
   totalElement$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  error$: BehaviorSubject<string> = new BehaviorSubject(null);
+  error$: Subject<string> = new Subject<string>();
   pageSubscrption: Subscription;
   entity$: BehaviorSubject<T> = new BehaviorSubject<T>(null);
   errorMessage: string;
+  readonly INVALID_PASSWORD_MESSAGE = 'Le mot de passe est incorrect';
 
-  protected constructor(protected httpClient: HttpClient, protected translate: TranslateService) {
-    translate.get(i18nConstantes.errorMessage).toPromise().then(value => this.errorMessage = value);
+  protected constructor(protected data: NodeServiceData) {
+    data.translate.get(i18nConstantes.errorMessage).toPromise().then(value => this.errorMessage = value);
   }
 
   get baseOption(): HeadersOptions {
@@ -51,9 +51,9 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
 
   abstract getPath(): string;
 
-  get(id: number): Promise<ResponseWrapper<T>> {
+  get(id: number, ...others): Promise<ResponseWrapper<T>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery<T>(this.httpClient.get<ResponseWrapper<T>>(this.getUrl(`read/${id}`), this.baseOption))
+      this.mapQuery<T>(this.data.httpClient.get<ResponseWrapper<T>>(this.getUrl(`read/${id}`), this.baseOption))
         .then((value: ResponseWrapper<T>) => {
           this.entity$.next(value.data);
           resolve(value);
@@ -64,9 +64,9 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     });
   }
 
-  delete(id: number | string): Promise<ResponseWrapper<T>> {
+  delete(id: number | string, ...others): Promise<ResponseWrapper<T>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery<T>(this.httpClient.delete<ResponseWrapper<T>>(this.getUrl(`delete/${id}`), this.baseOption))
+      this.mapQuery<T>(this.data.httpClient.delete<ResponseWrapper<T>>(this.getUrl(`delete/${id}`), this.baseOption))
         .then((value: any) => {
           resolve(value);
         })
@@ -76,9 +76,9 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     });
   }
 
-  create(entity: T): Promise<ResponseWrapper<T>> {
+  create(entity: T, ...others): Promise<ResponseWrapper<T>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery(this.httpClient.post<ResponseWrapper<T>>(this.getUrl(), JSON.stringify(entity), this.baseOption))
+      this.mapQuery(this.data.httpClient.post<ResponseWrapper<T>>(this.getUrl(), JSON.stringify(entity), this.baseOption))
         .then((value: ResponseWrapper<T>) => {
           resolve(value);
         })
@@ -88,9 +88,9 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     });
   }
 
-  update(entity: T, id: number | string): Promise<ResponseWrapper<T>> {
+  update(entity: T, id: number | string, ...others): Promise<ResponseWrapper<T>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery(this.httpClient.put<ResponseWrapper<T>>(this.getUrl(`update/${id}`), JSON.stringify(entity), this.baseOption))
+      this.mapQuery(this.data.httpClient.put<ResponseWrapper<T>>(this.getUrl(`update/${id}`), JSON.stringify(entity), this.baseOption))
         .then((value: ResponseWrapper<T>) => {
           resolve(value);
         })
@@ -100,25 +100,23 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     });
   }
 
-  pageElements(pagination: Pagination): Promise<ResponseWrapper<T[]>> {
+  pageElements(pagination: Pagination, ...others): Promise<ResponseWrapper<T[]>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery(this.httpClient.post<ResponseWrapper<T[]>>(this.getUrl('page'), pagination, this.baseOption))
+      this.mapQuery(this.data.httpClient.post<ResponseWrapper<T[]>>(this.getUrl('page'), pagination, this.baseOption))
         .then((response: ResponseWrapper<T[]>) => {
           this.pageElements$.next(response.data);
           this.totalElement$.next(response.pagination.totalElements);
           resolve(response);
         })
         .catch((error: ResponseWrapper<T[]>) => {
-          console.log('Class: AbstractNodeService, Function: , Line 99 , error: '
-            , error);
           this.nextError(error, reject);
         });
     });
   }
 
-  createAndGet(data: { entity: T; pagination: Pagination; }): Promise<ResponseWrapper<T[]>> {
+  createAndGet(data: { entity: T; pagination: Pagination; }, ...others): Promise<ResponseWrapper<T[]>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery(this.httpClient.post<ResponseWrapper<T[]>>(this.getUrl(`create/and-get`),
+      this.mapQuery(this.data.httpClient.post<ResponseWrapper<T[]>>(this.getUrl(`create/and-get`),
         JSON.stringify(data), this.baseOption))
         .then((response: ResponseWrapper<T[]>) => {
           this.pageElements$.next(response.data);
@@ -131,9 +129,9 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     });
   }
 
-  updateAndGet(data: { entity: T; pagination: Pagination; }, id: string | number): Promise<ResponseWrapper<T[]>> {
+  updateAndGet(data: { entity: T; pagination: Pagination; }, id: string | number, ...others): Promise<ResponseWrapper<T[]>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery(this.httpClient.put<ResponseWrapper<T[]>>(this.getUrl(`/update/and-get/${id}`),
+      this.mapQuery(this.data.httpClient.put<ResponseWrapper<T[]>>(this.getUrl(`/update/and-get/${id}`),
         JSON.stringify(data), this.baseOption))
         .then((response: ResponseWrapper<T[]>) => {
           this.pageElements$.next(response.data);
@@ -146,9 +144,9 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     });
   }
 
-  deleteAndGet(pagination: Pagination, id: string | number): Promise<ResponseWrapper<T[]>> {
+  deleteAndGet(pagination: Pagination, id: string | number, ...others): Promise<ResponseWrapper<T[]>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery(this.httpClient.put<ResponseWrapper<T[]>>(this.getUrl(`delete/and-get/${id}`)
+      this.mapQuery(this.data.httpClient.put<ResponseWrapper<T[]>>(this.getUrl(`delete/and-get/${id}`)
         , JSON.stringify(pagination), this.baseOption))
         .then((response: ResponseWrapper<T[]>) => {
           this.pageElements$.next(response.data);
@@ -161,9 +159,9 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     });
   }
 
-  deleteAllAndGet(entities: T[], pagination: Pagination): Promise<ResponseWrapper<T[]>> {
+  deleteAllAndGet(entities: T[], pagination: Pagination, ...others): Promise<ResponseWrapper<T[]>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery(this.httpClient.put<ResponseWrapper<T[]>>(this.getUrl('delete-all/and-get'),
+      this.mapQuery(this.data.httpClient.put<ResponseWrapper<T[]>>(this.getUrl('delete-all/and-get'),
         JSON.stringify({pagination, ids: entities.map(value => value.id)}), this.baseOption))
         .then((response: ResponseWrapper<T[]>) => {
           this.pageElements$.next(response.data);
@@ -176,9 +174,9 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     });
   }
 
-  saveAll(entities: T[]): Promise<ResponseWrapper<T[]>> {
+  saveAll(entities: T[], ...others): Promise<ResponseWrapper<T[]>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery(this.httpClient.post<ResponseWrapper<T[]>>(this.getUrl('save/all'), JSON.stringify(entities), this.baseOption))
+      this.mapQuery(this.data.httpClient.post<ResponseWrapper<T[]>>(this.getUrl('save/all'), JSON.stringify(entities), this.baseOption))
         .then((value: ResponseWrapper<T[]>) => {
           resolve(value);
         })
@@ -188,9 +186,9 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     });
   }
 
-  updateAll(entities: T[]): Promise<ResponseWrapper<T[]>> {
+  updateAll(entities: T[], ...others): Promise<ResponseWrapper<T[]>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery(this.httpClient.post<ResponseWrapper<T[]>>(this.getUrl('update/all'), JSON.stringify(entities), this.baseOption))
+      this.mapQuery(this.data.httpClient.post<ResponseWrapper<T[]>>(this.getUrl('update/all'), JSON.stringify(entities), this.baseOption))
         .then((value: ResponseWrapper<T[]>) => {
           resolve(value);
         })
@@ -200,9 +198,9 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     });
   }
 
-  deleteAll(entities: T[]): Promise<ResponseWrapper<T[]>> {
+  deleteAll(entities: T[], ...others): Promise<ResponseWrapper<T[]>> {
     return new Promise((resolve, reject) => {
-      this.mapQuery(this.httpClient.put<ResponseWrapper<T[]>>(this.getUrl('delete/all'),
+      this.mapQuery(this.data.httpClient.put<ResponseWrapper<T[]>>(this.getUrl('delete/all'),
         JSON.stringify(entities.map(value => value.id)), this.baseOption))
         .then((value: ResponseWrapper<T[]>) => {
           resolve(value);
@@ -213,9 +211,9 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     });
   }
 
-  getAll(): Promise<ResponseWrapper<T[]>> {
+  getAll(...others): Promise<ResponseWrapper<T[]>> {
     return new Promise((resolve, reject) => {
-      this.httpClient.get<ResponseWrapper<T[]>>(this.getUrl('get/all'), this.baseOption)
+      this.data.httpClient.get<ResponseWrapper<T[]>>(this.getUrl('get/all'), this.baseOption)
         .toPromise()
         .then((value: ResponseWrapper<T[]>) => {
           resolve(value);
@@ -228,7 +226,7 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
 
   search(...param: any[]): Promise<ResponseWrapper<T[]>> {
     return new Promise<ResponseWrapper<T[]>>((resolve, reject) => {
-      this.httpClient.put<ResponseWrapper<T[]>>(this.getUrl('search'),
+      this.data.httpClient.put<ResponseWrapper<T[]>>(this.getUrl('search'),
         param ? param.reduce((pr, cu) => Object.assign(pr, cu), {}) : {},
         this.baseOption)
         .toPromise()
@@ -241,11 +239,11 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     });
   }
 
-  snapshot?(id: number): Observable<ResponseWrapper<T>> {
+  snapshot?(id: number, ...others): Observable<ResponseWrapper<T>> {
     throw new Error('Method not implemented.');
   }
 
-  snapshots?(): Observable<ResponseWrapper<T[]>> {
+  snapshots?(...others): Observable<ResponseWrapper<T[]>> {
     throw new Error('Method not implemented.');
   }
 
@@ -253,6 +251,9 @@ export abstract class AbstractNodeService<T extends AbstractEntity<T>> implement
     this.error$.next(responseWrapper && responseWrapper.error && responseWrapper.error.message
       ? responseWrapper.error.message
       : this.errorMessage);
+    if (responseWrapper && responseWrapper.error && responseWrapper.error.message === this.INVALID_PASSWORD_MESSAGE) {
+      this.data.passwordStateService.setStateToInvalid();
+    }
     reject(responseWrapper);
   }
 

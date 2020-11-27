@@ -8,7 +8,7 @@ import {AuthentificationInterface} from '../types/authentification-interface';
 import {ResponseWrapper} from '../../common/class/response-wrapper';
 import {HeadersOptions, HttpHelpers} from '../../common/class/http-helpers';
 import {constantes} from '../../../environments/constantes';
-import {UserDomaine} from '../../kasoua/user-management/user/domain/user-domaine';
+import {UserDomain} from '../../kasoua/user-management/user/domain/user-domain';
 
 /**
  * @author abdel-maliki
@@ -17,10 +17,10 @@ import {UserDomaine} from '../../kasoua/user-management/user/domain/user-domaine
 
 @Injectable({providedIn: 'root'})
 export class HttpauthentificationService implements AuthentificationInterface {
-  userSubject: BehaviorSubject<UserDomaine> = new BehaviorSubject<UserDomaine>(null);
+  userSubject: BehaviorSubject<UserDomain> = new BehaviorSubject<UserDomain>(null);
   tokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(JSON.parse(localStorage.getItem(constantes.storageToken)));
-  user: Observable<UserDomaine>;
-  roles: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  user: Observable<UserDomain>;
+  rolesSubject: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
 
   constructor(
     private router: Router,
@@ -33,7 +33,7 @@ export class HttpauthentificationService implements AuthentificationInterface {
     return HttpHelpers.getOptions();
   }
 
-  public get userValue(): UserDomaine {
+  public get userValue(): UserDomain {
     return this.userSubject.value;
   }
 
@@ -51,10 +51,10 @@ export class HttpauthentificationService implements AuthentificationInterface {
   }
 
   loadCurrentUserDatas(): Observable<void> {
-    return this.http.get<ResponseWrapper<{ user: UserDomaine, roles: string[] }>>
+    return this.http.get<ResponseWrapper<{ user: UserDomain, roles: string[] }>>
     (`${environment.apiUrl}users/current-user-data`, this.baseOption)
-      .pipe(map((value: ResponseWrapper<{ user: UserDomaine, roles: string[] }>) => {
-        this.roles.next(value.data.roles);
+      .pipe(map((value: ResponseWrapper<{ user: UserDomain, roles: string[] }>) => {
+        this.rolesSubject.next(value.data.roles);
         this.userSubject.next(value.data.user);
       }));
   }

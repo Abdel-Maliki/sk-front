@@ -22,6 +22,7 @@ export class ProfilListComponent extends AbstractListComponent<ProfileDomaine, I
   val = 'pi pi-fw pi-circle-off';
   showProfileRole = false;
   roleItem: MenuItem = new MenuItemImp(this.promiseI18nElement('manageRoles'), 'fa fa-unlock-alt fa-lg', () => this.enableRoleOption());
+  visibleConfirmPassword = false;
 
   constructor(profileProvider: ProfileProvider,
               serviceUtils: ServiceUtils) {
@@ -29,11 +30,12 @@ export class ProfilListComponent extends AbstractListComponent<ProfileDomaine, I
   }
 
   ngOnInit(): void {
+    super.ngOnInit();
     this.modalItems.push(this.roleItem);
   }
 
   ngOnDestroy(): void {
-    super.onDestroy();
+    super.ngOnDestroy();
   }
 
   async enableRoleOption(): Promise<void> {
@@ -42,12 +44,13 @@ export class ProfilListComponent extends AbstractListComponent<ProfileDomaine, I
   }
 
   async setRoles(): Promise<void> {
-    await this.provider.getEnvService().setRoles(this.entity.id, this.profileRoles);
-    this.desabledRoleOption();
+    await this.provider.getEnvService().setRoles(this.entity.id, this.profileRoles, this.serviceUtils.userConfigurationService.password);
+    this.disabledRoleOption();
+    this.disablePasswordConfirmation();
     await this.serviceUtils.notificationService.showSuccess();
   }
 
-  desabledRoleOption(): void {
+  disabledRoleOption(): void {
     this.showProfileRole = false;
   }
 
@@ -59,22 +62,30 @@ export class ProfilListComponent extends AbstractListComponent<ProfileDomaine, I
     return entity && entity.name !== this.constantes.profileAdmin;
   }
 
-  showcontextMenuOption(): boolean {
+  showContextMenuOption(): boolean {
     return this.haseSomeRoles(
       [this.rolesConstantes.AFFECT_PROFILE_ROLE, this.rolesConstantes.EDIT_PROFILE, this.rolesConstantes.DELETE_PROFILE]
     );
   }
 
-  async rebuidMenuItem(entity: ProfileDomaine): Promise<void> {
+  async rebuildMenuItem(entity: ProfileDomaine): Promise<void> {
     this.modalItems = [];
     if (this.hasRole(this.rolesConstantes.EDIT_PROFILE)) {
       this.modalItems.push(this.modalUpdateItem);
     }
     if (this.hasRole(this.rolesConstantes.DELETE_PROFILE)) {
-      this.modalItems.push(this.deleteItem);
+      this.modalItems.push(this.DELETE_ITEM);
     }
     if (this.hasRole(this.rolesConstantes.AFFECT_PROFILE_ROLE)) {
       this.modalItems.push(this.roleItem);
     }
+  }
+
+  disablePasswordConfirmation(): void {
+    this.visibleConfirmPassword = false;
+  }
+
+  setRoleOrEnablePasswordConfirmation(): void {
+    this.isValidPassword ? this.setRoles() : this.enablePasswordConfirmation();
   }
 }

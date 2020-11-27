@@ -1,5 +1,5 @@
 import {AbstractEntity} from './abstract-entity';
-import {Component, Directive, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Directive, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {AbstractServiceProvider} from './abstract-service-provider';
 import {InterfaceService} from '../interface/interface-service';
 import {ResponseWrapper} from '../class/response-wrapper';
@@ -15,8 +15,9 @@ import {ServiceUtils} from '../service/service-utils.service';
 
 
 @Directive()
-export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I extends InterfaceService<T>, P extends AbstractServiceProvider<T, I>>
-  extends AbstractComponent<T, I, P>  {
+export abstract class AbstractFormComponent<T extends AbstractEntity<T>,
+  I extends InterfaceService<T>,
+  P extends AbstractServiceProvider<T, I>> extends AbstractComponent<T, I, P> implements OnInit, OnDestroy {
 
   form: FormGroup;
   @Input() entity: T;
@@ -34,13 +35,14 @@ export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I exten
                         public serviceUtils: ServiceUtils,
                         public i18nBase: string) {
     super(provider, serviceUtils, i18nBase);
-    this.init();
   }
 
-  onDestroy(): void {
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
   }
 
-  init(): void {
+  ngOnInit(): void {
+    super.ngOnInit();
     if (!this.entity && this.provider.getEnvService().entity$.value && this.provider.getEnvService().entity$.value.id) {
       this.entity = this.provider.getEnvService().entity$.value;
     } else if (!this.entity) {
@@ -48,17 +50,17 @@ export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I exten
     }
   }
 
-  onSubmit(entity: T = this.entity): void {
+  onSubmit(entity: T = this.entity, ...others): Promise<ResponseWrapper<T>> {
     if (this.form && this.form.valid) {
-      this.create(entity).then();
+      return this.create(entity, others).then();
     } else if (this.form && this.form.valid) {
-      this.update().then();
+      return this.update(entity.id, entity, others).then();
     }
   }
 
-  create(entity: T = this.entity): Promise<ResponseWrapper<T>> {
+  create(entity: T = this.entity, ...others): Promise<ResponseWrapper<T>> {
     return new Promise<ResponseWrapper<T>>(async (resolve, reject) => {
-      this.provider.getEnvService().create(entity)
+      this.provider.getEnvService().create(entity, others)
         .then((responseWrapper: ResponseWrapper<T>) => {
           this.saveEvent.emit(responseWrapper.data);
           resolve(responseWrapper);
@@ -68,10 +70,10 @@ export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I exten
     });
   }
 
-  update(id: number | string = this.entity.id, entity: T = this.entity): Promise<ResponseWrapper<T>> {
+  update(id: number | string = this.entity.id, entity: T = this.entity, ...others): Promise<ResponseWrapper<T>> {
     this.entity = entity ? Object.assign({}, entity) : this.entity;
     return new Promise<ResponseWrapper<T>>(async (resolve, reject) => {
-      this.provider.getEnvService().update(entity, id)
+      this.provider.getEnvService().update(entity, id, others)
         .then((responseWrapper: ResponseWrapper<T>) => {
           this.saveEvent.emit(responseWrapper.data);
           resolve(responseWrapper);
@@ -81,9 +83,9 @@ export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I exten
     });
   }
 
-  createAndGet(pagination: Pagination, entity: T = this.entity): Promise<ResponseWrapper<T[]>> {
+  createAndGet(pagination: Pagination, entity: T = this.entity, ...others): Promise<ResponseWrapper<T[]>> {
     return new Promise<ResponseWrapper<T[]>>(async (resolve, reject) => {
-      this.provider.getEnvService().createAndGet({entity, pagination})
+      this.provider.getEnvService().createAndGet({entity, pagination}, others)
         .then((responseWrapper: ResponseWrapper<T[]>) => {
           resolve(responseWrapper);
         }).catch((error: ResponseWrapper<T>) => {
@@ -92,9 +94,10 @@ export abstract class AbstractFormComponent<T extends AbstractEntity<T>, I exten
     });
   }
 
-  updateAndGet(pagination: Pagination, entity: T = this.entity, id: number | string = this.entity.id): Promise<ResponseWrapper<T[]>> {
+  updateAndGet(pagination: Pagination, entity: T = this.entity, id: number | string = this.entity.id, ...others)
+    : Promise<ResponseWrapper<T[]>> {
     return new Promise<ResponseWrapper<T[]>>(async (resolve, reject) => {
-      this.provider.getEnvService().updateAndGet({entity, pagination}, id)
+      this.provider.getEnvService().updateAndGet({entity, pagination}, id, others)
         .then((responseWrapper: ResponseWrapper<T[]>) => {
           resolve(responseWrapper);
         }).catch((error: ResponseWrapper<T>) => {

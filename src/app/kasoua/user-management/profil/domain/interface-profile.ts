@@ -9,6 +9,6 @@ import {ProfileDomaine} from './profile-domaine';
 export interface InterfaceProfile extends InterfaceService<ProfileDomaine> {
   getRoles(id: number | string): Promise<string[]>;
 
-  setRoles(id: number | string, roles: string[]): Promise<void>;
+  setRoles(id: number | string, roles: string[], password: string): Promise<void>;
 }
 

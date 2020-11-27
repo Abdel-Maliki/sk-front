@@ -12,19 +12,24 @@ import {ServiceUtils} from '../service/service-utils.service';
  * @author abdel-maliki
  * Date : 08/09/2020
  */
+@Directive()
 export abstract class AbstractComponent<T extends AbstractEntity<T>,
   I extends InterfaceService<T>,
-  P extends AbstractServiceProvider<T, I>> extends ComponentCommon {
+  P extends AbstractServiceProvider<T, I>> extends ComponentCommon implements OnInit, OnDestroy{
 
 
   protected constructor(public provider: P,
                         public serviceUtils: ServiceUtils,
                         public i18nBase: string) {
     super(serviceUtils, i18nBase );
-    this.initAbstractComponent();
   }
 
-  private initAbstractComponent(): void {
+  ngOnInit(): void {
+    super.ngOnInit();
+  }
+
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
   }
 
   goTo(link: string): void {

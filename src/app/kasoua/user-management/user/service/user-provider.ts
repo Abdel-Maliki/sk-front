@@ -3,8 +3,8 @@ import {UserConfigurationService} from '../../../../common/service/user-configur
 import {ConfigurationService} from '../../../../common/service/configuration-service';
 import {Injectable} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
-import {UserDomaine} from '../domain/user-domaine';
-import {InterfaceUser} from '../domain/interface-user';
+import {UserDomain} from '../domain/user-domain';
+import {InterfaceUser} from './interface-user';
 import {UserNodeService} from './user-node.service';
 
 /**
@@ -13,7 +13,7 @@ import {UserNodeService} from './user-node.service';
  */
 
 @Injectable({providedIn: 'root'})
-export class UserProvider extends AbstractServiceProvider<UserDomaine, InterfaceUser> {
+export class UserProvider extends AbstractServiceProvider<UserDomain, InterfaceUser> {
   constructor(userConfigurationService: UserConfigurationService,
               configurationService: ConfigurationService,
               userNodeService: UserNodeService,

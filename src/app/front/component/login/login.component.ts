@@ -1,10 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
-import {NotificationService} from '../../../common/service/notification-service';
-import {AuthenficationProvider} from '../../classe/authenfication-provider';
+import {ActivatedRoute} from '@angular/router';
 import {first} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
+import {ServiceUtils} from '../../../common/service/service-utils.service';
 
 @Component({
   selector: 'app-login',
@@ -16,10 +15,8 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
+    private serviceUtils: ServiceUtils,
     private route: ActivatedRoute,
-    private router: Router,
-    private authenficationProvider: AuthenficationProvider,
-    private alertService: NotificationService
   ) {
   }
 
@@ -40,17 +37,18 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.authenficationProvider.getEnvService().login(this.f.username.value, this.f.password.value)
+    this.serviceUtils.authenficationProvider.getEnvService().login(this.f.username.value, this.f.password.value)
       .pipe(first())
       .subscribe({
         next: async () => {
-          await this.authenficationProvider.getEnvService().loadCurrentUserDatas().toPromise().then();
-          this.router.navigateByUrl(this.route.snapshot.queryParams.returnUrl ? this.route.snapshot.queryParams.returnUrl : '/').then();
+          await this.serviceUtils.authenficationProvider.getEnvService().loadCurrentUserDatas().toPromise().then();
+          this.serviceUtils.userConfigurationService.password = this.f.password.value;
+          this.serviceUtils.userConfigurationService.passwordStateService.setStateToValid();
+          this.serviceUtils.router
+            .navigateByUrl(this.route.snapshot.queryParams.returnUrl ? this.route.snapshot.queryParams.returnUrl : '/').then();
         },
         error: (error: HttpErrorResponse) => {
-          // this.alertService.error(error);
-          // this.loading = false;
-          this.alertService.showError(error.error.message).then();
+          this.serviceUtils.notificationService.showError(error.error.message).then();
         }
       });
   }

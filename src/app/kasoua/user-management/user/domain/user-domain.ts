@@ -12,7 +12,7 @@ export enum UserState {
   BLOQUE = 'BLOQUE',
 }
 
-export class UserDomaine extends AbstractEntity<UserDomaine> {
+export class UserDomain extends AbstractEntity<UserDomain> {
   email: string;
   name: string;
   password: string;

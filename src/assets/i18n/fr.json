@@ -4,10 +4,13 @@
   "deleteConfirmDialogHeader" : "Confirmation de suppression",
   "successMessage" : "Opération effectuée avec succès",
   "errorMessage" : "Opération échouée",
+  "inputPassword": "veuillez saisir votre mot de passe",
   "new": "Nouveau",
   "add": "Ajouter",
   "delete": "Supprimer",
+  "reset" : "Réinitialiser",
   "edit": "Modifier",
+  "validate" : "Valider",
   "update": "Mettre à jour",
   "cancel": "Annuler",
   "actions": "Actions",
@@ -17,6 +20,7 @@
   "minCharError": "le nombre minimum de caractères est {{ min }}",
   "yes": "Oui",
   "no": "Nom",
+  "confirmPassWord": "Nom",
   "search": "Recherche",
   "profile": {
     "fields": {
@@ -35,9 +39,11 @@
       "name": "Nom & Prénom",
       "userName": "Nom d'utilisateur",
       "password": "Mot de passe",
-      "repeatPassword": "Répéter le mot de passe",
       "profile": "Profile",
-      "status": "Statut"
+      "status": "Statut",
+      "oldPassword": "Ancien mot de passe",
+      "newPassword": "Nouveau mot de passe",
+      "repeatPassword": "Répéter le mot de passe"
     },
     "profile": "Profile",
     "errors": {
@@ -45,6 +51,8 @@
       "reqUserName": "Le nom d'utilisateur est réquis",
       "reqPassword": "Le mot de passe est réquis",
       "reqEmail": "L'adresse email est réquise",
+      "reqNewPassword": "Le nouveau mot de passe est réquis",
+      "reqOldPassword": "L'ancien mot de passe est réquis",
       "reqRepeatPassword": "Merci de repéter le mot de passe",
       "notIdentiquePassword": "les deux mots de passe ne sont pas identiques"
     },
@@ -55,9 +63,13 @@
     "disableLabel" : "Désactivé",
     "blockedLabel" : "Bloqué",
     "activateMessage" : "Vous êtes sûr de vouloir activer ce compte ?",
+    "addUserHeader" : "Ajouter un utilisateur",
+    "editUserHeader" : "Modifier l'utilisateur",
     "disableMessage" : "Vous êtes sûr de vouloir désactiver ce compte ?",
-    "activateAccountHeader" : "Activer le compte de {{ userName }}",
-    "disableAccountHeader" : "Désactiver le compte de {{ userName }}",
+    "activateAccountHeader" : "Activation du compte de {{ userName }}",
+    "deleteAccountHeader" : "Suppression du compte de {{ userName }}",
+    "deleteAllAccountHeader" : "Suppression des comptes ",
+    "disableAccountHeader" : "Désactivation du compte de {{ userName }}",
     "activateAllMessage" : "Vous êtes sûr de vouloir activer tout ces comptes ?",
     "disableAllMessage" : "Vous êtes sûr de vouloir désactiver tout ces comptes ?",
     "activateAllAccountHeader" : "Activer les comptes",
@@ -65,7 +77,18 @@
     "activateOrDisable": "Activer/Désactiver",
     "resetPassword": "Réinitialiser",
     "resetPasswordMessage" : "Vous êtes sûr de vouloir réinitialiser le mot passe ?",
-    "resetPasswordHeader" : "Réinitialiser le mot de passe de {{ userName }}"
+    "resetPasswordHeader" : "Réinitialisation du mot de passe de {{ userName }}"
+  },
+  "log": {
+    "fields": {
+      "errorMessage": "Message d'erreur",
+      "action": "Action",
+      "userName": "Nom d'utilisateur",
+      "state": "Statut"
+    },
+    "title": "LISTE DE LOGS",
+    "successLabel": "SUCCES",
+    "errorLabel": "ERROR"
   }
 
 

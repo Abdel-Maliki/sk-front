@@ -14,11 +14,13 @@
       <button *ngIf="haseAddRole" pButton pRipple [label]="i18nConstantes.new | translate" icon="fa fa-plus fa-lg" class="p-button-success p-mr-2"
               (click)="enableDialog()"></button>
       <button *ngIf="haseDeleteRole" [disabled]="validateEntries().length === 0" pButton pRipple icon="fa fa-trash fa-lg" class="p-button-danger p-mr-2"
-              (click)="deleteAllConfimation()"></button>
+              (click)="enablePasswordConfirmation(action.DELETE_ALL)"></button>
       <button *ngIf="haseActiveRole" [disabled]="validateEntries().length === 0"  pButton pRipple icon="fa fa-check fa-lg" class="p-button-success p-mr-2"
-              (click)="activeMultipleConfirmation()"></button>
+              (click)="enablePasswordConfirmation(action.ENABLE_ALL)"></button>
       <button *ngIf="haseDisabledRole" [disabled]="validateEntries().length === 0" pButton pRipple icon="fa fa-ban fa-lg" class="p-button-danger"
-              (click)="disaleMultipleConfirmation()"></button>
+              (click)="enablePasswordConfirmation(action.DISABLE_ALL)"></button>
+
+      <button pButton pRipple icon="fa fa-ban fa-lg" class="p-button-success" (click)="enableUpdatePasswordDialog()"></button>
     </div>
 
     <ng-template pTemplate="right">
@@ -49,10 +51,10 @@
            [showCurrentPageReport]="true"
            [value]="provider.getEnvService().pageElements$ | async"
            [(contextMenuSelection)]="entity"
-           [contextMenu]="showcontextMenuOption() ? cm : null"
+           [contextMenu]="showContextMenuOption() ? cm : null"
            [currentPageReportTemplate]="i18nConstantes.toatalElement | translate: {value: provider.getEnvService().totalElement$ | async} "
            dataKey="id"
-           [styleClass]="showcontextMenuOption() ?'p-datatable-sm' : ''">
+           [styleClass]="showContextMenuOption() ?'p-datatable-sm' : ''">
     <ng-template pTemplate="header">
       <tr>
         <th style="width: 3rem">
@@ -80,7 +82,7 @@
         <th pSortableColumn="createdAt">{{ i18nConstantes.createdAt | translate}}
           <p-sortIcon field="createdAt"></p-sortIcon>
         </th>
-        <th *ngIf="showcontextMenuOption()">{{i18nConstantes.actions | translate}}</th>
+        <th *ngIf="showContextMenuOption()">{{i18nConstantes.actions | translate}}</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-user>
@@ -99,7 +101,7 @@
           <span style="min-width: 70%" *ngIf="user.status === userState.BLOQUE" class="p-tag p-tag-danger">{{ blockedLabel}}</span>
         </td>
         <td>{{dateHelpers.dateToDMYHMS(user.createdAt)}}</td>
-        <td *ngIf="showcontextMenuOption()">
+        <td *ngIf="showContextMenuOption()">
           <button pButton pRipple type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text"
                   (click)="setEntity(user,$event, menu)"></button>
         </td>
@@ -120,23 +122,54 @@
 
 
 <div *ngIf="showFormDialog && ((haseAddRole &&  !entity.id) || (haseEditRole && entity.id)) ">
-  <p-dialog (onHide)="desabledDialog()" resizable="true" [(visible)]="showFormDialog" [style]="{width: '450px'}"
+  <p-dialog (onHide)="disabledDialog()" resizable="true" [(visible)]="showFormDialog" [style]="{width: '450px'}"
             header="Ajouter un utilisateur" [modal]="true" styleClass="p-fluid">
     <ng-template pTemplate="content">
       <app-user-form #formComponent
                      [entity]="entity"
-                     (updateEvent)="desabledDialog()"
-                     (saveEvent)="desabledDialog()">
+                     (updateEvent)="disabledDialog()"
+                     (saveEvent)="disabledDialog()">
       </app-user-form>
     </ng-template>
 
     <ng-template pTemplate="footer">
       <app-modal-button
         [disabled]="isNotValidForm()"
-        (validateEvent)="saveOrUpdate()"
+        (validateEvent)="isValidPassword ? saveOrUpdate(lastPassword) : enablePasswordConfirmation(action.FOR_ACTION)"
         [forUpdate]="!!entity && !!entity.id"
-        (cancelEvent)="desabledDialog()">
+        (cancelEvent)="disabledDialog()">
       </app-modal-button>
     </ng-template>
   </p-dialog>
 </div>
+
+
+<div *ngIf="showUpdatePasswordDialog">
+  <p-dialog (onHide)="disableUpdatePasswordDialog()" resizable="true" [(visible)]="showUpdatePasswordDialog" [style]="{width: '450px'}"
+            [header]="entity && entity.id ? editUserHeader : addUserHeader" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+      <app-update-password #updatePasswordComponent
+                     [entity]="entity"
+                     (saveEvent)="disableUpdatePasswordDialog()">
+      </app-update-password>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <app-modal-button
+        [disabled]="updatePasswordComponent && updatePasswordComponent.form ? updatePasswordComponent.form.invalid : false"
+        (validateEvent)="updatePasswordComponent.validate()"
+        [forUpdate]="false"
+        (cancelEvent)="disableUpdatePasswordDialog()">
+      </app-modal-button>
+    </ng-template>
+  </p-dialog>
+</div>
+
+<app-confirm-password
+  [visible]="visibleConfirmPassword"
+  [header]="getHeader() | translate: {userName: entity ? entity.userName : ''}"
+  [validateButtonLabel]="validateButtonLabel() | translate"
+  (validateEvent)="validateAction()"
+  (cancelEvent)="disablePasswordConfirmation()">
+</app-confirm-password>
+

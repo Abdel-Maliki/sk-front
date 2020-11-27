@@ -1,6 +1,6 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {UserDomaine, UserState} from '../../domain/user-domaine';
-import {InterfaceUser} from '../../domain/interface-user';
+import {UserDomain, UserState} from '../../domain/user-domain';
+import {InterfaceUser} from '../../service/interface-user';
 import {UserProvider} from '../../service/user-provider';
 import {AbstractFormComponent} from '../../../../../common/abstract/abstract-form-component';
 import {i18nConstantes} from '../../../../../../environments/i18n-constantes';
@@ -14,7 +14,7 @@ import {ServiceUtils} from '../../../../../common/service/service-utils.service'
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.scss']
 })
-export class UserFormComponent extends AbstractFormComponent<UserDomaine, InterfaceUser, UserProvider>
+export class UserFormComponent extends AbstractFormComponent<UserDomain, InterfaceUser, UserProvider>
   implements OnInit, OnDestroy {
 
   profiles: ProfileDomaine[] = [];
@@ -38,6 +38,7 @@ export class UserFormComponent extends AbstractFormComponent<UserDomaine, Interf
   }
 
   ngOnInit(): void {
+    super.ngOnInit();
     this.subscribeForm();
     this.setFormData();
     this.updateForm();
@@ -52,7 +53,7 @@ export class UserFormComponent extends AbstractFormComponent<UserDomaine, Interf
   }
 
   ngOnDestroy(): void {
-    super.onDestroy();
+    super.ngOnDestroy();
   }
 
   buildForm(): void {
@@ -89,8 +90,8 @@ export class UserFormComponent extends AbstractFormComponent<UserDomaine, Interf
     // this.form.get(this.profile).valueChanges.subscribe(value => this.entity.profile = value);
   }
 
-  getNewInstance(): UserDomaine {
-    return new UserDomaine();
+  getNewInstance(): UserDomain {
+    return new UserDomain();
   }
 
   onKeyUp(search: string = ''): void {

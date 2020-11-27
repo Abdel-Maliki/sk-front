@@ -47,10 +47,10 @@
            [showCurrentPageReport]="true"
            [value]="provider.getEnvService().pageElements$ | async"
            [(contextMenuSelection)]="entity"
-           [contextMenu]="showcontextMenuOption() ? cm : null"
+           [contextMenu]="showContextMenuOption() ? cm : null"
            [currentPageReportTemplate]="i18nConstantes.toatalElement | translate: {value: provider.getEnvService().totalElement$ | async} "
            dataKey="id"
-           [styleClass]="showcontextMenuOption() ?'p-datatable-sm' : ''">
+           [styleClass]="showContextMenuOption() ?'p-datatable-sm' : ''">
     <ng-template pTemplate="header">
       <tr>
         <th style="width: 3rem">
@@ -66,7 +66,7 @@
         <th pSortableColumn="createdAt">{{ i18nConstantes.createdAt | translate}}
           <p-sortIcon field="createdAt"></p-sortIcon>
         </th>
-        <th *ngIf="showcontextMenuOption()">{{i18nConstantes.actions | translate}}</th>
+        <th *ngIf="showContextMenuOption()">{{i18nConstantes.actions | translate}}</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-profil>
@@ -79,7 +79,7 @@
         <td>{{profil.name}}</td>
         <td>{{profil.description}}</td>
         <td>{{dateHelpers.dateToDMYHMS(profil.createdAt)}}</td>
-        <td *ngIf="showcontextMenuOption()">
+        <td *ngIf="showContextMenuOption()">
           <button pButton pRipple type="button" icon="pi pi-ellipsis-v"
                   class="p-button-rounded p-button-text" (click)="setEntity(profil,$event, menu)"></button>
         </td>
@@ -100,13 +100,13 @@
 </div>
 
 <div *ngIf="showFormDialog">
-  <p-dialog (onHide)="desabledDialog()" resizable="true" [(visible)]="showFormDialog" [style]="{width: '450px'}"
+  <p-dialog (onHide)="disabledDialog()" resizable="true" [(visible)]="showFormDialog" [style]="{width: '450px'}"
             header="Product Details" [modal]="true" styleClass="p-fluid">
     <ng-template pTemplate="content">
       <app-profil-form #formComponent
                        [entity]="entity"
-                       (updateEvent)="desabledDialog()"
-                       (saveEvent)="desabledDialog()">
+                       (updateEvent)="disabledDialog()"
+                       (saveEvent)="disabledDialog()">
       </app-profil-form>
     </ng-template>
 
@@ -116,7 +116,7 @@
         [disabled]="isNotValidForm()"
         (validateEvent)="saveOrUpdate()"
         [forUpdate]="!!entity && !!entity.id"
-        (cancelEvent)="desabledDialog()">
+        (cancelEvent)="disabledDialog()">
       </app-modal-button>
     </ng-template>
   </p-dialog>
@@ -124,7 +124,7 @@
 
 
 <div *ngIf="showProfileRole">
-  <p-dialog (onHide)="desabledRoleOption()" resizable="true" [(visible)]="showProfileRole" header="Product Details"
+  <p-dialog (onHide)="disabledRoleOption()" resizable="true" [(visible)]="showProfileRole" header="Product Details"
             [modal]="true" styleClass="p-fluid">
     <ng-template pTemplate="content">
       <app-profil-role [profileRoles]="profileRoles"></app-profil-role>
@@ -133,12 +133,18 @@
     <ng-template pTemplate="footer">
       <app-modal-button
         [disabled]="false"
-        (validateEvent)="setRoles()"
+        (validateEvent)="setRoleOrEnablePasswordConfirmation()"
         [forUpdate]="true"
-        (cancelEvent)="desabledRoleOption()">
+        (cancelEvent)="disabledRoleOption()">
       </app-modal-button>
     </ng-template>
   </p-dialog>
 </div>
+
+<app-confirm-password
+  [visible]="visibleConfirmPassword"
+  (validateEvent)="setRoles()"
+  (cancelEvent)="disablePasswordConfirmation()">
+</app-confirm-password>
 
 

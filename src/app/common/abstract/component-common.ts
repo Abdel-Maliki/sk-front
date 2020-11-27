@@ -5,46 +5,64 @@ import '@angular/common/locales/global/fr';
 import {Helpers} from '../class/helpers';
 import {Roles} from '../../../environments/roles';
 import {ServiceUtils} from '../service/service-utils.service';
+import {Directive, OnDestroy, OnInit} from '@angular/core';
 
 
 /**
  * @author abdel-maliki
  * Date : 08/09/2020
  */
-
-export abstract class ComponentCommon {
+@Directive()
+export abstract class ComponentCommon implements OnInit, OnDestroy {
   readonly constantes = constantes;
   readonly i18nConstantes = i18nConstantes;
   readonly dateHelpers = DateHelpers;
   readonly helpers = Helpers;
   readonly rolesConstantes = Roles;
+  visibleConfirmPassword = false;
+
   yesLabel: string;
   noLabel: string;
+  errorMessage: string;
 
   protected constructor(public serviceUtils: ServiceUtils,
                         public i18nBase?: string) {
-    this.initComponentCommon();
   }
 
-  initComponentCommon(): void {
+  get isValidPassword(): boolean {
+    return this.serviceUtils
+      && this.serviceUtils.userConfigurationService
+      && this.serviceUtils.userConfigurationService.isValidPassword;
+  }
+
+  get lastPassword(): string {
+    return this.serviceUtils
+      && this.serviceUtils.userConfigurationService
+      && this.serviceUtils.userConfigurationService.password;
+  }
+
+  ngOnInit(): void {
     this.getLabels();
   }
 
+  ngOnDestroy(): void {
+  }
 
   getLabels(): void {
     this.serviceUtils.translate.get(this.i18nConstantes.yes).toPromise().then(value => this.yesLabel = value);
     this.serviceUtils.translate.get(this.i18nConstantes.no).toPromise().then(value => this.noLabel = value);
+    this.serviceUtils.translate.get(i18nConstantes.errorMessage).toPromise().then(value => this.errorMessage = value);
   }
 
-  deleteConfirmeMessage(): Promise<string> {
+  deleteConfirmMessage(): Promise<string> {
     return this.serviceUtils.translate.get(this.i18nConstantes.deleteConfirmDialogMessage).toPromise();
   }
 
-  deleteAllConfirmeMessage(): Promise<string> {
+  deleteAllConfirmMessage(): Promise<string> {
     return this.serviceUtils.translate.get(this.i18nConstantes.deleteAllConfirmDialogMessage).toPromise();
   }
 
-  deleteConfirmeMessageHeader(): Promise<string> {
+  deleteConfirmMessageHeader(): Promise<string> {
     return this.serviceUtils.translate.get(this.i18nConstantes.deleteConfirmDialogHeader).toPromise();
   }
 
@@ -96,21 +114,21 @@ export abstract class ComponentCommon {
     if (!this.serviceUtils) {
       return false;
     }
-    return this.helpers.hasRole(this.serviceUtils.authenficationProvider.getEnvService().roles.value, role);
+    return this.helpers.hasRole(this.serviceUtils.authenficationProvider.getEnvService().rolesSubject.value, role);
   }
 
-  hasEveryRoles(roles: string[]): boolean{
+  hasEveryRoles(roles: string[]): boolean {
     return roles && roles.every(role => this.hasRole(role));
   }
 
-  haseSomeRoles(roles: string[]): boolean{
+  haseSomeRoles(roles: string[]): boolean {
     return roles && roles.some(role => this.hasRole(role));
   }
 
   async shoWConfirmDialog(message: Promise<string> | string, header: Promise<string> | string, commande: () => any): Promise<void> {
     this.serviceUtils.confirmationService.confirm({
       message: (message instanceof Promise) ? await message : message,
-      header:  (header instanceof Promise) ? await header : header,
+      header: (header instanceof Promise) ? await header : header,
       acceptLabel: this.yesLabel,
       rejectLabel: this.noLabel,
       icon: this.constantes.deleteConfirmDialogIcon,
@@ -119,5 +137,13 @@ export abstract class ComponentCommon {
       },
       key: this.constantes.deleteConfirmDialogKey,
     });
+  }
+
+  enablePasswordConfirmation(...data: any): void {
+    this.visibleConfirmPassword = true;
+  }
+
+  disablePasswordConfirmation(): void {
+    this.visibleConfirmPassword = false;
   }
 }
