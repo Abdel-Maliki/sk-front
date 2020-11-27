@@ -1,0 +1,104 @@
+<p-menu #menu [popup]="true" [model]="modalItems"></p-menu>
+<p-contextMenu #cm [model]="modalItems"></p-contextMenu>
+<p-confirmDialog [position]="deleteConfirmDialogPosition" [key]="constantes.deleteConfirmDialogKey"
+                 [baseZIndex]="10000"></p-confirmDialog>
+
+<div class="card" style="margin: 2rem">
+  <p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+
+      <h5 class="p-m-0">{{i18nElement('title') | translate}}</h5>
+    </ng-template>
+
+    <div>
+      <button *ngIf="haseDeleteRole" [disabled]="validateEntries().length === 0" pButton pRipple icon="fa fa-trash fa-lg" class="p-button-danger p-mr-2"
+              (click)="deleteAllConfimation()"></button>
+    </div>
+
+    <ng-template pTemplate="right">
+      <span class="p-input-icon-left">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="dt.filterGlobal($event.target['value'], 'contains')"
+                               [placeholder]="(i18nConstantes.search | translate) + '...'"/>
+                    </span>
+    </ng-template>
+  </p-toolbar>
+
+
+  <p-table #dt [(selection)]="selectedEntities"
+           [lazy]="true"
+           (onPage)="onPage($event)"
+           (onSort)="onSort($event)"
+           (onFilter)="onFilter($event)"
+           [totalRecords]="provider.getEnvService().totalElement$ | async"
+           [resizableColumns]="true"
+           columnResizeMode="expand"
+           [loading]="loading"
+           [globalFilterFields]="['action','userName','createdAt','state','errorMessage']"
+           [paginator]="true"
+           [rowHover]="true"
+           [rowsPerPageOptions]="constantes.rowsPerPageOptions"
+           [rows]="constantes.rowsPerPageOptions[0]"
+           [filterDelay]="800"
+           [showCurrentPageReport]="true"
+           [value]="provider.getEnvService().pageElements$ | async"
+           [(contextMenuSelection)]="entity"
+           [contextMenu]="showContextMenuOption() ? cm : null"
+           [currentPageReportTemplate]="i18nConstantes.toatalElement | translate: {value: provider.getEnvService().totalElement$ | async} "
+           dataKey="id"
+           [styleClass]="showContextMenuOption() ?'p-datatable-sm' : ''">
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th pSortableColumn="action">{{ fieldLabel('action') | translate}}
+          <p-sortIcon field="action"></p-sortIcon>
+        </th>
+        <th pSortableColumn="userName">{{ fieldLabel('userName')  | translate}}
+          <p-sortIcon field="userName"></p-sortIcon>
+        </th>
+
+        <th pSortableColumn="createdAt">{{ i18nConstantes.createdAt | translate}}
+          <p-sortIcon field="createdAt"></p-sortIcon>
+        </th>
+
+        <th pSortableColumn="state">{{  fieldLabel('state') | translate}}
+          <p-sortIcon field="state"></p-sortIcon>
+        </th>
+
+        <th pSortableColumn="errorMessage">{{ fieldLabel('errorMessage') | translate}}
+          <p-sortIcon field="errorMessage"></p-sortIcon>
+        </th>
+
+        <th *ngIf="showContextMenuOption()">{{i18nConstantes.actions | translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-log>
+      <tr (contextmenu)="setEntity(log, $event)" [pContextMenuRowDisabled]="!showItemContextMenu(log)" (click)="setEntity(log, $event)" [pContextMenuRow]="log">
+        <td>
+          <p-checkbox *ngIf="!showItemContextMenu(log)" [disabled]="true"></p-checkbox>
+          <p-tableCheckbox *ngIf="showItemContextMenu(log)" [value]="log"></p-tableCheckbox>
+        </td>
+        <td>{{log.action}}</td>
+        <td>{{log.userName}}</td>
+        <td>{{dateHelpers.dateToDMYHMS(log.createdAt)}}</td>
+        <td>
+          <span style="min-width: 70%" *ngIf="log.state === LOG_STATE.SUCCESS" class="p-tag p-tag-success">{{SUCCESS_LABEL }}</span>
+          <span style="min-width: 70%" *ngIf="log.state === LOG_STATE.ERROR" class="p-tag p-tag-danger">{{ ERROR_LABEL}}</span>
+        </td>
+        <td>{{log.errorMessage}}</td>
+
+        <td *ngIf="showContextMenuOption()">
+          <button pButton pRipple type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text"
+                  (click)="setEntity(log,$event, menu)"></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="paginatorleft">
+      <p-button type="button" icon="pi pi-refresh" (click)="reload()" styleClass="p-button-text"></p-button>
+    </ng-template>
+    <ng-template pTemplate="paginatorright">
+    </ng-template>
+  </p-table>
+</div>
