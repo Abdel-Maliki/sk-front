@@ -3,7 +3,7 @@ import {UserDomain, UserState} from '../../domain/user-domain';
 import {InterfaceUser} from '../../service/interface-user';
 import {UserProvider} from '../../service/user-provider';
 import {AbstractFormComponent} from '../../../../../common/abstract/abstract-form-component';
-import {i18nConstantes} from '../../../../../../environments/i18n-constantes';
+import {i18nConstantes} from '../../../../../../constantes/i18n-constantes';
 import {FormBuilder, FormControl, Validators} from '@angular/forms';
 import {ProfileProvider} from '../../../profil/service/profile-provider';
 import {ProfileDomaine} from '../../../profil/domain/profile-domaine';

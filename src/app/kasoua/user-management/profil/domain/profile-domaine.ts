@@ -1,4 +1,6 @@
 import {AbstractEntity} from '../../../../common/abstract/abstract-entity';
+import {PathHelpers} from '../../../../common/class/PathHelpers';
+import {RouteConstantes} from '../../../../../constantes/route-constantes';
 
 /**
  * @author abdel-maliki
@@ -11,8 +13,6 @@ export class ProfileDomaine extends AbstractEntity<ProfileDomaine> {
     super();
   }
 
-  generateId(): string {
-    const s = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    return Array(20).join().split(',').map(() => s.charAt(Math.floor(Math.random() * s.length))).join('');
-  }
+  static baseRoute: string = PathHelpers.join([RouteConstantes.USER_MANAGEMENT, RouteConstantes.PROFIL]);
+
 }

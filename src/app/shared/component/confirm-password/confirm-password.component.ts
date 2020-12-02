@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {i18nConstantes} from '../../../../environments/i18n-constantes';
+import {i18nConstantes} from '../../../../constantes/i18n-constantes';
 import {ServiceUtils} from '../../../common/service/service-utils.service';
 import {FormControl} from '@angular/forms';
 

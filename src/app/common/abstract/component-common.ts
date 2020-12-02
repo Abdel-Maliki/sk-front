@@ -1,9 +1,9 @@
 import {DateHelpers} from '../class/date-helpers';
-import {constantes} from '../../../environments/constantes';
-import {i18nConstantes} from '../../../environments/i18n-constantes';
+import {constantes} from '../../../constantes/constantes';
+import {i18nConstantes} from '../../../constantes/i18n-constantes';
 import '@angular/common/locales/global/fr';
 import {Helpers} from '../class/helpers';
-import {Roles} from '../../../environments/roles';
+import {Roles} from '../../../constantes/roles';
 import {ServiceUtils} from '../service/service-utils.service';
 import {Directive, OnDestroy, OnInit} from '@angular/core';
 

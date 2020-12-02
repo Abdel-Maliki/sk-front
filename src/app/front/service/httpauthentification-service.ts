@@ -7,7 +7,7 @@ import {environment} from '../../../environments/environment';
 import {AuthentificationInterface} from '../types/authentification-interface';
 import {ResponseWrapper} from '../../common/class/response-wrapper';
 import {HeadersOptions, HttpHelpers} from '../../common/class/http-helpers';
-import {constantes} from '../../../environments/constantes';
+import {constantes} from '../../../constantes/constantes';
 import {UserDomain} from '../../kasoua/user-management/user/domain/user-domain';
 
 /**

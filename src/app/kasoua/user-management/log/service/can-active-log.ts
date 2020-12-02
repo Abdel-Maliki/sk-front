@@ -2,9 +2,9 @@ import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular
 import {Injectable} from '@angular/core';
 import {PathHelpers} from '../../../../common/class/PathHelpers';
 import {AuthProvider} from '../../../../front/classe/authentification-provider.service';
-import {RouteConstantes} from '../../../../../environments/route-constantes';
 import {Helpers} from '../../../../common/class/helpers';
-import {Roles} from '../../../../../environments/roles';
+import {Roles} from '../../../../../constantes/roles';
+import {LogDomain} from '../domain/log-domain';
 
 /**
  * @author abdel-maliki
@@ -13,7 +13,6 @@ import {Roles} from '../../../../../environments/roles';
 
 @Injectable()
 export class CanActiveLog implements CanActivate {
-  private readonly LOG_BASE: string = PathHelpers.join([RouteConstantes.USER_MANAGEMENT, RouteConstantes.LOG]);
 
   constructor(protected authProvider: AuthProvider) {
   }
@@ -21,10 +20,8 @@ export class CanActiveLog implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const url = PathHelpers.mapUrl(state.url);
     const allRoles: string[] = this.authProvider.getEnvService().rolesSubject.value;
-    console.log('Class: CanActiveLog, Function: canActivate, Line 26 url(): '
-    , url);
     switch (url) {
-      case PathHelpers.joinList(this.LOG_BASE):
+      case PathHelpers.joinList(LogDomain.baseRoute):
         return Helpers.haseSomeRoles(allRoles, [Roles.DELETE_LOG, Roles.READ_LOG]);
       default:
         return false;

@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {NavigationEnd} from '@angular/router';
 import {PrimeNGConfig} from 'primeng/api';
-import {constantes} from '../environments/constantes';
+import {constantes} from '../constantes/constantes';
 import {AppConfigService} from './common/service/appconfigservice';
 import {ServiceUtils} from './common/service/service-utils.service';
 

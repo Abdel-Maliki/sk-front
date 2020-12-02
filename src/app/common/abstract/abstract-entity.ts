@@ -5,6 +5,7 @@
 import {Updatelog} from '../class/updateLog';
 
 export abstract class AbstractEntity<T> {
+  public static readonly baseRoute: string;
   id: number | string;
   createdAt: Date;
   updateDate: Date;

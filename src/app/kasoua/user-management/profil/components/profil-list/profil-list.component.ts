@@ -5,7 +5,7 @@ import {InterfaceProfile} from '../../domain/interface-profile';
 import {ProfileProvider} from '../../service/profile-provider';
 import {ProfilFormComponent} from '../profil-form/profil-form.component';
 import {MenuItem} from 'primeng/api';
-import {i18nConstantes} from '../../../../../../environments/i18n-constantes';
+import {i18nConstantes} from '../../../../../../constantes/i18n-constantes';
 import {MenuItemImp} from '../../../../../common/class/menu-item-imp';
 import {ServiceUtils} from '../../../../../common/service/service-utils.service';
 

@@ -1,5 +1,7 @@
 import {AbstractEntity} from '../../../../common/abstract/abstract-entity';
 import {ProfileDomaine} from '../../profil/domain/profile-domaine';
+import {RouteConstantes} from '../../../../../constantes/route-constantes';
+import {PathHelpers} from '../../../../common/class/PathHelpers';
 
 /**
  * @author abdel-maliki
@@ -13,6 +15,11 @@ export enum UserState {
 }
 
 export class UserDomain extends AbstractEntity<UserDomain> {
+  constructor() {
+    super();
+  }
+
+  static baseRoute: string = PathHelpers.join([RouteConstantes.USER_MANAGEMENT, RouteConstantes.USER]);
   email: string;
   name: string;
   password: string;
@@ -22,9 +29,5 @@ export class UserDomain extends AbstractEntity<UserDomain> {
   activatedDate: Date;
   deactivatedDate: Date;
   blockedDate: Date;
-
-  constructor() {
-    super();
-  }
 }
 

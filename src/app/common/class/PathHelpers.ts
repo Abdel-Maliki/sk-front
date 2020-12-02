@@ -2,7 +2,7 @@
  * @author abdel-maliki
  * Date : 02/12/2020
  */
-import {RouteConstantes} from '../../../environments/route-constantes';
+import {RouteConstantes} from '../../../constantes/route-constantes';
 
 export class PathHelpers {
 

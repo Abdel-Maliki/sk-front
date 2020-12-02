@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AbstractListComponent} from '../../../../../common/abstract/abstract-list-component';
 import {MenuItem} from 'primeng/api';
-import {i18nConstantes} from '../../../../../../environments/i18n-constantes';
+import {i18nConstantes} from '../../../../../../constantes/i18n-constantes';
 import {UserDomain, UserState} from '../../domain/user-domain';
 import {InterfaceUser} from '../../service/interface-user';
 import {UserProvider} from '../../service/user-provider';

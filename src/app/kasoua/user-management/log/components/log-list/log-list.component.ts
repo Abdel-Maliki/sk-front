@@ -4,7 +4,7 @@ import {LogDomain, LogState} from '../../domain/log-domain';
 import {InterfaceLog} from '../../service/interface-log';
 import {LogProvider} from '../../service/log-provider';
 import {ServiceUtils} from '../../../../../common/service/service-utils.service';
-import {i18nConstantes} from '../../../../../../environments/i18n-constantes';
+import {i18nConstantes} from '../../../../../../constantes/i18n-constantes';
 import {FormControl} from '@angular/forms';
 import {debounceTime} from 'rxjs/operators';
 import {UserProvider} from '../../../user/service/user-provider';

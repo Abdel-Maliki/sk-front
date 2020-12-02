@@ -5,7 +5,7 @@ import {InterfaceLog} from '../../service/interface-log';
 import {LogProvider} from '../../service/log-provider';
 import {UserProvider} from '../../../user/service/user-provider';
 import {ServiceUtils} from '../../../../../common/service/service-utils.service';
-import {i18nConstantes} from '../../../../../../environments/i18n-constantes';
+import {i18nConstantes} from '../../../../../../constantes/i18n-constantes';
 import * as DeviceDetector from 'device-detector-js';
 
 

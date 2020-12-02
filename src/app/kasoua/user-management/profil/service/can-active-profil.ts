@@ -1,10 +1,10 @@
 import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular/router';
 import {Injectable} from '@angular/core';
 import {PathHelpers} from '../../../../common/class/PathHelpers';
-import {RouteConstantes} from '../../../../../environments/route-constantes';
 import {AuthProvider} from '../../../../front/classe/authentification-provider.service';
 import {Helpers} from '../../../../common/class/helpers';
-import {Roles} from '../../../../../environments/roles';
+import {Roles} from '../../../../../constantes/roles';
+import {ProfileDomaine} from '../domain/profile-domaine';
 
 /**
  * @author abdel-maliki
@@ -13,23 +13,20 @@ import {Roles} from '../../../../../environments/roles';
 
 @Injectable()
 export class CanActiveProfil implements CanActivate {
-  private readonly PROFIL_BASE: string = PathHelpers.join([RouteConstantes.USER_MANAGEMENT, RouteConstantes.PROFIL]);
-
   constructor(protected authProvider: AuthProvider) {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const url = PathHelpers.mapUrl(state.url);
     const allRoles: string[] = this.authProvider.getEnvService().rolesSubject.value;
-    console.log('Class: CanActiveUserManagementChild, Function: canActivate, Line 26 url(): '
-    , url);
+
     switch (url) {
-      case PathHelpers.joinList(this.PROFIL_BASE):
+      case PathHelpers.joinList(ProfileDomaine.baseRoute):
         // tslint:disable-next-line:max-line-length
         return Helpers.haseSomeRoles(allRoles, [Roles.ADD_PROFILE, Roles.EDIT_PROFILE, Roles.READ_PROFILE, Roles.DELETE_PROFILE, Roles.AFFECT_PROFILE_ROLE]);
-      case PathHelpers.joinFormNew(this.PROFIL_BASE):
+      case PathHelpers.joinFormNew(ProfileDomaine.baseRoute):
         return Helpers.hasRole(allRoles, Roles.ADD_PROFILE);
-      case PathHelpers.joinFormUpdate(this.PROFIL_BASE):
+      case PathHelpers.joinFormUpdate(ProfileDomaine.baseRoute):
         return Helpers.hasRole(allRoles, Roles.EDIT_PROFILE);
       default:
         return false;

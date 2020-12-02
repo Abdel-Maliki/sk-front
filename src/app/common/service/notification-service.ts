@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {ResponseWrapper} from '../class/response-wrapper';
 import {MessageService} from 'primeng/api';
-import {constantes} from '../../../environments/constantes';
+import {constantes} from '../../../constantes/constantes';
 import {TranslateService} from '@ngx-translate/core';
-import {i18nConstantes} from '../../../environments/i18n-constantes';
+import {i18nConstantes} from '../../../constantes/i18n-constantes';
 
 /**
  * @author abdel-maliki

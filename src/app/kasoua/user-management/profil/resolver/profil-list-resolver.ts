@@ -3,7 +3,7 @@ import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/rou
 import {ProfileProvider} from '../service/profile-provider';
 import {ResponseWrapper} from '../../../../common/class/response-wrapper';
 import {ProfileDomaine} from '../domain/profile-domaine';
-import {constantes} from '../../../../../environments/constantes';
+import {constantes} from '../../../../../constantes/constantes';
 
 /**
  * @author abdel-maliki

@@ -4,8 +4,8 @@ import {AbstractComponent} from '../../../../../common/abstract/abstract-compone
 import {ProfileDomaine} from '../../domain/profile-domaine';
 import {InterfaceProfile} from '../../domain/interface-profile';
 import {ProfileProvider} from '../../service/profile-provider';
-import {i18nConstantes} from '../../../../../../environments/i18n-constantes';
-import {Roles} from '../../../../../../environments/roles';
+import {i18nConstantes} from '../../../../../../constantes/i18n-constantes';
+import {Roles} from '../../../../../../constantes/roles';
 import {ServiceUtils} from '../../../../../common/service/service-utils.service';
 
 @Component({

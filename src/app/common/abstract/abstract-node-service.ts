@@ -7,7 +7,7 @@ import {HeadersOptions, HttpHelpers} from '../class/http-helpers';
 import {map} from 'rxjs/operators';
 import {Pagination} from '../class/pagination';
 import {ActivatedRouteSnapshot} from '@angular/router';
-import {i18nConstantes} from '../../../environments/i18n-constantes';
+import {i18nConstantes} from '../../../constantes/i18n-constantes';
 import {NodeServiceData} from './node-service-data';
 
 

@@ -4,7 +4,7 @@ import {InterfaceProfile} from '../../domain/interface-profile';
 import {ProfileProvider} from '../../service/profile-provider';
 import {AbstractFormComponent} from '../../../../../common/abstract/abstract-form-component';
 import {FormBuilder, Validators} from '@angular/forms';
-import {i18nConstantes} from '../../../../../../environments/i18n-constantes';
+import {i18nConstantes} from '../../../../../../constantes/i18n-constantes';
 import {ServiceUtils} from '../../../../../common/service/service-utils.service';
 
 @Component({

@@ -4,11 +4,11 @@ import {InterfaceUser} from '../../../kasoua/user-management/user/service/interf
 import {UserProvider} from '../../../kasoua/user-management/user/service/user-provider';
 import {ServiceUtils} from '../../../common/service/service-utils.service';
 import {FormBuilder, Validators} from '@angular/forms';
-import {i18nConstantes} from '../../../../environments/i18n-constantes';
+import {i18nConstantes} from '../../../../constantes/i18n-constantes';
 import {AbstractFormComponent} from '../../../common/abstract/abstract-form-component';
 import {ConfirmedValidator} from '../../../common/function/confirmed.validator';
 import {ResponseWrapper} from '../../../common/class/response-wrapper';
-import {constantes} from '../../../../environments/constantes';
+import {constantes} from '../../../../constantes/constantes';
 
 @Component({
   selector: 'app-update-password',

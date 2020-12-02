@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
-import {i18nConstantes} from '../../../../environments/i18n-constantes';
+import {i18nConstantes} from '../../../../constantes/i18n-constantes';
 
 @Component({
   selector: 'app-modal-button',

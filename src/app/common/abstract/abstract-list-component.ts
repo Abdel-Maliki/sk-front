@@ -8,7 +8,7 @@ import {Menu} from 'primeng/menu';
 import {MenuItemImp} from '../class/menu-item-imp';
 import {AbstractComponent} from './abstract-component';
 import {Subscription} from 'rxjs';
-import {constantes} from '../../../environments/constantes';
+import {constantes} from '../../../constantes/constantes';
 import {Pagination} from '../class/pagination';
 import {ResponseWrapper} from '../class/response-wrapper';
 import {FilterMetadata} from 'primeng/api/filtermetadata';

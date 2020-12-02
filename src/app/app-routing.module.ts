@@ -3,7 +3,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {LoginComponent} from './front/component/login/login.component';
 import {AuthGuard} from './front/service/auth-guard';
 import {LoginGuard} from './front/service/login-guard';
-import {RouteConstantes} from '../environments/route-constantes';
+import {RouteConstantes} from '../constantes/route-constantes';
 
 const routes: Routes = [
   {

@@ -3,6 +3,7 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Router} from '@angular/router';
 import {MenuItem} from '../../classe/menu-item';
 import {MenuCategory} from '../../classe/menu-category';
+import {MenuLeftItems} from '../../../../constantes/menu-left-items';
 
 @Component({
   selector: 'app-menu-left',
@@ -34,44 +35,7 @@ import {MenuCategory} from '../../classe/menu-category';
 })
 export class MenuLeftComponent implements OnInit {
 
-  menuItems: MenuCategory[] = [
-    new MenuCategory('categorie 1',
-      [
-        new MenuItem('Utilisateurs', 'user-management/users/list', 'fa fa-arrows'),
-        new MenuItem('Profiles', 'user-management/profils/list', 'fa fa-car'),
-        new MenuItem('Logs', 'user-management/logs/list', 'fa fa-cubes'),
-      ]),
-    new MenuCategory('categorie 2',
-      [
-        new MenuItem('item3', '#', 'fa fa-deaf'),
-        new MenuItem('item21', '#', 'fa fa-cubes', [
-          new MenuItem('sub1 item1', '#', 'fa fa-fax'),
-          new MenuItem('sub1 item2', '#', 'fa fa-cubes'),
-          new MenuItem('sub1 item3', '#', 'fa fa-fire'),
-        ]),
-        new MenuItem('item22', '#', 'fa fa-film', [
-          new MenuItem('sub item1', '#', 'fa fa-question'),
-          new MenuItem('sub item2', '#', 'fa fa-filter', [
-            new MenuItem('sub1 sub item1', '#', 'fa fa-plane'),
-            new MenuItem('sub1 sub item2', '#', 'fa fa-random'),
-            new MenuItem('sub1 sub item3', '#', 'fa fa-paw'),
-          ]),
-          new MenuItem('sub item3', '#', 'fa fa-folder-o' , [
-            new MenuItem('sub sub item1', '#', 'fa fa-photo'),
-            new MenuItem('sub sub item2', '#', 'fa fa-cubes', [
-              new MenuItem('sub sub sub1 item1', '#', 'fa fa-magic'),
-              new MenuItem('sub sub sub1 item2', '#', 'fa fa-recycle'),
-              new MenuItem('sub sub sub1 item3', '#', 'fa fa-cubes'),
-            ]),
-            new MenuItem('sub sub item3', '#', 'fa fa-history', [
-              new MenuItem('sub sub sub2 item1', '#', 'fa fa-legal'),
-              new MenuItem('sub sub sub2 item2', '#', 'fa fa-reoader'),
-              new MenuItem('sub sub sub2 item3', '#', 'fa fa-print'),
-            ]),
-          ]),
-        ]),
-      ]),
-  ];
+  menuItems: MenuCategory[] = MenuLeftItems;
   @Input() active = true;
 
   activeSubmenus: { [key: string]: boolean } = {};
@@ -79,6 +43,9 @@ export class MenuLeftComponent implements OnInit {
   activeSubSubSubmenus: { [key: string]: boolean } = {};
 
   constructor(private router: Router) {
+  }
+
+  ngOnInit(): void {
   }
 
   toggleSubmenu(event: Event, name: string): void {
@@ -103,7 +70,6 @@ export class MenuLeftComponent implements OnInit {
       this.activeSubmenus[name] = true;
       return true;
     }
-
     return false;
   }
 
@@ -130,10 +96,4 @@ export class MenuLeftComponent implements OnInit {
 
     return false;
   }
-
-
-
-  ngOnInit(): void {
-  }
-
 }

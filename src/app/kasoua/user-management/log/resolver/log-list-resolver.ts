@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {ResponseWrapper} from '../../../../common/class/response-wrapper';
-import {constantes} from '../../../../../environments/constantes';
+import {constantes} from '../../../../../constantes/constantes';
 import {LogDomain} from '../domain/log-domain';
 import {LogProvider} from '../service/log-provider';
 
