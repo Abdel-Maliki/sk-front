@@ -22,7 +22,7 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(public serviceUtils: ServiceUtils,
               private primengConfig: PrimeNGConfig,
               public configService: AppConfigService) {
-    serviceUtils.authenficationProvider.getEnvService().loadCurrentUserDatas().toPromise().then();
+    serviceUtils.authProvider.getEnvService().loadCurrentUserDatas().toPromise().then();
     serviceUtils.translate.addLangs(['fr', 'en']);
     serviceUtils.translate.setDefaultLang('fr');
     serviceUtils.translate.use('fr');
@@ -38,6 +38,12 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     this.newsActive = this.newsActive && sessionStorage.getItem('primenews-hidden') == null;
+    this.serviceUtils.translate.setDefaultLang('fr');
+  }
+
+  translate(lang: string): void {
+    this.serviceUtils.translate.use(lang);
+    this.serviceUtils.translate.get('primeng').subscribe(res => this.primengConfig.setTranslation(res));
   }
 
   onMenuButtonClick(): void {

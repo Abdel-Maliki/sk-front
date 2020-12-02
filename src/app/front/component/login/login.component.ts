@@ -37,11 +37,11 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.serviceUtils.authenficationProvider.getEnvService().login(this.f.username.value, this.f.password.value)
+    this.serviceUtils.authProvider.getEnvService().login(this.f.username.value, this.f.password.value)
       .pipe(first())
       .subscribe({
         next: async () => {
-          await this.serviceUtils.authenficationProvider.getEnvService().loadCurrentUserDatas().toPromise().then();
+          await this.serviceUtils.authProvider.getEnvService().loadCurrentUserDatas().toPromise().then();
           this.serviceUtils.userConfigurationService.password = this.f.password.value;
           this.serviceUtils.userConfigurationService.passwordStateService.setStateToValid();
           this.serviceUtils.router

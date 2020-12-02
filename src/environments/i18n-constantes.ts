@@ -21,6 +21,7 @@ export const i18nConstantes = {
   cancel: 'cancel',
   actions: 'actions',
   createdAt: 'createdAt',
+  date: 'date',
   yes: 'yes',
   no: 'no',
   search: 'search',

@@ -20,6 +20,10 @@ export abstract class ComponentCommon implements OnInit, OnDestroy {
   readonly helpers = Helpers;
   readonly rolesConstantes = Roles;
   visibleConfirmPassword = false;
+  deleteAllConfirmDialogMessage = '';
+  deleteConfirmDialogHeader = '';
+  deleteConfirmDialogMessage = '';
+  event: Event;
 
   yesLabel: string;
   noLabel: string;
@@ -33,6 +37,12 @@ export abstract class ComponentCommon implements OnInit, OnDestroy {
     return this.serviceUtils
       && this.serviceUtils.userConfigurationService
       && this.serviceUtils.userConfigurationService.isValidPassword;
+  }
+
+  get lastPasswordObject(): {password: string} {
+    return {password: this.serviceUtils
+        && this.serviceUtils.userConfigurationService
+        && this.serviceUtils.userConfigurationService.password};
   }
 
   get lastPassword(): string {
@@ -51,19 +61,14 @@ export abstract class ComponentCommon implements OnInit, OnDestroy {
   getLabels(): void {
     this.serviceUtils.translate.get(this.i18nConstantes.yes).toPromise().then(value => this.yesLabel = value);
     this.serviceUtils.translate.get(this.i18nConstantes.no).toPromise().then(value => this.noLabel = value);
+    this.serviceUtils.translate.get(this.i18nConstantes.deleteAllConfirmDialogMessage)
+      .toPromise().then(value => this.deleteAllConfirmDialogMessage = value);
+    this.serviceUtils.translate.get(this.i18nConstantes.deleteConfirmDialogHeader)
+      .toPromise().then(value => this.deleteConfirmDialogHeader = value);
+    this.serviceUtils.translate.get(this.i18nConstantes.deleteConfirmDialogMessage)
+      .toPromise().then(value => this.deleteConfirmDialogMessage = value);
+
     this.serviceUtils.translate.get(i18nConstantes.errorMessage).toPromise().then(value => this.errorMessage = value);
-  }
-
-  deleteConfirmMessage(): Promise<string> {
-    return this.serviceUtils.translate.get(this.i18nConstantes.deleteConfirmDialogMessage).toPromise();
-  }
-
-  deleteAllConfirmMessage(): Promise<string> {
-    return this.serviceUtils.translate.get(this.i18nConstantes.deleteAllConfirmDialogMessage).toPromise();
-  }
-
-  deleteConfirmMessageHeader(): Promise<string> {
-    return this.serviceUtils.translate.get(this.i18nConstantes.deleteConfirmDialogHeader).toPromise();
   }
 
   i18nElement(value: string): string {
@@ -114,15 +119,21 @@ export abstract class ComponentCommon implements OnInit, OnDestroy {
     if (!this.serviceUtils) {
       return false;
     }
-    return this.helpers.hasRole(this.serviceUtils.authenficationProvider.getEnvService().rolesSubject.value, role);
+    return this.helpers.hasRole(this.serviceUtils.authProvider.getEnvService().rolesSubject.value, role);
   }
 
   hasEveryRoles(roles: string[]): boolean {
-    return roles && roles.every(role => this.hasRole(role));
+    if (!this.serviceUtils) {
+      return false;
+    }
+    return Helpers.hasEveryRoles(this.serviceUtils.authProvider.getEnvService().rolesSubject.value, roles);
   }
 
   haseSomeRoles(roles: string[]): boolean {
-    return roles && roles.some(role => this.hasRole(role));
+    if (!this.serviceUtils) {
+      return false;
+    }
+    return Helpers.haseSomeRoles(this.serviceUtils.authProvider.getEnvService().rolesSubject.value, roles);
   }
 
   async shoWConfirmDialog(message: Promise<string> | string, header: Promise<string> | string, commande: () => any): Promise<void> {
@@ -139,7 +150,27 @@ export abstract class ComponentCommon implements OnInit, OnDestroy {
     });
   }
 
-  enablePasswordConfirmation(...data: any): void {
+  async confirmPopup(event: Event,
+                     message: Promise<string> | string,
+                     accept: () => any,
+                     reject?: () => any,
+                     acceptLabel: Promise<string> | string = this.yesLabel,
+                     rejectLabel: Promise<string> | string = this.noLabel,
+                     icon: Promise<string> | string = this.constantes.warningIcon): Promise<void> {
+    console.log('Class: ComponentCommon, Function: confirmPopup, Line 148 , event: '
+    , event);
+    this.serviceUtils.confirmationService.confirm({
+      target: event.target,
+      message:  await message,
+      acceptLabel: await acceptLabel,
+      rejectLabel: await rejectLabel,
+      icon: await icon,
+      accept,
+      reject,
+    });
+  }
+
+  enablePasswordConfirmation(data?: any): void {
     this.visibleConfirmPassword = true;
   }
 

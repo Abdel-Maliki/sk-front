@@ -7,7 +7,7 @@ import {HttpauthentificationService} from '../service/httpauthentification-servi
 import {AuthentificationInterface} from '../types/authentification-interface';
 
 @Injectable({providedIn: 'root'})
-export class AuthenficationProvider {
+export class AuthProvider {
   constructor(private httpauthentificationService: HttpauthentificationService) {
   }
 

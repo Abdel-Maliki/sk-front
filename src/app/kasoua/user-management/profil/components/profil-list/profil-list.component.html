@@ -16,7 +16,7 @@
       <button *ngIf="hasRole(rolesConstantes.DELETE_PROFILE)" [disabled]="validateEntries().length === 0" pButton pRipple
               icon="pi pi-trash"
               class="p-button-danger"
-              (click)="deleteAllConfimation()"></button>
+              (click)="deleteAllPopupConfirm($event)"></button>
     </div>
 
     <ng-template pTemplate="right">

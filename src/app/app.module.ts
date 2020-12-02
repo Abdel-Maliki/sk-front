@@ -23,6 +23,7 @@ import { LoginComponent } from './front/component/login/login.component';
 import {JwtInterceptor} from './front/service/jwt-interceptor';
 import {ErrorInterceptor} from './front/service/error-interceptor';
 import { LoaderComponent } from './front/component/loader/loader.component';
+import {ConfirmPopupModule} from 'primeng/confirmpopup';
 
 const socketIoConfig: SocketIoConfig = { url: 'http://localhost:5000', options: {} };
 
@@ -34,29 +35,30 @@ const socketIoConfig: SocketIoConfig = { url: 'http://localhost:5000', options: 
     LoginComponent,
     LoaderComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    SocketIoModule.forRoot(socketIoConfig),
-    ReactiveFormsModule,
-    HttpClientModule,
-    ToastModule,
-    CalendarModule,
-    TooltipModule,
-    AutoCompleteModule,
-    RippleModule,
-    TranslateModule.forRoot({
-      defaultLanguage: 'fr',
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
-    }),
-    ProgressBarModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        FormsModule,
+        SocketIoModule.forRoot(socketIoConfig),
+        ReactiveFormsModule,
+        HttpClientModule,
+        ToastModule,
+        CalendarModule,
+        TooltipModule,
+        AutoCompleteModule,
+        RippleModule,
+        TranslateModule.forRoot({
+            defaultLanguage: 'fr',
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        }),
+        ProgressBarModule,
+        ConfirmPopupModule
+    ],
   providers: [
     MessageService,
     ConfirmationService,

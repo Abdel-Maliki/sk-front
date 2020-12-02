@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {environment} from '../../../environments/environment';
-import {AuthenficationProvider} from '../classe/authenfication-provider';
+import {AuthProvider} from '../classe/authentification-provider.service';
 
 
 /**
@@ -12,10 +12,10 @@ import {AuthenficationProvider} from '../classe/authenfication-provider';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-  constructor(private authenficationProvider: AuthenficationProvider) { }
+  constructor(private authProvider: AuthProvider) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token: string = this.authenficationProvider.getEnvService().token;
+    const token: string = this.authProvider.getEnvService().token;
     const isApiUrl = request.url.startsWith(environment.apiUrl);
     if (token && token.trim().length > 0 && isApiUrl) {
       request = request.clone({

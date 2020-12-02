@@ -20,39 +20,37 @@ export interface InterfaceService<T> {
   pageSubscrption: Subscription;
   INVALID_PASSWORD_MESSAGE: string;
 
-  get(id: number): Promise<ResponseWrapper<T>>;
+  get(id: number| string): Promise<ResponseWrapper<T>>;
 
-  getAll(...others): Promise<ResponseWrapper<T[]>>;
+  getAll(others?: any): Promise<ResponseWrapper<T[]>>;
 
-  pageElements(pagination: Pagination, ...others): Promise<ResponseWrapper<T[]>>;
+  pageElements(pagination: Pagination, others?: any): Promise<ResponseWrapper<T[]>>;
 
-  create(entity: T, ...others): Promise<ResponseWrapper<T>>;
+  create(entity: T, others?: any): Promise<ResponseWrapper<T>>;
 
-  update(entity: T, id: number | string, ...others): Promise<ResponseWrapper<T>>;
+  update(entity: T, id: number | string, others?: any): Promise<ResponseWrapper<T>>;
 
   delete(id: number | string, ...data: any): Promise<ResponseWrapper<T>>;
 
-  createAndGet(data: { entity: T, pagination: Pagination }, ...others): Promise<ResponseWrapper<T[]>>;
+  createAndGet(data: { entity: T, pagination: Pagination }, others?: any): Promise<ResponseWrapper<T[]>>;
 
-  updateAndGet(data: { entity: T, pagination: Pagination }, id: number | string, ...others): Promise<ResponseWrapper<T[]>>;
+  updateAndGet(data: { entity: T, pagination: Pagination }, id: number | string, others?: any): Promise<ResponseWrapper<T[]>>;
 
-  deleteAndGet(pagination: Pagination, id: number | string, ...others): Promise<ResponseWrapper<T[]>>;
+  deleteAndGet(pagination: Pagination, id: number | string, others?: any): Promise<ResponseWrapper<T[]>>;
 
-  deleteAllAndGet?(entities: T[], pagination: Pagination, ...others): Promise<ResponseWrapper<T[]>>;
+  deleteAllAndGet?(entities: T[], pagination: Pagination, others?: any): Promise<ResponseWrapper<T[]>>;
 
-  resolverFormJob(route: ActivatedRouteSnapshot, id?: string, ...others): Promise<ResponseWrapper<T>>;
+  resolverFormJob(route: ActivatedRouteSnapshot, id?: string, others?: any): Promise<ResponseWrapper<T>>;
 
-  search?(...param: any): Promise<ResponseWrapper<T[]>>;
+  saveAll?(entities: T[], others?: any): Promise<ResponseWrapper<T[]>>;
 
-  saveAll?(entities: T[], ...others): Promise<ResponseWrapper<T[]>>;
+  updateAll?(entities: T[], others?: any): Promise<ResponseWrapper<T[]>>;
 
-  updateAll?(entities: T[], ...others): Promise<ResponseWrapper<T[]>>;
+  deleteAll?(entities: T[], others?: any): Promise<ResponseWrapper<T[]>>;
 
-  deleteAll?(entities: T[], ...others): Promise<ResponseWrapper<T[]>>;
+  snapshot?(id: number, others?: any): Observable<ResponseWrapper<T>>;
 
-  snapshot?(id: number, ...others): Observable<ResponseWrapper<T>>;
-
-  snapshots?(...others): Observable<ResponseWrapper<T[]>>;
+  snapshots?(others?: any): Observable<ResponseWrapper<T[]>>;
 
   getPath(): string;
 }

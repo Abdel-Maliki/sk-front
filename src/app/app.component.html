@@ -1,4 +1,5 @@
 <p-toast position="bottom-right" [key]="constantes.defaultNotificationKey"></p-toast>
+<p-confirmPopup></p-confirmPopup>
 <div class="layout-wrapper">
   <app-topbar *ngIf="configService.getConfig().toolbare" [active]="menuActive" (menuButtonClick)="onMenuButtonClick()"></app-topbar>
   <app-menu-left *ngIf="configService.getConfig().menuLeft" [active]="menuActive"></app-menu-left>

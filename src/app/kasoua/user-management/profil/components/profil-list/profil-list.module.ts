@@ -5,6 +5,7 @@ import {ProfilListRoutingModule} from './profil-list-routing.module';
 import {SharedModule} from '../../../../../shared/shared.module';
 import {ProfilFormModule} from '../profil-form/profil-form.module';
 import {ProfilRoleModule} from '../profil-role/profil-role.module';
+import {CanActiveProfil} from '../../service/can-active-profil';
 
 
 @NgModule({
@@ -15,6 +16,7 @@ import {ProfilRoleModule} from '../profil-role/profil-role.module';
     SharedModule,
     ProfilFormModule,
     ProfilRoleModule,
-  ]
+  ],
+  providers: [CanActiveProfil],
 })
 export class ProfilListModule { }

@@ -20,7 +20,7 @@ import {RadioButtonModule} from 'primeng/radiobutton';
 import {ToolbarModule} from 'primeng/toolbar';
 import {FileUploadModule} from 'primeng/fileupload';
 import {TabViewModule} from 'primeng/tabview';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MenuModule} from 'primeng/menu';
 import {ModalButtonComponent} from './component/modal-button/modal-button.component';
 import {TranslateModule} from '@ngx-translate/core';
@@ -29,6 +29,9 @@ import {CommonModule} from '@angular/common';
 import {PanelMenuModule} from 'primeng/panelmenu';
 import {CheckboxModule} from 'primeng/checkbox';
 import {ConfirmPasswordComponent} from './component/confirm-password/confirm-password.component';
+import {ConfirmPopupModule} from 'primeng/confirmpopup';
+import {TriStateCheckboxModule} from 'primeng/tristatecheckbox';
+
 
 
 @NgModule({
@@ -61,6 +64,7 @@ import {ConfirmPasswordComponent} from './component/confirm-password/confirm-pas
     TranslateModule,
     PanelMenuModule,
     CheckboxModule,
+    ConfirmPopupModule,
   ],
 
   exports: [
@@ -93,6 +97,9 @@ import {ConfirmPasswordComponent} from './component/confirm-password/confirm-pas
     PanelMenuModule,
     CheckboxModule,
     ConfirmPasswordComponent,
+    ConfirmPopupModule,
+    FormsModule,
+    TriStateCheckboxModule,
   ]
 })
 export class SharedModule {

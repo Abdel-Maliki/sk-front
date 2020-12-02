@@ -200,34 +200,48 @@ export class UserListComponent extends AbstractListComponent<UserDomain, Interfa
     if (!this.currentAction) {
       return;
     }
-    if (this.currentAction === Action.ENABLE) {
-      await this.activateAccount();
-    } else if (this.currentAction === Action.DISABLE) {
-      await this.disableAccount();
-    } else if (this.currentAction === Action.DISABLE_ALL) {
-      await this.disableAllAccount();
-    } else if (this.currentAction === Action.ENABLE_ALL) {
-      await this.activateAllAccount();
-    } else if (this.currentAction === Action.DELETE) {
-      await this.deleteAndGet(this.entity, this.lastPassword);
-    } else if (this.currentAction === Action.DELETE_ALL) {
-      await this.deleteAllAndGet(this.selectedEntities, this.pagination, this.lastPassword);
-    } else if (this.currentAction === Action.RESET) {
-      await this.resetPassword();
-    } else if (this.currentAction === Action.FOR_ACTION) {
-      await this
-        .saveOrUpdate(this.lastPassword)
-        .then(() => this.disablePasswordConfirmation())
-        .catch((reason: ResponseWrapper<any>) => {
-          if (reason.error && reason.error.message && reason.error.message !== this.provider.getEnvService().INVALID_PASSWORD_MESSAGE) {
-            this.disablePasswordConfirmation();
-          }
-        });
-    }
 
-    if (this.currentAction !== Action.FOR_ACTION) {
-      this.disablePasswordConfirmation();
-
+    switch (this.currentAction) {
+      case Action.ENABLE:
+        await this.activateAccount();
+        this.disablePasswordConfirmation();
+        break;
+      case Action.ENABLE_ALL:
+        await this.activateAllAccount();
+        this.disablePasswordConfirmation();
+        break;
+      case Action.DISABLE:
+        await this.disableAccount();
+        this.disablePasswordConfirmation();
+        break;
+      case Action.DISABLE_ALL:
+        await this.disableAllAccount();
+        this.disablePasswordConfirmation();
+        break;
+      case Action.DELETE:
+        await this.deleteAndGet(this.entity, this.lastPasswordObject);
+        this.disablePasswordConfirmation();
+        break;
+      case Action.DELETE_ALL:
+        await this.deleteAllAndGet(this.selectedEntities, this.pagination, this.lastPasswordObject);
+        this.disablePasswordConfirmation();
+        break;
+      case Action.RESET:
+        await this.resetPassword();
+        this.disablePasswordConfirmation();
+        break;
+      case Action.FOR_ACTION:
+        await this
+          .saveOrUpdate(this.lastPasswordObject)
+          .then(() => this.disablePasswordConfirmation())
+          .catch((reason: ResponseWrapper<any>) => {
+            if (reason.error && reason.error.message && reason.error.message !== this.provider.getEnvService().INVALID_PASSWORD_MESSAGE) {
+              this.disablePasswordConfirmation();
+            }
+          });
+        break;
+      default:
+        this.helpers.fail(this.currentAction);
     }
   }
 

@@ -3,6 +3,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {LoginComponent} from './front/component/login/login.component';
 import {AuthGuard} from './front/service/auth-guard';
 import {LoginGuard} from './front/service/login-guard';
+import {RouteConstantes} from '../environments/route-constantes';
 
 const routes: Routes = [
   {
@@ -17,9 +18,9 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },*/
   {
-    path: 'user-management',
+    path: RouteConstantes.USER_MANAGEMENT,
     loadChildren: () => import('./kasoua/user-management/user-management.module').then(m => m.UserManagementModule),
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
   },
   // otherwise redirect to home
   { path: '**', redirectTo: '' }

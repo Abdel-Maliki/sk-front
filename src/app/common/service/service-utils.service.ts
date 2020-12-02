@@ -4,7 +4,7 @@ import {AppConfigService} from './appconfigservice';
 import {ConfigurationService} from './configuration-service';
 import {UserConfigurationService} from './user-configuration.service';
 import {TranslateService} from '@ngx-translate/core';
-import {AuthenficationProvider} from '../../front/classe/authenfication-provider';
+import {AuthProvider} from '../../front/classe/authentification-provider.service';
 import {Router} from '@angular/router';
 import {ConfirmationService} from 'primeng/api';
 import {PasswordStateService} from './password-state-service';
@@ -16,7 +16,7 @@ import {PasswordStateService} from './password-state-service';
 
 @Injectable({providedIn: 'root'})
 export class ServiceUtils {
-  constructor(public authenficationProvider: AuthenficationProvider,
+  constructor(public authProvider: AuthProvider,
               public notificationService: NotificationService,
               public userConfigurationService: UserConfigurationService,
               public passwordStateService: PasswordStateService,

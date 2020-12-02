@@ -62,7 +62,7 @@ export class UserFormComponent extends AbstractFormComponent<UserDomain, Interfa
       userName: [this.entity.userName, [...this.reqMinMaxValidator()]],
       email: [this.entity.email, [...this.reqMinMaxValidator(), Validators.email]],
       profile: [this.entity.profile, []],
-      status: [this.entity.status === UserState.ACTIVE , []],
+      status: [this.entity.status === UserState.ACTIVE, []],
     });
   }
 
@@ -95,7 +95,7 @@ export class UserFormComponent extends AbstractFormComponent<UserDomain, Interfa
   }
 
   onKeyUp(search: string = ''): void {
-    this.profileProvider.getEnvService().search({global: search}).then(value => {
+    this.profileProvider.getEnvService().getAll().then(value => {
       this.profiles = value.data;
     });
   }
@@ -105,12 +105,15 @@ export class UserFormComponent extends AbstractFormComponent<UserDomain, Interfa
   }
 
   showActiveOption(): boolean {
-    if (this.entity.status === UserState.DESACTIVE || this.entity.status === UserState.BLOQUE) {
-      return this.helpers.hasRole(Object.values(this.rolesConstantes), this.rolesConstantes.ACTIVATE_ACCOUNT);
-    } else if (this.entity.status === UserState.ACTIVE) {
-      return this.helpers.hasRole(Object.values(this.rolesConstantes), this.rolesConstantes.DISABLED_ACCOUNT);
-    }else {
-      return false;
+    switch (this.entity.status) {
+      case UserState.ACTIVE:
+        return this.helpers.hasRole(Object.values(this.rolesConstantes), this.rolesConstantes.DISABLED_ACCOUNT);
+      case UserState.BLOQUE:
+        return this.helpers.hasRole(Object.values(this.rolesConstantes), this.rolesConstantes.ACTIVATE_ACCOUNT);
+      case UserState.DESACTIVE:
+        return this.helpers.hasRole(Object.values(this.rolesConstantes), this.rolesConstantes.ACTIVATE_ACCOUNT);
+      default:
+        this.helpers.fail(this.entity.status);
     }
   }
 }

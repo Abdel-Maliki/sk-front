@@ -55,6 +55,14 @@ export class ProfilRoleComponent extends AbstractComponent<ProfileDomaine, Inter
               this.buildItem(Roles.AFFECT_PROFILE_ROLE),
             ]
           },
+          {
+            label: 'Log',
+            icon: 'pi pi-fw pi-user',
+            items: [
+              this.buildItem(Roles.READ_LOG),
+              this.buildItem(Roles.DELETE_LOG),
+            ]
+          },
         ]
       },
     ];

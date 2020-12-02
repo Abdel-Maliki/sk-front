@@ -3,6 +3,7 @@
 <p-confirmDialog [position]="deleteConfirmDialogPosition" [key]="constantes.deleteConfirmDialogKey"
                  [baseZIndex]="10000"></p-confirmDialog>
 
+
 <div class="card" style="margin: 2rem">
   <p-toolbar styleClass="p-mb-4">
     <ng-template pTemplate="left">
@@ -11,19 +12,13 @@
     </ng-template>
 
     <div>
-      <button *ngIf="haseDeleteRole" [disabled]="validateEntries().length === 0" pButton pRipple icon="fa fa-trash fa-lg" class="p-button-danger p-mr-2"
-              (click)="deleteAllConfimation()"></button>
+      <button *ngIf="haseDeleteRole" [disabled]="validateEntries().length === 0" pButton pRipple
+              icon="fa fa-trash fa-lg" class="p-button-danger p-mr-2"
+              (click)="isValidPassword
+              ? deleteAllPopupConfirm($event, selectedEntities, pagination, lastPasswordObject)
+              : enablePasswordConfirmation({action: action.DELETE_ALL})"></button>
     </div>
-
-    <ng-template pTemplate="right">
-      <span class="p-input-icon-left">
-                        <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="dt.filterGlobal($event.target['value'], 'contains')"
-                               [placeholder]="(i18nConstantes.search | translate) + '...'"/>
-                    </span>
-    </ng-template>
   </p-toolbar>
-
 
   <p-table #dt [(selection)]="selectedEntities"
            [lazy]="true"
@@ -31,10 +26,9 @@
            (onSort)="onSort($event)"
            (onFilter)="onFilter($event)"
            [totalRecords]="provider.getEnvService().totalElement$ | async"
-           [resizableColumns]="true"
            columnResizeMode="expand"
            [loading]="loading"
-           [globalFilterFields]="['action','userName','createdAt','state','errorMessage']"
+           [globalFilterFields]="['action','userName','createdAt','state']"
            [paginator]="true"
            [rowHover]="true"
            [rowsPerPageOptions]="constantes.rowsPerPageOptions"
@@ -52,6 +46,9 @@
         <th style="width: 3rem">
           <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
         </th>
+        <th style="width: 9rem">
+          {{ fieldLabel('code') | translate}}
+        </th>
         <th pSortableColumn="action">{{ fieldLabel('action') | translate}}
           <p-sortIcon field="action"></p-sortIcon>
         </th>
@@ -67,31 +64,133 @@
           <p-sortIcon field="state"></p-sortIcon>
         </th>
 
-        <th pSortableColumn="errorMessage">{{ fieldLabel('errorMessage') | translate}}
-          <p-sortIcon field="errorMessage"></p-sortIcon>
+        <th>{{ fieldLabel('errorMessage') | translate}}
         </th>
 
-        <th *ngIf="showContextMenuOption()">{{i18nConstantes.actions | translate}}</th>
+        <th  style="width: 7rem" *ngIf="showContextMenuOption()">{{i18nConstantes.actions | translate}}</th>
       </tr>
+      <tr>
+        <th style="width: 3rem"></th>
+
+        <th>
+          <p-columnFilter field="code" [showClearButton]="true" [showMenu]="false">
+            <ng-template pTemplate="filter">
+              <p-multiSelect [placeholder]="fieldLabel('code') | translate" [emptyFilterMessage]="" selectedItemsLabel="{0} codes" [options]="codesOptions"
+                             [formControl]="codeControl"></p-multiSelect>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+
+        <th>
+          <p-columnFilter field="action" [showClearButton]="true" [showMenu]="false">
+            <ng-template pTemplate="filter">
+              <input [placeholder]="fieldLabel('action') | translate" pInputText type="text" [formControl]="actionControl"/>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+
+        <th (click)="getAllUsernames()">
+          <!--<p-columnFilter field="userName" [showClearButton]="true" [showMenu]="false">
+            <ng-template pTemplate="filter">
+              <p-multiSelect [options]="allUserNames" [(ngModel)]="allUserNames"></p-multiSelect>
+            </ng-template>
+          </p-columnFilter>-->
+
+          <p-columnFilter field="userName" [showClearButton]="true" [showMenu]="false">
+            <ng-template pTemplate="filter">
+              <p-multiSelect [placeholder]="i18nElement('users') | translate"  [emptyFilterMessage]="" selectedItemsLabel="{0} utilisateurs" [options]="allUserNames"
+                             [formControl]="usernamesControl"></p-multiSelect>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+
+        <th>
+          <p-columnFilter field="createdAt" [showClearButton]="true" [showMenu]="false">
+            <ng-template pTemplate="filter">
+              <p-calendar [placeholder]="i18nConstantes.date | translate" [showButtonBar]="true" [maxDate]="maxDateValue" dateFormat="dd/mm/yy"
+                          [formControl]="rangeDatesControl"
+                          selectionMode="range" [readonlyInput]="true" inputId="range"></p-calendar>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+
+        <!--<th>
+          <p-columnFilter field="status" [showClearButton]="true" [showMenu]="false">
+          <ng-template pTemplate="filter">
+            <p-triStateCheckbox [formControl]="statusControl"></p-triStateCheckbox>
+          </ng-template>
+          </p-columnFilter>
+        </th>-->
+
+        <th>
+          <p-columnFilter field="status" [showClearButton]="true" [showMenu]="false">
+            <ng-template pTemplate="filter">
+              <p-dropdown [formControl]="statusControl" [options]="[ALL_LABEL, LOG_STATE.SUCCESS, LOG_STATE.USER_ERROR, LOG_STATE.SERVER_ERROR]"
+                          [placeholder]="fieldLabel('state') | translate">
+                <ng-template pTemplate="selectedItem">
+                  <div *ngIf="statusControl.value">
+                    <span *ngIf="statusControl.value === ALL_LABEL" style="width: 100%" class="p-tag p-tag-info">{{ ALL_LABEL }}</span>
+                    <span *ngIf="statusControl.value === LOG_STATE.SUCCESS" style="width: 100%"
+                          class="p-tag p-tag-success">{{SUCCESS_LABEL}}</span>
+                    <span *ngIf="statusControl.value === LOG_STATE.USER_ERROR" style="width: 100%"
+                          class="p-tag p-tag-warning">{{USER_ERROR_LABEL}}</span>
+                    <span *ngIf="statusControl.value === LOG_STATE.SERVER_ERROR" style="width: 100%"
+                          class="p-tag p-tag-danger">{{  SERVER_ERROR_LABEL }}</span>
+                  </div>
+                </ng-template>
+
+                <ng-template let-option pTemplate="item">
+                  <span *ngIf="option === ALL_LABEL" style="width: 100%" class="p-tag p-tag-info">{{ ALL_LABEL }}</span>
+                  <span *ngIf="option === LOG_STATE.SUCCESS" style="width: 100%"
+                        class="p-tag p-tag-success">{{SUCCESS_LABEL}}</span>
+                  <span *ngIf="option === LOG_STATE.USER_ERROR" style="width: 100%"
+                        class="p-tag p-tag-warning">{{USER_ERROR_LABEL}}</span>
+                  <span *ngIf="option === LOG_STATE.SERVER_ERROR" style="width: 100%"
+                        class="p-tag p-tag-danger">{{  SERVER_ERROR_LABEL }}</span>
+
+                </ng-template>
+              </p-dropdown>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+
+        <th>
+          <p-columnFilter field="errorMessage" [showClearButton]="true" [showMenu]="false">
+            <ng-template pTemplate="filter">
+              <input pInputText type="text" [formControl]="errorMessageControl"/>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+
+        <th *ngIf="showContextMenuOption()"></th>
+      </tr>
+
     </ng-template>
     <ng-template pTemplate="body" let-log>
-      <tr (contextmenu)="setEntity(log, $event)" [pContextMenuRowDisabled]="!showItemContextMenu(log)" (click)="setEntity(log, $event)" [pContextMenuRow]="log">
+      <tr [pContextMenuRowDisabled]="!showItemContextMenu(log)" [pContextMenuRow]="log">
         <td>
           <p-checkbox *ngIf="!showItemContextMenu(log)" [disabled]="true"></p-checkbox>
           <p-tableCheckbox *ngIf="showItemContextMenu(log)" [value]="log"></p-tableCheckbox>
         </td>
-        <td>{{log.action}}</td>
-        <td>{{log.userName}}</td>
-        <td>{{dateHelpers.dateToDMYHMS(log.createdAt)}}</td>
-        <td>
-          <span style="min-width: 70%" *ngIf="log.state === LOG_STATE.SUCCESS" class="p-tag p-tag-success">{{SUCCESS_LABEL }}</span>
-          <span style="min-width: 70%" *ngIf="log.state === LOG_STATE.ERROR" class="p-tag p-tag-danger">{{ ERROR_LABEL}}</span>
+        <td (click)="enableDisplay(log)">{{log.code}}</td>
+        <td (click)="enableDisplay(log)">{{log.action}}</td>
+        <td (click)="enableDisplay(log)">{{log.userName}}</td>
+        <td (click)="enableDisplay(log)">{{dateHelpers.dateToDMYHMS(log.createdAt)}}</td>
+        <td (click)="enableDisplay(log)">
+          <span style="min-width: 100%" *ngIf="log.state === LOG_STATE.SUCCESS"
+                class="p-tag p-tag-success">{{SUCCESS_LABEL }}</span>
+          <span style="min-width: 100%" *ngIf="log.state === LOG_STATE.USER_ERROR"
+                class="p-tag p-tag-warning">{{ USER_ERROR_LABEL}}</span>
+          <span style="min-width: 100%" *ngIf="log.state === LOG_STATE.SERVER_ERROR"
+                class="p-tag p-tag-danger">{{ SERVER_ERROR_LABEL}}</span>
         </td>
-        <td>{{log.errorMessage}}</td>
+        <td (click)="enableDisplay(log)">{{log.errorMessage}}</td>
 
         <td *ngIf="showContextMenuOption()">
-          <button pButton pRipple type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text"
-                  (click)="setEntity(log,$event, menu)"></button>
+          <button pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                  (click)="isValidPassword
+                  ? deletePopupConfirm($event, log, lastPasswordObject)
+                  : enablePasswordConfirmation({action : action.DELETE, log: log})"></button>
         </td>
       </tr>
     </ng-template>
@@ -102,3 +201,15 @@
     </ng-template>
   </p-table>
 </div>
+
+<div *ngIf="showDisplay">
+  <app-log-display [visible]="showDisplay" [entity]="entity" (cancelEvent)="disableDisplay()"></app-log-display>
+</div>
+
+<app-confirm-password
+  [visible]="visibleConfirmPassword"
+  (validateEvent)="validateAction()"
+  (cancelEvent)="disablePasswordConfirmation()">
+</app-confirm-password>
+
+

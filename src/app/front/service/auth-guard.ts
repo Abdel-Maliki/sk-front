@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree} from '@angular/router';
+import {Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, CanLoad, UrlSegment, Route} from '@angular/router';
 import {Observable} from 'rxjs';
-import {AuthenficationProvider} from '../classe/authenfication-provider';
+import {AuthProvider} from '../classe/authentification-provider.service';
 import {AppConfigService} from '../../common/service/appconfigservice';
 
 
@@ -11,22 +11,30 @@ import {AppConfigService} from '../../common/service/appconfigservice';
  */
 
 @Injectable({ providedIn: 'root' })
-export class AuthGuard implements CanActivate {
+export class AuthGuard implements CanActivate, CanLoad {
   constructor(
     private router: Router,
-    private authenficationProvider: AuthenficationProvider,
+    private authProvider: AuthProvider,
     private appConfigService: AppConfigService
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):
     Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    const user = this.authenficationProvider.getEnvService().userValue;
+    return this.hasAuthentificated(state);
+  }
+
+  private hasAuthentificated(state: RouterStateSnapshot): boolean {
+    const user = this.authProvider.getEnvService().userValue;
     if (user) {
       this.appConfigService.updateConfig(
-        {...this.appConfigService.getConfig() , menuLeft: true, toolbare: true});
+        {...this.appConfigService.getConfig(), menuLeft: true, toolbare: true});
       return true;
     }
-    this.router.navigate(['/login'], { queryParams: { returnUrl: state.url }}).then();
+    this.router.navigate(['/login'], {queryParams: {returnUrl: state.url}}).then();
     return false;
+  }
+
+  canLoad(route: Route, segments: UrlSegment[]): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    return true;
   }
 }

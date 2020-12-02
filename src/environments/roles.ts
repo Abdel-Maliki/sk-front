@@ -9,6 +9,8 @@ export enum Roles {
   DELETE_USER = 'Supprimer un utilisateur',
   READ_USER = 'Lister les utilisateurs',
   RESET_PASSWORD = 'Réinitialiser un mot de passe',
+  ACTIVATE_ACCOUNT = 'Activer un compte',
+  DISABLED_ACCOUNT = 'Désactiver un compte',
 
 
   ADD_PROFILE = 'Créer un profile',
@@ -16,8 +18,6 @@ export enum Roles {
   DELETE_PROFILE = 'Supprimer un profile',
   READ_PROFILE = 'Lister les profiles',
   AFFECT_PROFILE_ROLE = 'Modifier les droits d\'un profile',
-  ACTIVATE_ACCOUNT = 'Activer un compte',
-  DISABLED_ACCOUNT = 'Désactiver un compte',
 
   DELETE_LOG = 'Supprimer un log',
   READ_LOG = 'Consulter les logs',

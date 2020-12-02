@@ -59,7 +59,7 @@ export class UpdatePasswordComponent extends AbstractFormComponent<UserDomain, I
       .then(response => {
         localStorage.setItem(constantes.storageToken, JSON.stringify(response.data.token));
         this.serviceUtils.userConfigurationService.password = this.form.get(this.newPassword).value;
-        this.serviceUtils.authenficationProvider.getEnvService().tokenSubject.next(response.data.token);
+        this.serviceUtils.authProvider.getEnvService().tokenSubject.next(response.data.token);
         this.serviceUtils.notificationService.showSuccess().then();
         this.saveEvent.emit(null);
       })

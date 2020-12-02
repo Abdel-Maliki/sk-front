@@ -22,12 +22,8 @@ export interface InterfaceUser extends InterfaceService<UserDomain> {
 
   updateMyPassword(oldPassword: string, newPassword: string): Promise<ResponseWrapper<{ token: string }>>;
 
-  delete(id: number | string, password: string): Promise<ResponseWrapper<UserDomain>>;
 
-  deleteAndGet(pagination: Pagination, id: number | string, password: string): Promise<ResponseWrapper<UserDomain[]>>;
 
-  deleteAllAndGet(entities: UserDomain[], pagination: Pagination, password: string): Promise<ResponseWrapper<UserDomain[]>>;
-
-  deleteAll(entities: UserDomain[], password: string): Promise<ResponseWrapper<UserDomain[]>>;
+  allUsernames(): Promise<ResponseWrapper<string[]>>;
 
 }

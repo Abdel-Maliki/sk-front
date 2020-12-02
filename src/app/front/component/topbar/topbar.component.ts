@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
 import {animate, AnimationEvent, style, transition, trigger} from '@angular/animations';
-import {AuthenficationProvider} from '../../classe/authenfication-provider';
+import {AuthProvider} from '../../classe/authentification-provider.service';
 
 @Component({
   selector: 'app-topbar',
@@ -40,7 +40,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   blue = 'saga-blue';
   purple = 'arya-blue';
 
-  constructor(private router: Router, protected authenficationProvider: AuthenficationProvider) {
+  constructor(private router: Router, protected authProvider: AuthProvider) {
   }
 
   ngOnInit(): void {
@@ -53,7 +53,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
-    this.authenficationProvider.getEnvService().logout();
+    this.authProvider.getEnvService().logout();
   }
 
   onMenuButtonClick(event: Event): void {

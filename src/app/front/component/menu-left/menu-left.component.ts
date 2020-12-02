@@ -38,8 +38,8 @@ export class MenuLeftComponent implements OnInit {
     new MenuCategory('categorie 1',
       [
         new MenuItem('Utilisateurs', 'user-management/users/list', 'fa fa-arrows'),
-        new MenuItem('Profile', 'user-management/profils/list', 'fa fa-car'),
-        new MenuItem('item3', '#', 'fa fa-cude'),
+        new MenuItem('Profiles', 'user-management/profils/list', 'fa fa-car'),
+        new MenuItem('Logs', 'user-management/logs/list', 'fa fa-cubes'),
       ]),
     new MenuCategory('categorie 2',
       [

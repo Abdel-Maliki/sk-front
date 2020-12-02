@@ -36,7 +36,7 @@ export class ProfileNodeService extends AbstractNodeService<ProfileDomaine> impl
   setRoles(id: number | string, roles: string[], password: string): Promise<void> {
     return new Promise((resolve, reject) => {
       this.mapQuery<string[]>(this.data.httpClient
-        .put<ResponseWrapper<string[]>>(this.getUrl(`set-roles/${id}`), {roles, password}, this.baseOption))
+        .put<ResponseWrapper<string[]>>(this.getUrl(`set-roles/${id}`), {roles, others: {password}}, this.baseOption))
         .then(() => {
           this.data.passwordStateService.setStateToValid();
           resolve();

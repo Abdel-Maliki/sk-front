@@ -9,6 +9,6 @@ import { UserManagementRoutingModule } from './user-management-routing.module';
   imports: [
     CommonModule,
     UserManagementRoutingModule
-  ]
+  ],
 })
 export class UserManagementModule { }

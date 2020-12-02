@@ -1,5 +1,5 @@
 import {AbstractEntity} from './abstract-entity';
-import {Directive, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Directive, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AbstractServiceProvider} from './abstract-service-provider';
 import {InterfaceService} from '../interface/interface-service';
 import {AbstractFormComponent} from './abstract-form-component';
@@ -29,6 +29,8 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
   entity: T;
   showFormDialog = false;
   @ViewChild('formComponent') formComponent: F;
+  @ViewChild('btn') btn: ElementRef;
+
   // @ViewChild('dt', {static: false}) table: Table;
   deleteConfirmDialogPosition = 'topright';
   loading = false;
@@ -43,7 +45,7 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
 
   modalUpdateItem: MenuItem = new MenuItemImp(this.editLabel(), 'fa fa-pencil  fa-lg', () => this.enableDialog(this.entity));
   rediredUpdateItem: MenuItem = new MenuItemImp(this.editLabel(), 'pi pi-refresh', () => this.goToForm('/' + this.entity.id));
-  DELETE_ITEM: MenuItem = new MenuItemImp(this.deleteLabel(), 'fa fa-trash fa-lg', () => this.deleteConfirmation());
+  DELETE_ITEM: MenuItem = new MenuItemImp(this.deleteLabel(), 'fa fa-trash fa-lg', () => this.deletePopupConfirm(this.event));
   modalItems: MenuItem[] = [this.modalUpdateItem, this.DELETE_ITEM];
   redirectItems: MenuItem[] = [this.rediredUpdateItem, this.DELETE_ITEM];
 
@@ -73,7 +75,7 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
       }
     });
 
-    this.rolesSubscription = this.serviceUtils.authenficationProvider.getEnvService().rolesSubject.subscribe(() => {
+    this.rolesSubscription = this.serviceUtils.authProvider.getEnvService().rolesSubject.subscribe(() => {
       this.checkRoles();
     });
   }
@@ -108,13 +110,13 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     return !!this.entity && !!this.entity.id;
   }
 
-  saveOrUpdate(...others): Promise<ResponseWrapper<T[]>> {
+  saveOrUpdate(others?: any): Promise<ResponseWrapper<T[]>> {
     return this.forUpdate()
       ? this.updateAndGet(this.pagination, this.entity, this.entity.id, others)
       : this.createAndGet(this.pagination, this.entity, others);
   }
 
-  save(entity: T = this.entity, ...others): Promise<ResponseWrapper<T>> {
+  save(entity: T = this.entity, others?: any): Promise<ResponseWrapper<T>> {
     return new Promise<ResponseWrapper<T>>((resolve, reject) => {
       if (this.formComponent) {
         this.formComponent.disabled = true;
@@ -132,7 +134,7 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     });
   }
 
-  update(id: number | string = this.entity.id, entity: T = this.entity, ...others): Promise<ResponseWrapper<T>> {
+  update(id: number | string = this.entity.id, entity: T = this.entity, others?: any): Promise<ResponseWrapper<T>> {
     return new Promise<ResponseWrapper<T>>((resolve, reject) => {
       if (this.formComponent) {
         this.formComponent.disabled = true;
@@ -150,14 +152,14 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     });
   }
 
-  createAndGet(pagination: Pagination = this.pagination, entity: T = this.entity, ...others): Promise<ResponseWrapper<T[]>> {
+  createAndGet(pagination: Pagination = this.pagination, entity: T = this.entity, others?: any): Promise<ResponseWrapper<T[]>> {
     return new Promise<ResponseWrapper<T[]>>((resolve, reject) => {
       if (this.formComponent) {
         this.formComponent.disabled = true;
-        this.formComponent.createAndGet(pagination, entity, others).then(async (value) => {
+        this.formComponent.createAndGet(pagination, entity, others).then((value) => {
           this.normaliseSelected();
           this.disabledDialog();
-          reject(value);
+          resolve(value);
           this.serviceUtils.notificationService.showSuccess().then();
         }, (error) => {
           this.formComponent.disabled = false;
@@ -169,7 +171,7 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     });
   }
 
-  updateAndGet(pagination: Pagination = this.pagination, entity: T = this.entity, id: number | string = this.entity.id, ...others)
+  updateAndGet(pagination: Pagination = this.pagination, entity: T = this.entity, id: number | string = this.entity.id, others?: any)
     : Promise<ResponseWrapper<T[]>> {
     return new Promise<ResponseWrapper<T[]>>((resolve, reject) => {
       if (this.formComponent) {
@@ -193,7 +195,7 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     return !this.formComponent || this.formComponent.isNotValidForm() || this.formComponent.disabled;
   }
 
-  delete(entity: T, ...others): Promise<ResponseWrapper<T>> {
+  delete(entity: T, others?: any): Promise<ResponseWrapper<T>> {
     return new Promise<ResponseWrapper<T>>((resolve, reject) => {
       this.provider.getEnvService().delete(entity.id, others).then(async (value) => {
         await this.reload(this.pagination, others);
@@ -203,23 +205,23 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     });
   }
 
-  async deleteAndGet(entity: T = this.entity, ...others): Promise<ResponseWrapper<T[]>> {
+  async deleteAndGet(entity: T = this.entity, others?: any): Promise<ResponseWrapper<T[]>> {
     const data = await this.provider.getEnvService().deleteAndGet(this.pagination, entity.id, others);
     this.normaliseSelected();
     this.serviceUtils.notificationService.showSuccess().then();
     return data;
   }
 
-  async deleteAllAndGet(entities: T[] = this.selectedEntities, pagination: Pagination = this.pagination, ...others)
+  async deleteAllAndGet(selectedEntities: T[] = this.selectedEntities, pagination: Pagination = this.pagination, others?: any)
     : Promise<ResponseWrapper<T[]>> {
     const data = await this.provider.getEnvService()
-      .deleteAllAndGet(entities.filter(entity => this.showItemContextMenu(entity)), pagination, others);
+      .deleteAllAndGet(selectedEntities.filter(entity => this.showItemContextMenu(entity)), pagination, others);
     this.normaliseSelected();
     this.serviceUtils.notificationService.showSuccess().then();
     return data;
   }
 
-  async deleteAll(entities: T[] = this.selectedEntities, ...others): Promise<ResponseWrapper<T[]>> {
+  async deleteAll(entities: T[] = this.selectedEntities, others?: any): Promise<ResponseWrapper<T[]>> {
     const data = await this.provider.getEnvService().deleteAll(entities.filter(entity => this.showItemContextMenu(entity)), others);
     await this.reload(this.pagination, others);
     this.serviceUtils.notificationService.showSuccess().then();
@@ -227,6 +229,7 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
   }
 
   async setEntity(entity: T, event?: UIEvent, menu?: Menu): Promise<void> {
+    this.event = event;
     await this.rebuildMenuItem(entity);
     this.entity = Object.assign({}, entity);
     if (menu && event && this.showItemContextMenu(entity)) {
@@ -235,12 +238,13 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     if (event) {
       event.preventDefault();
     }
+
   }
 
   async deleteConfirmation(): Promise<void> {
     this.serviceUtils.confirmationService.confirm({
-      message: await this.deleteConfirmMessage(),
-      header: await this.deleteConfirmMessageHeader(),
+      message: this.deleteConfirmDialogMessage,
+      header: this.deleteConfirmDialogHeader,
       acceptLabel: this.yesLabel,
       rejectLabel: this.noLabel,
       icon: this.constantes.deleteConfirmDialogIcon,
@@ -251,34 +255,36 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
     });
   }
 
-  async deleteAllConfimation(): Promise<void> {
-    this.serviceUtils.confirmationService.confirm({
-      message: await this.deleteAllConfirmMessage(),
-      header: await this.deleteConfirmMessageHeader(),
-      acceptLabel: this.yesLabel,
-      rejectLabel: this.noLabel,
-      icon: this.constantes.deleteConfirmDialogIcon,
-      accept: () => this.deleteAllAndGet(),
-      reject: () => {
-      },
-      key: this.constantes.deleteConfirmDialogKey,
-    });
+  async deletePopupConfirm(event: Event, entity: T = this.entity, others?: any): Promise<void> {
+    this.entity = entity;
+    await this.confirmPopup(event, this.deleteConfirmDialogMessage, () => this.deleteAndGet(entity, others));
   }
 
-  onPage(event: { first: number; rows: number }, ...others): Promise<ResponseWrapper<T[]>> {
+  async deleteAllPopupConfirm(event: Event,
+                              selectedEntities: T[] = this.selectedEntities,
+                              pagination: Pagination = this.pagination,
+                              others?: any)
+    : Promise<void> {
+    this.selectedEntities = selectedEntities;
+    this.pagination = pagination;
+    await this.confirmPopup(event, this.deleteAllConfirmDialogMessage,
+      () => this.deleteAllAndGet(selectedEntities, pagination, others));
+  }
+
+  onPage(event: { first: number; rows: number }, others?: any): Promise<ResponseWrapper<T[]>> {
     this.pagination.page = event.first === 0 ? 0 : +event.first / +event.rows;
     this.pagination.size = event.rows;
     return this.reload(this.pagination, others).then();
   }
 
-  onSort(event: SortEvent, ...others): Promise<ResponseWrapper<T[]>> {
+  onSort(event: SortEvent, others?: any): Promise<ResponseWrapper<T[]>> {
     this.pagination.page = 0;
     this.pagination.sort = event.field;
     this.pagination.direction = event.order;
     return this.reload(this.pagination, others).then();
   }
 
-  onFilter(event: { filteredValue: T[]; filters?: { [s: string]: FilterMetadata; } }, key: string = 'global', ...others)
+  onFilter(event: { filteredValue: T[]; filters?: { [s: string]: FilterMetadata; } }, key: string = 'global', others?: any)
     : Promise<ResponseWrapper<T[]>> {
 
     if (key === constantes.globalFiltered) {
@@ -290,7 +296,7 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
 
   // LazyLoadEvent
 
-  reload(pagination: Pagination = this.pagination, ...others): Promise<ResponseWrapper<T[]>> {
+  reload(pagination: Pagination = this.pagination, others?: any): Promise<ResponseWrapper<T[]>> {
     const timer = setTimeout(() => this.loading = true, 230);
     return new Promise<ResponseWrapper<T[]>>((resolve, reject) => {
       this.provider.getEnvService().pageElements(pagination, others)
@@ -338,5 +344,13 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
   }
 
   checkRoles(): void {
+  }
+
+  getErrorMessageAndNext<ERROR>(responseWrapper: ResponseWrapper<ERROR>): string | null {
+    if (responseWrapper && responseWrapper.error && responseWrapper.error.message){
+      this.provider.getEnvService().error$.next(responseWrapper.error.message);
+      return responseWrapper.error.message;
+    }
+    return;
   }
 }

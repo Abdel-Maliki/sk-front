@@ -1,0 +1,167 @@
+<p-dialog (onShow)="onShow()" (onHide)="cancelEvent.emit()"
+          [maximizable]="true" [baseZIndex]="10000" [(visible)]="visible" [draggable]="false" [resizable]="false"
+          [style]="{width: '50vw'}"
+          [header]="'inputPassword' | translate" [modal]="true" styleClass="p-fluid">
+  <ng-template pTemplate="content">
+
+    <div class="p-field">
+      <label for="url">{{ fieldLabel('url') | translate }}</label>
+      <input [value]="entity.url" type="text" id="url" pInputText readonly/>
+    </div>
+
+    <div class="p-formgrid p-grid">
+
+      <div class="p-field p-col">
+        <label for="action">{{ fieldLabel('action') | translate }}</label>
+        <input [value]="entity.action" pInputText id="action" readonly/>
+      </div>
+    </div>
+
+    <div class="p-formgrid p-grid">
+
+      <div class="p-field p-col">
+        <label for="userName">{{ fieldLabel('userName') | translate }}</label>
+        <input [value]="entity.userName" pInputText id="userName" readonly/>
+      </div>
+
+      <div class="p-field p-col">
+        <label for="date">{{ i18nConstantes.createdAt | translate }}</label>
+        <input [value]="dateHelpers.dateToDMYHMS(entity.createdAt)" type="text" id="date" pInputText readonly/>
+      </div>
+
+      <div class="p-field p-col">
+        <label for="elementId">{{ fieldLabel('elementId') | translate }}</label>
+        <input [value]="entity.elementId" type="text" id="elementId" pInputText readonly/>
+      </div>
+    </div>
+
+
+    <div class="p-formgrid p-grid">
+      <div class="p-field p-col">
+        <label for="method">{{ fieldLabel('method') | translate }}</label>
+        <input [value]="entity.method" type="text" id="method" pInputText readonly/>
+      </div>
+
+      <div class="p-field p-col">
+        <label for="ipAddress">{{ fieldLabel('ipAddress') | translate }}</label>
+        <input [value]="entity.ipAddress" type="text" id="ipAddress" pInputText readonly/>
+      </div>
+
+      <div class="p-field p-col">
+        <label for="host">{{ fieldLabel('host') | translate }}</label>
+        <input [value]="entity.host" type="text" id="host" pInputText readonly/>
+      </div>
+
+
+    </div>
+    <div class="p-formgrid p-grid">
+      <div class="p-field p-col">
+        <label for="code">{{ fieldLabel('code') | translate }}</label>
+        <input [value]="entity.code" type="text" id="code" pInputText readonly/>
+      </div>
+
+      <div class="p-field p-col">
+        <label for="status">{{ fieldLabel('state') | translate }}</label>
+        <input [value]="entity.state" type="text" id="status" pInputText readonly/>
+      </div>
+
+      <div class="p-field p-col">
+        <label for="time">{{ fieldLabel('time') | translate }}</label>
+        <input [value]="entity.time" type="text" id="time" pInputText readonly/>
+      </div>
+
+
+    </div>
+
+
+    <div class="p-formgrid p-grid">
+
+      <div class="p-field p-col">
+        <label for="clientType">{{ fieldLabel('clientType') | translate }}</label>
+        <input [value]="device && device.client ? device.client.type : ''" type="text" id="clientType" pInputText
+               readonly/>
+      </div>
+
+      <div class="p-field p-col">
+        <label for="clientName">{{ fieldLabel('clientName') | translate }}</label>
+        <input [value]="device && device.client ? device.client.name : ''" type="text" id="clientName" pInputText
+               readonly/>
+      </div>
+
+      <div class="p-field p-col">
+        <label for="clientVersion">{{ fieldLabel('clientVersion') | translate }}</label>
+        <input [value]="device && device.client ? device.client.version : ''" type="text" id="clientVersion" pInputText
+               readonly/>
+      </div>
+
+      <!--<div class="p-field p-col">
+        <label for="clientEngine">{{ fieldLabel('clientEngine') | translate }}</label>
+        <input [value]="device && device.client ? device.client.engine : ''" type="text" id="clientEngine" pInputText
+               readonly/>
+      </div>
+
+      <div class="p-field p-col">
+        <label for="engineVersion">{{ fieldLabel('engineVersion') | translate }}</label>
+        <input [value]="device && device.client ? device.client.engineVersion : ''" type="text" id="engineVersion"
+               pInputText readonly/>
+      </div>-->
+
+    </div>
+
+    <div class="p-formgrid p-grid">
+
+      <div class="p-field p-col">
+        <label for="deviceBrand">{{ fieldLabel('deviceBrand') | translate }}</label>
+        <input [value]="device && device.device ? device.device.brand : ''" type="text" id="deviceBrand" pInputText
+               readonly/>
+      </div>
+
+      <div class="p-field p-col">
+        <label for="deviceType">{{ fieldLabel('deviceType') | translate }}</label>
+        <input [value]="device && device.device ? device.device.type : ''" type="text" id="deviceType" pInputText
+               readonly/>
+      </div>
+
+      <div class="p-field p-col">
+        <label for="deviceModel">{{ fieldLabel('deviceModel') | translate }}</label>
+        <input [value]="device && device.device ? device.device.model : ''" type="text" id="deviceModel" pInputText
+               readonly/>
+      </div>
+    </div>
+
+    <div class="p-formgrid p-grid">
+
+      <div class="p-field p-col">
+        <label for="osName">{{ fieldLabel('osName') | translate }}</label>
+        <input [value]="device && device.os ? device.os.name : ''" type="text" id="osName" pInputText readonly/>
+      </div>
+
+      <div class="p-field p-col">
+        <label for="osVersion">{{ fieldLabel('osVersion') | translate }}</label>
+        <input [value]="device && device.os ? device.os.version : ''" type="text" id="osVersion" pInputText readonly/>
+      </div>
+
+      <div class="p-field p-col">
+        <label for="osPlatform">{{ fieldLabel('osPlatform') | translate }}</label>
+        <input [value]="device && device.os ? device.os.platform : ''" type="text" id="osPlatform" pInputText readonly/>
+      </div>
+
+    </div>
+
+    <div class="p-field">
+      <label for="errorMessage">{{ fieldLabel('errorMessage') | translate }}</label>
+      <input [value]="entity.errorMessage" pInputText id="errorMessage" readonly/>
+    </div>
+
+    <div class="p-field">
+      <textarea label="Exception" readonly [value]="entity.serverError" rows="5" cols="30" pInputTextarea
+                autoResize="autoResize"></textarea>
+    </div>
+
+
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <p-button icon="pi pi-check" (click)="cancelEvent.emit()" label="Ok" styleClass="p-button-text"></p-button>
+  </ng-template>
+</p-dialog>

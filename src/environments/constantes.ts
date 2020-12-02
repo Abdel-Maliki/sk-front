@@ -6,6 +6,7 @@
 export const constantes = {
   deleteConfirmDialogPosition: 'topright',
   deleteConfirmDialogIcon : 'pi pi-info-circle',
+  warningIcon : 'pi pi-exclamation-triangle',
   deleteConfirmDialogKey : 'deleteDialog',
   defaultNotificationKey  : 'defaultKey',
   rowsPerPageOptions : [10, 25, 50],

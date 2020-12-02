@@ -15,6 +15,7 @@
   "cancel": "Annuler",
   "actions": "Actions",
   "createdAt": "Date de création",
+  "date": "Date",
   "toatalElement": "totale {{ value }}",
   "maxCharError": "le nombre de caractères doit ne doit pas dépasser {{ max }}",
   "minCharError": "le nombre minimum de caractères est {{ min }}",
@@ -22,6 +23,7 @@
   "no": "Nom",
   "confirmPassWord": "Nom",
   "search": "Recherche",
+  "allLabel": "Tout",
   "profile": {
     "fields": {
       "name": "Nom",
@@ -84,11 +86,31 @@
       "errorMessage": "Message d'erreur",
       "action": "Action",
       "userName": "Nom d'utilisateur",
-      "state": "Statut"
+      "state": "Statut",
+      "code": "Code",
+      "host": "host",
+      "method": "Methode",
+      "ipAddress": "Adresse IP",
+      "time": "Temps",
+      "url": "URL",
+      "elementId": "Element Id",
+      "clientName": "Nom client",
+      "clientType": "Type client",
+      "clientVersion": "Version client",
+      "clientEngine": "Moteur",
+      "engineVersion": "Version Moteur",
+      "deviceBrand": "Marque de l'appareil",
+      "deviceModel": "Modèle d'appareil",
+      "deviceType": "Type d'appareil",
+      "osName": "Nom de l'os",
+      "osPlatform": "Platforme",
+      "osVersion": "Version de l'os"
     },
     "title": "LISTE DE LOGS",
     "successLabel": "SUCCES",
-    "errorLabel": "ERROR"
+    "userErrorLabel": "ERREUR UTILISATEUR",
+    "serverErrorLabel": "ERREUR SERVEUR",
+    "users": "Utilisateurs"
   }
 
 

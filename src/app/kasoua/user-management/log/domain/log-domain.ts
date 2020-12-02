@@ -5,7 +5,7 @@
 
 import {AbstractEntity} from '../../../../common/abstract/abstract-entity';
 
-export enum LogState {SUCCESS = 'SUCCESS', ERROR = 'ERROR'}
+export enum LogState {SUCCESS = 'SUCCESS', USER_ERROR = 'USER_ERROR', SERVER_ERROR = 'SERVER_ERROR' }
 
 export class LogDomain extends AbstractEntity<LogDomain>{
   action?: string | null;
@@ -20,4 +20,5 @@ export class LogDomain extends AbstractEntity<LogDomain>{
   time?: number | null;
   host?: string | null;
   errorMessage?: string | null;
+  serverError?: string;
 }

@@ -135,7 +135,7 @@
     <ng-template pTemplate="footer">
       <app-modal-button
         [disabled]="isNotValidForm()"
-        (validateEvent)="isValidPassword ? saveOrUpdate(lastPassword) : enablePasswordConfirmation(action.FOR_ACTION)"
+        (validateEvent)="isValidPassword ? saveOrUpdate(lastPasswordObject) : enablePasswordConfirmation(action.FOR_ACTION)"
         [forUpdate]="!!entity && !!entity.id"
         (cancelEvent)="disabledDialog()">
       </app-modal-button>

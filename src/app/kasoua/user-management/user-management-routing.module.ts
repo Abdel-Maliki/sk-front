@@ -1,17 +1,18 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import {RouteConstantes} from '../../../environments/route-constantes';
 
 const routes: Routes = [
   {
-    path: 'profils',
+    path: RouteConstantes.PROFIL,
     loadChildren: () => import('./profil/profil.module').then(m => m.ProfilModule),
   },
   {
-    path: 'users',
+    path: RouteConstantes.USER,
     loadChildren: () => import('./user/user.module').then(m => m.UserModule),
   },
   {
-    path: 'logs',
+    path: RouteConstantes.LOG,
     loadChildren: () => import('./log/log.module').then(m => m.LogModule),
   },
 ];
