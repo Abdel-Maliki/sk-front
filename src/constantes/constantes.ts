@@ -11,7 +11,7 @@ export const constantes = {
   defaultNotificationKey  : 'defaultKey',
   rowsPerPageOptions : [10, 25, 50],
   globalFiltered: 'global',
-  profileAdmin: 'admin',
+  admin: 'admin',
   storageToken: 'token',
 };
 

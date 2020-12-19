@@ -8,6 +8,9 @@ import {MenuItem} from 'primeng/api';
 import {i18nConstantes} from '../../../../../../constantes/i18n-constantes';
 import {MenuItemImp} from '../../../../../common/class/menu-item-imp';
 import {ServiceUtils} from '../../../../../common/service/service-utils.service';
+import {FormControl} from '@angular/forms';
+import {Subscription} from 'rxjs';
+import {debounceTime} from 'rxjs/operators';
 
 @Component({
   selector: 'app-profil-list',
@@ -23,6 +26,9 @@ export class ProfilListComponent extends AbstractListComponent<ProfileDomaine, I
   showProfileRole = false;
   roleItem: MenuItem = new MenuItemImp(this.promiseI18nElement('manageRoles'), 'fa fa-unlock-alt fa-lg', () => this.enableRoleOption());
   visibleConfirmPassword = false;
+  searchControl: FormControl = new FormControl(null);
+  searchSubscription: Subscription;
+
 
   constructor(profileProvider: ProfileProvider,
               serviceUtils: ServiceUtils) {
@@ -34,7 +40,20 @@ export class ProfilListComponent extends AbstractListComponent<ProfileDomaine, I
     this.modalItems.push(this.roleItem);
   }
 
+  subscribe(): void {
+    super.subscribe();
+    this.searchSubscription = this.searchControl.valueChanges
+      .pipe(debounceTime(300))
+      .subscribe(value => {
+        this.pagination.filters.value = value;
+        this.reload().then();
+      });
+  }
+
   ngOnDestroy(): void {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
     super.ngOnDestroy();
   }
 
@@ -56,10 +75,6 @@ export class ProfilListComponent extends AbstractListComponent<ProfileDomaine, I
 
   getNewInstance(): ProfileDomaine {
     return new ProfileDomaine();
-  }
-
-  showItemContextMenu(entity: ProfileDomaine): boolean {
-    return entity && entity.name !== this.constantes.profileAdmin;
   }
 
   showContextMenuOption(): boolean {

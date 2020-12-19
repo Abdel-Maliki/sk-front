@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
 import {AbstractNodeService} from '../../../../common/abstract/abstract-node-service';
 import {NodeServiceData} from '../../../../common/abstract/node-service-data';
 import {LogDomain} from '../domain/log-domain';
 import {InterfaceLog} from './interface-log';
 import {ResponseWrapper} from '../../../../common/class/response-wrapper';
 import {Pagination} from '../../../../common/class/pagination';
+import {Injectable} from '@angular/core';
 
 /**
  * @author abdel-maliki
@@ -13,13 +13,14 @@ import {Pagination} from '../../../../common/class/pagination';
 
 @Injectable({providedIn: 'root'})
 export class LogNodeService extends AbstractNodeService<LogDomain> implements InterfaceLog {
-  protected constructor(data: NodeServiceData) {
+  constructor(data: NodeServiceData) {
     super(data);
   }
 
   getPath(): string {
     return 'logs';
   }
+
   deleteAll(entities: LogDomain[], others?: any): Promise<ResponseWrapper<LogDomain[]>> {
     return new Promise<ResponseWrapper<LogDomain[]>>((resolve, reject) => {
       super.deleteAll(entities, others).then(value => {

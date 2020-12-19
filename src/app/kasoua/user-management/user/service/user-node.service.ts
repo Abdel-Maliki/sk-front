@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
 import {AbstractNodeService} from '../../../../common/abstract/abstract-node-service';
 import {UserDomain} from '../domain/user-domain';
 import {InterfaceUser} from './interface-user';
 import {ResponseWrapper} from '../../../../common/class/response-wrapper';
 import {Pagination} from '../../../../common/class/pagination';
 import {NodeServiceData} from '../../../../common/abstract/node-service-data';
+import {Injectable} from '@angular/core';
 
 /**
  * @author abdel-maliki
@@ -13,7 +13,7 @@ import {NodeServiceData} from '../../../../common/abstract/node-service-data';
 
 @Injectable({providedIn: 'root'})
 export class UserNodeService extends AbstractNodeService<UserDomain> implements InterfaceUser {
-  protected constructor(data: NodeServiceData) {
+  constructor(data: NodeServiceData) {
     super(data);
   }
 
@@ -128,10 +128,10 @@ export class UserNodeService extends AbstractNodeService<UserDomain> implements 
 
   create(entity: UserDomain, others?: any): Promise<ResponseWrapper<UserDomain>> {
     return new Promise<ResponseWrapper<UserDomain>>((resolve, reject) => {
-     super.create(entity, others).then(value => {
-       this.data.passwordStateService.setStateToValid();
-       resolve(value);
-     }, reason => reject(reason));
+      super.create(entity, others).then(value => {
+        this.data.passwordStateService.setStateToValid();
+        resolve(value);
+      }, reason => reject(reason));
     });
   }
 
@@ -156,10 +156,10 @@ export class UserNodeService extends AbstractNodeService<UserDomain> implements 
   updateAndGet(data: { entity: UserDomain; pagination: Pagination }, id: string | number, others?: any):
     Promise<ResponseWrapper<UserDomain[]>> {
     return new Promise<ResponseWrapper<UserDomain[]>>((resolve, reject) => {
-     super.updateAndGet(data, id, others).then(value => {
-       this.data.passwordStateService.setStateToValid();
-       resolve(value);
-     }, reason => reject(reason));
+      super.updateAndGet(data, id, others).then(value => {
+        this.data.passwordStateService.setStateToValid();
+        resolve(value);
+      }, reason => reject(reason));
     });
   }
 
@@ -196,6 +196,34 @@ export class UserNodeService extends AbstractNodeService<UserDomain> implements 
         this.data.passwordStateService.setStateToValid();
         resolve(value);
       }, reason => reject(reason));
+    });
+  }
+
+  forgotPasswordRequest(email: string): Promise<ResponseWrapper<void>> {
+    return new Promise((resolve, reject) => {
+      this.mapQuery(this.data.httpClient.put<ResponseWrapper<void>>(this.getUrl(`forget-password-request`)
+        , JSON.stringify({email}), this.baseOption))
+        .then(() => {
+          this.data.passwordStateService.setStateToValid();
+          resolve();
+        })
+        .catch((error: ResponseWrapper<UserDomain[]>) => {
+          this.nextError(error, reject);
+        });
+    });
+  }
+
+  forgotPasswordFinalisation(token: string, password: string): Promise<ResponseWrapper<void>> {
+    return new Promise((resolve, reject) => {
+      this.mapQuery(this.data.httpClient.put<ResponseWrapper<void>>(this.getUrl(`forget-password-finatisation`)
+        , JSON.stringify({token, password}), this.baseOption))
+        .then(() => {
+          this.data.passwordStateService.setStateToValid();
+          resolve();
+        })
+        .catch((error: ResponseWrapper<UserDomain[]>) => {
+          this.nextError(error, reject);
+        });
     });
   }
 }

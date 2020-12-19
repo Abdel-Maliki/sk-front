@@ -5,7 +5,7 @@ import {RouteConstantes} from '../../../constantes/route-constantes';
 const routes: Routes = [
   {
     path: RouteConstantes.PROFIL,
-    loadChildren: () => import('./profil/profil.module').then(m => m.ProfilModule),
+    loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule),
   },
   {
     path: RouteConstantes.USER,

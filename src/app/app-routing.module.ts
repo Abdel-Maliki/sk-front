@@ -10,6 +10,17 @@ const routes: Routes = [
     path: 'login', component: LoginComponent,
     canActivate: [LoginGuard]
   },
+  {
+    path: RouteConstantes.FORGOT_PASSWORD_REQUEST,
+    loadChildren: () => import('./front/component/forgot-password/forgot-password.module').then(m => m.ForgotPasswordModule),
+    // canActivate: [LoginGuard],
+  },
+  {
+    path: RouteConstantes.FORGOT_PASSWORD_FINALIZATION,
+    loadChildren: () => import('./front/component/forgot-password-finalization/forgot-password-finalization.module')
+      .then(m => m.ForgotPasswordFinalizationModule),
+    // canActivate: [LoginGuard],
+  },
   { path: '',   redirectTo: '/user-management/profils/list', pathMatch: 'full' },
   /*{
 

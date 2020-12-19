@@ -22,7 +22,9 @@ export interface InterfaceUser extends InterfaceService<UserDomain> {
 
   updateMyPassword(oldPassword: string, newPassword: string): Promise<ResponseWrapper<{ token: string }>>;
 
+  forgotPasswordRequest(email: string): Promise<ResponseWrapper<void>>;
 
+  forgotPasswordFinalisation(token: string, password: string): Promise<ResponseWrapper<void>>;
 
   allUsernames(): Promise<ResponseWrapper<string[]>>;
 

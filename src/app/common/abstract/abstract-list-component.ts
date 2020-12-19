@@ -34,9 +34,7 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
   // @ViewChild('dt', {static: false}) table: Table;
   deleteConfirmDialogPosition = 'topright';
   loading = false;
-  subscription: Subscription;
-  rolesSubscription: Subscription;
-  pagination: Pagination = new Pagination(0, constantes.rowsPerPageOptions[0], 0);
+  pagination: Pagination = new Pagination(0, constantes.rowsPerPageOptions[0], {}, undefined, undefined, undefined);
   formLink: string;
 
   haseAddRole = false;
@@ -44,10 +42,10 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
   haseDeleteRole = false;
 
   modalUpdateItem: MenuItem = new MenuItemImp(this.editLabel(), 'fa fa-pencil  fa-lg', () => this.enableDialog(this.entity));
-  rediredUpdateItem: MenuItem = new MenuItemImp(this.editLabel(), 'pi pi-refresh', () => this.goToForm('/' + this.entity.id));
-  DELETE_ITEM: MenuItem = new MenuItemImp(this.deleteLabel(), 'fa fa-trash fa-lg', () => this.deletePopupConfirm(this.event));
+  redirectUpdateItem: MenuItem = new MenuItemImp(this.editLabel(), 'pi pi-refresh', () => this.goToForm('/' + this.entity.id));
+  DELETE_ITEM: MenuItem = new MenuItemImp(this.deleteLabel(), 'fa fa-trash fa-lg', () => this.deleteConfirmation());
   modalItems: MenuItem[] = [this.modalUpdateItem, this.DELETE_ITEM];
-  redirectItems: MenuItem[] = [this.rediredUpdateItem, this.DELETE_ITEM];
+  redirectItems: MenuItem[] = [this.redirectUpdateItem, this.DELETE_ITEM];
 
   protected constructor(public provider: P,
                         public serviceUtils: ServiceUtils,
@@ -57,7 +55,6 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.subscribe();
     this.normaliseSelected();
 
     /*setInterval(() => {
@@ -66,18 +63,6 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
       this.table.first = 2;
       this.table.firstChange.emit(this.table.first);
     }, 5000);*/
-  }
-
-  subscribe(): void {
-    this.subscription = this.provider.getEnvService().error$.subscribe((error: string) => {
-      if (error && error.length > 0) {
-        this.serviceUtils.notificationService.showError(error).then();
-      }
-    });
-
-    this.rolesSubscription = this.serviceUtils.authProvider.getEnvService().rolesSubject.subscribe(() => {
-      this.checkRoles();
-    });
   }
 
   ngOnDestroy(): void {
@@ -341,9 +326,6 @@ export abstract class AbstractListComponent<T extends AbstractEntity<T>,
 
   showContextMenuOption(): boolean {
     return true;
-  }
-
-  checkRoles(): void {
   }
 
   getErrorMessageAndNext<ERROR>(responseWrapper: ResponseWrapper<ERROR>): string | null {

@@ -22,7 +22,7 @@
     <ng-template pTemplate="right">
       <span class="p-input-icon-left">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="dt.filterGlobal($event.target['value'], 'contains')"
+                        <input pInputText type="text" [formControl]="searchControl"
                                [placeholder]="(i18nConstantes.search | translate) + '...'"/>
                     </span>
     </ng-template>

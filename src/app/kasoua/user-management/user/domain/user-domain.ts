@@ -1,5 +1,5 @@
 import {AbstractEntity} from '../../../../common/abstract/abstract-entity';
-import {ProfileDomaine} from '../../profil/domain/profile-domaine';
+import {ProfileDomaine} from '../../profile/domain/profile-domaine';
 import {RouteConstantes} from '../../../../../constantes/route-constantes';
 import {PathHelpers} from '../../../../common/class/PathHelpers';
 

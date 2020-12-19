@@ -10,4 +10,6 @@ export const RouteConstantes = {
   USER: 'users',
   PROFIL: 'profils',
   LOG: 'logs',
+  FORGOT_PASSWORD_REQUEST: 'forget-password-request',
+  FORGOT_PASSWORD_FINALIZATION: 'forget-password-finalization/:token',
 };

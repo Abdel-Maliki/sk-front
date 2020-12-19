@@ -13,7 +13,7 @@ import {NodeServiceData} from '../../../../common/abstract/node-service-data';
 @Injectable({providedIn: 'root'})
 export class ProfileNodeService extends AbstractNodeService<ProfileDomaine> implements InterfaceProfile {
 
-  protected constructor(data: NodeServiceData) {
+  constructor(data: NodeServiceData) {
     super(data);
   }
 

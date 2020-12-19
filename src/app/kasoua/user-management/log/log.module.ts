@@ -9,5 +9,6 @@ import { LogRoutingModule } from './log-routing.module';
     CommonModule,
     LogRoutingModule
   ],
+  providers: []
 })
 export class LogModule { }

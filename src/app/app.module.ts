@@ -24,6 +24,7 @@ import {JwtInterceptor} from './front/service/jwt-interceptor';
 import {ErrorInterceptor} from './front/service/error-interceptor';
 import { LoaderComponent } from './front/component/loader/loader.component';
 import {ConfirmPopupModule} from 'primeng/confirmpopup';
+import {CookieService} from 'ngx-cookie-service';
 
 const socketIoConfig: SocketIoConfig = { url: 'http://localhost:5000', options: {} };
 
@@ -62,6 +63,7 @@ const socketIoConfig: SocketIoConfig = { url: 'http://localhost:5000', options: 
   providers: [
     MessageService,
     ConfirmationService,
+    CookieService,
     { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

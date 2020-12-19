@@ -91,8 +91,8 @@ export class LogListComponent extends AbstractListComponent<LogDomain, Interface
       this.reload().then();
     });
 
-    this.rangeDatesControl.valueChanges.subscribe(date => {
-      this.pagination.filters.date = date;
+    this.rangeDatesControl.valueChanges.subscribe(dates => {
+      this.pagination.filters.dates = dates;
       this.reload().then();
     });
 

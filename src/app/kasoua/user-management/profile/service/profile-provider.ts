@@ -12,11 +12,8 @@ import {Injectable} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({providedIn: 'root'})
-export class ProfileProvider extends AbstractServiceProvider<ProfileDomaine, InterfaceProfile>{
-  constructor(userConfigurationService: UserConfigurationService,
-              configurationService: ConfigurationService,
-              profilNodeService: ProfileNodeService,
-              public translate: TranslateService) {
-    super(userConfigurationService, configurationService, translate , profilNodeService, null, null);
+export class ProfileProvider extends AbstractServiceProvider<ProfileDomaine, InterfaceProfile> {
+  constructor(profileNodeService: ProfileNodeService) {
+    super(profileNodeService);
   }
 }

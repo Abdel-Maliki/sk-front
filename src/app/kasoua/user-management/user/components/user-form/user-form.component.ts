@@ -5,9 +5,11 @@ import {UserProvider} from '../../service/user-provider';
 import {AbstractFormComponent} from '../../../../../common/abstract/abstract-form-component';
 import {i18nConstantes} from '../../../../../../constantes/i18n-constantes';
 import {FormBuilder, FormControl, Validators} from '@angular/forms';
-import {ProfileProvider} from '../../../profil/service/profile-provider';
-import {ProfileDomaine} from '../../../profil/domain/profile-domaine';
+import {ProfileProvider} from '../../../profile/service/profile-provider';
+import {ProfileDomaine} from '../../../profile/domain/profile-domaine';
 import {ServiceUtils} from '../../../../../common/service/service-utils.service';
+import {Pagination} from '../../../../../common/class/pagination';
+import {ResponseWrapper} from '../../../../../common/class/response-wrapper';
 
 @Component({
   selector: 'app-user-form',
@@ -42,6 +44,9 @@ export class UserFormComponent extends AbstractFormComponent<UserDomain, Interfa
     this.subscribeForm();
     this.setFormData();
     this.updateForm();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   updateForm(): void {
@@ -94,10 +99,10 @@ export class UserFormComponent extends AbstractFormComponent<UserDomain, Interfa
     return new UserDomain();
   }
 
-  onKeyUp(search: string = ''): void {
-    this.profileProvider.getEnvService().getAll().then(value => {
-      this.profiles = value.data;
-    });
+  onKeyUp(value: string = ''): void {
+    this.profileProvider.getEnvService().pageElements(new Pagination(0, 100000000000, {value}))
+      .then(responseWrapper => this.profiles = responseWrapper.data)
+      .catch((reason: ResponseWrapper<any>) => this.serviceUtils.notificationService.showError(reason.error.message));
   }
 
   isValidForm(): boolean {

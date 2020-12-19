@@ -145,7 +145,7 @@ export class UserListComponent extends AbstractListComponent<UserDomain, Interfa
   }
 
   showItemContextMenu(entity: UserDomain): boolean {
-    return entity && entity.userName !== this.constantes.profileAdmin;
+    return entity && entity.userName !== this.constantes.admin;
   }
 
   async disableAccount(): Promise<void> {

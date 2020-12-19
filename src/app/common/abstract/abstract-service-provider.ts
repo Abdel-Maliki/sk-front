@@ -4,6 +4,7 @@ import {UserConfigurationService} from '../service/user-configuration.service';
 import {ConfigurationService} from '../service/configuration-service';
 import {TranslateService} from '@ngx-translate/core';
 import {Injectable} from '@angular/core';
+import {AbstractNodeService} from './abstract-node-service';
 
 /**
  * @author abdel-maliki
@@ -12,12 +13,7 @@ import {Injectable} from '@angular/core';
 
 export abstract class AbstractServiceProvider<T extends AbstractEntity<T>, R extends InterfaceService<T>> {
 
-  protected constructor(private userConfigurationService: UserConfigurationService,
-                        private configurationService: ConfigurationService,
-                        public translate: TranslateService,
-                        private nodeService: R,
-                        private javaService?: R,
-                        private fireBaseService?: R) {
+  protected constructor(private nodeService: R) {
   }
 
   getEnvService(): R {

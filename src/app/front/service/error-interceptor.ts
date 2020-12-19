@@ -18,7 +18,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(catchError((err: HttpErrorResponse) => {
       if ([401].includes(err.status)) {
-        this.authProvider.getEnvService().logout();
+        // this.authProvider.getEnvService().logout();
       }else if ([403].includes(err.status)) {
         this.authProvider.getEnvService().userSubject.next(err.error.data.user);
         this.authProvider.getEnvService().rolesSubject.next(err.error.data.roles);
